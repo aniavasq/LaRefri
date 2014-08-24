@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="refri_bg">#FF999089</color>
+	<color name="refri_menu_bg">#FF6B6560</color>
+	<color name="refri_transparency_shadow">#006B6560</color>
+</resources>

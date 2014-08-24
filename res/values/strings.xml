@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">La Refri</string>
+    <string name="action_settings"></string>
+    <string name="title_activity_menu">MenuActivity</string>
+    <string name="add_fridge_magnets">agregar imantados</string>
+    <string name="customize">personalizar refri</string>
+    <string name="account">cuenta</string>
+    <string name="notifications">notificaciones</string>
+    <string name="title_activity_flyer">Flyer</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_call">Call</string>
+    <string name="title_activity_phone_guide">PhoneGuideActivity</string>
+    <string name="title_activity_categories">CategoriesActivity</string>
+
+</resources>
