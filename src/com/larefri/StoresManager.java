@@ -8,7 +8,7 @@ import java.util.List;
 
 import android.util.JsonReader;
 
-public class StoresReader implements RefriJsonReader {
+public class StoresManager implements RefriJsonReader {
 	public List<Store> readJsonStream(InputStream in) throws IOException {
 		JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
 		try {

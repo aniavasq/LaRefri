@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.app.Activity;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -35,18 +34,29 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
 		//Set policy to HTTP
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+        
+        //get metrics for relative size from display width multiples
+		DisplayMetrics dm = new DisplayMetrics();
+		this.getWindow().getWindowManager().getDefaultDisplay().getMetrics(dm);
+		int width = dm.widthPixels;
+		
+		//Create RestClient object to get HTTP response data
+		RestClient restClient = new RestClient();
 				
 		//check first time installed
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);       
         if (settings.getBoolean("my_first_time", true)) {
-		    //the app is being launched for first time, do something        
-		    Log.e("Comments", "First time for ");//+android_id);
-		           // first time task
+		    //the APP is being launched for first time, do something        
+		    Log.e("Comments", "First time for ");
+
+		    //get the categories in the server
 		    try{
-		    	Object http_repsonse = (new RestClient()).doInBackground(
+		    	//download JSON from server with the categories
+		    	Object http_repsonse = restClient.doInBackground(
 						StaticUrls.CATEGORIES, 
 						new HashMap<Object, Object>(),
 						new ArrayList<Object>());
@@ -57,38 +67,29 @@ public class MainActivity extends Activity {
 			
 			    List<Category> categories = CategoriesActivity.getCategoriesFromJSON(new File(getFilesDir(),"categories.json"));
 		        for(Category c: categories){
-		        	//if(c!=null){
-			        	InputStream imageInputStream=new URL(StaticUrls.ICONS_CATEGORIES+c.icono_categoria).openStream();
-			        	FileOutputStream imageOutputStream;
-			        	imageOutputStream = openFileOutput(c.icono_categoria, Context.MODE_PRIVATE);
-			        	CopyStream(imageInputStream, imageOutputStream);
-			        	Log.e("outputImage",imageOutputStream.toString());
-			        	imageOutputStream.close();
-	        	//}
+		        	//download images from server at the first time running
+		        	InputStream imageInputStream=new URL(StaticUrls.ICONS_CATEGORIES+c.icono_categoria).openStream();
+		        	FileOutputStream imageOutputStream;
+		        	imageOutputStream = openFileOutput(c.icono_categoria, Context.MODE_PRIVATE);
+		        	CopyStream(imageInputStream, imageOutputStream);
+		        	imageOutputStream.close();
 		        }
 		    }catch(Exception e){
 		    	e.printStackTrace();
 		    }
-		    // record the fact that the app has been started at least once
+		    // record the fact that the APP has been started at least once
 		    settings.edit().putBoolean("my_first_time", false).commit(); 
-		} 
+		}
 		
-		//create internal folder
-		ContextWrapper cw = new ContextWrapper(this);
-		/**File directory = **/cw.getDir("media", Context.MODE_PRIVATE);
-		
-		DisplayMetrics dm = new DisplayMetrics();
-		this.getWindow().getWindowManager().getDefaultDisplay().getMetrics(dm);
-		int width = dm.widthPixels;
-		
-		//add fridge magnets from local data
+		//add fridgeMagnets from local data
 		LinearLayout left_pane_fridgemagnets = (LinearLayout) findViewById(R.id.left_pane_fridgemagnets);
-		LinearLayout right_pane_frudgemagnets = (LinearLayout)findViewById(R.id.right_pane_fridgemagnets);
-		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, width/2);
+		LinearLayout right_pane_fridgemagnets = (LinearLayout)findViewById(R.id.right_pane_fridgemagnets);
+		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width/2, width/2);
 		lp.setMargins(0, 0, 0, 0);
 		
+		//add default icons for the fridgeMagnets as buttons
 		try {
-			FridgeMagnetsReader fridgeMagnetReader = new FridgeMagnetsReader();
+			FridgeMagnetsManager fridgeMagnetReader = new FridgeMagnetsManager();
 			List<FridgeMagnet> fridgeMagnets = fridgeMagnetReader.readJsonStream(getAssets().open("data.json"));
 			for(final FridgeMagnet fm: fridgeMagnets){
 				ImageButton tmp_imageButtom = new ImageButton(this);
@@ -109,7 +110,7 @@ public class MainActivity extends Activity {
 				if(fridgeMagnets.indexOf(fm)%2 == 0){
 					left_pane_fridgemagnets.addView(tmp_imageButtom);
 				}else{
-					right_pane_frudgemagnets.addView(tmp_imageButtom);
+					right_pane_fridgemagnets.addView(tmp_imageButtom);
 				}
 			}	
 
@@ -138,7 +139,6 @@ public class MainActivity extends Activity {
 		return true;
 	}
 
-	/** Called when the user clicks the Send button */
 	public void goToMenu(View view) {
 	    Intent intent = new Intent(view.getContext(), MenuActivity.class);
 	    this.startActivity(intent);
@@ -154,6 +154,7 @@ public class MainActivity extends Activity {
 	    this.startActivity(intent);
 	}
 	
+	//For image copy from HTTP response
 	public static void CopyStream(InputStream is, FileOutputStream os)
 	{
 	    final int buffer_size=1024;

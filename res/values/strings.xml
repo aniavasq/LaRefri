@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">La Refri</string>
+    <string name="desc">Image</string>
     <string name="action_settings"></string>
     <string name="title_activity_menu">MenuActivity</string>
     <string name="add_fridge_magnets">agregar imantados</string>
@@ -13,5 +14,6 @@
     <string name="title_activity_call">Call</string>
     <string name="title_activity_phone_guide">PhoneGuideActivity</string>
     <string name="title_activity_categories">CategoriesActivity</string>
+    <string name="title_activity_add_magnet">AddMagnetActivity</string>
 
 </resources>

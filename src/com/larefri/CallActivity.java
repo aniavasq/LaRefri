@@ -70,14 +70,14 @@ public class CallActivity extends Activity {
 					nameValuePairs);
 			
 			InputStream is = new ByteArrayInputStream(http_repsonse.toString().getBytes());
-			StoresReader storesReader = new StoresReader();
+			StoresManager storesManager = new StoresManager();
 			
 			LinearLayout store_call_pane = (LinearLayout) findViewById(R.id.stores_call_buttons);
 			LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, Gravity.LEFT);
 			Resources resources = getResources();
 			ContextThemeWrapper themeWrapper = new ContextThemeWrapper(this, R.style.menu_button);
 			
-			for(final Store s: storesReader.readJsonStream(is)){
+			for(final Store s: storesManager.readJsonStream(is)){
 				if(s!=null){
 					Button tmp_button = new Button(themeWrapper);
 					tmp_button.setLayoutParams(lp);

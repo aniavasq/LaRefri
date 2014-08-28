@@ -8,7 +8,7 @@ import java.util.List;
 
 import android.util.JsonReader;
 
-public class CategoriesReader implements RefriJsonReader {
+public class CategoriesManager implements RefriJsonReader {
 
 	@Override
 	public List<Category> readJsonStream(InputStream in) throws IOException {

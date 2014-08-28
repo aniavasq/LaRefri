@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -15,6 +16,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -48,7 +50,7 @@ public class CategoriesActivity extends Activity {
 					ll.setOrientation(LinearLayout.VERTICAL);
 					
 					
-					Category c = categoriesIterator.next();
+					final Category c = categoriesIterator.next();
 					File imgFile = new File(getFilesDir(), c.icono_categoria);
 					ImageButton btn = new ImageButton(this);
 					Bitmap bmp = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
@@ -56,20 +58,22 @@ public class CategoriesActivity extends Activity {
 					btn.setImageBitmap(bmp);
 					btn.setBackgroundColor(Color.TRANSPARENT);
 					btn.setScaleType( ImageView.ScaleType.FIT_CENTER );
+					btn.setOnClickListener(new OnClickListener() {
+						
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							//onCall(v, s.telefono);
+							goToAddMagnets(v, c);
+						}
+					});
 					
 					
 					TextView tv = new TextView(this);
 					tv.setText(c.nombre_categoria);
 					tv.setTextColor(Color.WHITE);
 					tv.setGravity(Gravity.CENTER_HORIZONTAL);
-					/*Button btn = new Button(this);
-					File imgFile = new File(getFilesDir(), c.icono_categoria);
-					//Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-					Drawable d = Drawable.createFromPath(imgFile.getAbsolutePath());
-					btn.setCompoundDrawables(null, d, null, null);
-					//Log.e("icon", d.toString());
-					//btn.setCompoundDrawablesWithIntrinsicBounds();
-		            btn.setText(c.nombre_categoria);*/
+
 		            tr.addView(ll);
 					ll.addView(btn);
 					ll.addView(tv);
@@ -82,6 +86,17 @@ public class CategoriesActivity extends Activity {
 		}
 		
 		//tv.setText(input.);
+	}
+
+	protected void goToAddMagnets(View view, Category c) {
+		// TODO Auto-generated method stub
+		Intent intent = new Intent(view.getContext(), AddMagnetActivity.class);
+	    Bundle b = new Bundle();
+	    b.putInt("id_categoria", c.id_categoria); //Your id
+	    b.putString("logo", c.icono_categoria);
+	    b.putString("nombre", c.nombre_categoria);
+	    intent.putExtras(b); //Put your id to your next Intent
+	    this.startActivity(intent);
 	}
 
 	@Override
@@ -105,7 +120,7 @@ public class CategoriesActivity extends Activity {
 
 	public static List<Category> getCategoriesFromJSON (File fl) throws Exception {
 	    FileInputStream fin = new FileInputStream(fl);
-	    List<Category> ret = (new CategoriesReader()).readJsonStream(fin);
+	    List<Category> ret = (new CategoriesManager()).readJsonStream(fin);
 	    //Make sure you close all streams.
 	    fin.close();        
 	    return ret;

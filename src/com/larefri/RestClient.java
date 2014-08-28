@@ -12,7 +12,17 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import android.os.AsyncTask;
 
 @SuppressWarnings("rawtypes")
-public class RestClient  extends AsyncTask{
+public class RestClient  extends AsyncTask<Object,String, Object>{
+
+	private Object result;
+	
+	public Object getResult() {
+		return result;
+	}
+
+	public void setResult(Object result) {
+		this.result = result;
+	}
 
 	@SuppressWarnings({ "unchecked" })
 	public Object makeRequestByForm(String path, Map params, List<NameValuePair> form) throws Exception 
@@ -58,6 +68,20 @@ public class RestClient  extends AsyncTask{
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	@Override
+	protected void onPostExecute(Object result) {
+		// TODO Auto-generated method stub
+		//super.onPostExecute(result);
+		//Log.e("result",result.toString());
+		setResult(result);
+	}
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return this.getResult().toString();
 	}
 	
 	/*@SuppressWarnings("rawtypes")
