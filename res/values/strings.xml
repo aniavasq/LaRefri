@@ -9,11 +9,20 @@
     <string name="customize">personalizar refri</string>
     <string name="account">cuenta</string>
     <string name="notifications">notificaciones</string>
+    <string name="new_account">crear cuenta</string>
+    <string name="log_in">log in</string>
+    <string name="account_settings">configurar cuenta</string>
+    <string name="save">guardar</string>
     <string name="title_activity_flyer">Flyer</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_call">Call</string>
     <string name="title_activity_phone_guide">PhoneGuideActivity</string>
     <string name="title_activity_categories">CategoriesActivity</string>
     <string name="title_activity_add_magnet">AddMagnetActivity</string>
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="title_activity_account_menu">AccountMenuActivity</string>
+    <string name="title_activity_new_account">NewAccountActivity</string>
+    <string name="title_activity_log_in">LogInActivity</string>
+    <string name="title_activity_account_settings">AccountSettingsActivity</string>
 
 </resources>

@@ -8,7 +8,9 @@ import android.util.JsonWriter;
 
 public interface RefriJsonWriter {
 	
-	public void writeMessagesArray(JsonWriter writer,List<Object> objectsList) throws IOException;
+	@SuppressWarnings("rawtypes")
+	public void writeMessagesArray(JsonWriter writer,List objectsList) throws IOException;
 	
-	public void writeJsonStream(OutputStream out, List<Object> objectsList) throws IOException;
+	@SuppressWarnings("rawtypes")
+	public void writeJsonStream(OutputStream out, List objectsList) throws IOException;
 }

@@ -1,0 +1,323 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.larefri.AccountSettingsActivity" >
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical" >
+
+        <ImageView
+            android:id="@+id/larefri_Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/logorefri" />
+
+        <ImageButton
+            android:id="@+id/overflowbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_action_previous_item"
+     		android:background="@android:color/transparent"
+     		android:onClick="onBackPressed" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/relativeLayout1"
+        android:orientation="vertical"
+        android:background="@color/refri_menu_bg" >
+        
+        <View
+	        android:layout_width="match_parent"
+	        android:id="@+id/separator_sec"
+	        android:layout_height="16px"
+	        android:orientation="horizontal" 
+	        android:baselineAligned="false"
+	        android:background="@drawable/separator">
+	    </View>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:id="@+id/shadow_sec"
+            android:layout_height="23px"
+	        android:background="@drawable/back_ground_with_shadow" >
+        </RelativeLayout>
+	    
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="fill_parent"
+	        android:orientation="horizontal"
+	        android:baselineAligned="false" >
+
+	        <LinearLayout
+	            android:layout_width="0dp"
+	            android:layout_height="match_parent"
+	            android:layout_weight="0.5"
+	            android:orientation="vertical"
+	            android:paddingLeft="20dp"
+	            android:paddingRight="20dp" >
+
+	            <TextView
+	                android:id="@+id/btn_add_fridge_magnets"
+	                style="@style/menu_label"
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content"
+	                android:background="@drawable/menu_button_bg"
+	                android:text="@string/account_settings" />
+
+	            <ScrollView
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_marginBottom="80sp">
+
+	                <LinearLayout
+		                android:layout_width="match_parent"
+		                android:layout_height="wrap_content"
+		                android:orientation="vertical" >
+		                <LinearLayout
+			                android:layout_width="match_parent"
+			                android:layout_height="wrap_content"
+			                android:orientation="horizontal" 
+			                android:paddingTop="35sp">
+
+			                <TextView
+			                    style="@style/menu_label"
+			                    android:layout_width="0dp"
+			                    android:layout_weight="0.33"
+			                    android:layout_height="wrap_content"
+			                    android:text="nombre" />
+
+			                <EditText
+			                    android:id="@+id/name_txt"
+			                    android:layout_width="0dp"
+			                    android:layout_height="35sp"
+			                    android:layout_marginTop="1dp"
+			                    android:layout_marginBottom="1dp"
+			                    android:layout_weight="0.66"
+			                    android:ems="10" 
+			                    android:background="@color/refri_bg"
+			                    android:inputType="textPersonName">
+
+			                    <requestFocus />
+			                </EditText>
+		                </LinearLayout>
+		                
+		                <LinearLayout
+			                android:layout_width="match_parent"
+			                android:layout_height="wrap_content"
+			                android:orientation="horizontal" >
+
+			                <TextView
+			                    style="@style/menu_label"
+			                    android:layout_width="0dp"
+			                    android:layout_weight="0.33"
+			                    android:layout_height="wrap_content"
+			                    android:text="apellido" />
+
+			                <EditText
+			                    android:id="@+id/sure_name_txt"
+			                    android:layout_width="0dp"
+			                    android:layout_height="35sp"
+			                    android:layout_marginTop="1dp"
+			                    android:layout_marginBottom="1dp"
+			                    android:layout_weight="0.66"
+			                    android:ems="10" 
+			                    android:background="@color/refri_bg"
+			                    android:inputType="textPersonName">
+			                </EditText>
+		                </LinearLayout>
+		                
+		                <LinearLayout
+			                android:layout_width="match_parent"
+			                android:layout_height="wrap_content"
+			                android:orientation="horizontal" >
+
+			                <TextView
+			                    style="@style/menu_label"
+			                    android:layout_width="0dp"
+			                    android:layout_weight="0.33"
+			                    android:layout_height="wrap_content"
+			                    android:text="celular" />
+
+			                <EditText
+			                    android:id="@+id/phone_txt"
+			                    android:layout_width="0dp"
+			                    android:layout_height="35sp"
+			                    android:layout_marginTop="1dp"
+			                    android:layout_marginBottom="1dp"
+			                    android:layout_weight="0.66"
+			                    android:ems="10" 
+			                    android:background="@color/refri_bg"
+			                    android:inputType="phone">
+			                </EditText>
+		                </LinearLayout>
+		                
+		                <LinearLayout
+			                android:layout_width="match_parent"
+			                android:layout_height="wrap_content"
+			                android:orientation="horizontal" >
+
+			                <TextView
+			                    style="@style/menu_label"
+			                    android:layout_width="0dp"
+			                    android:layout_weight="0.33"
+			                    android:layout_height="wrap_content"
+			                    android:text="email" />
+
+			                <EditText
+			                    android:id="@+id/email_txt"
+			                    android:layout_width="0dp"
+			                    android:layout_height="35sp"
+			                    android:layout_marginTop="1dp"
+			                    android:layout_marginBottom="1dp"
+			                    android:layout_weight="0.66"
+			                    android:ems="10" 
+			                    android:background="@color/refri_bg"
+			                    android:inputType="textEmailAddress">
+			                </EditText>
+		                </LinearLayout>
+		                
+		                <LinearLayout
+			                android:layout_width="match_parent"
+			                android:layout_height="wrap_content"
+			                android:orientation="horizontal" >
+
+			                <TextView
+			                    style="@style/menu_label"
+			                    android:layout_width="0dp"
+			                    android:layout_weight="0.33"
+			                    android:layout_height="wrap_content"
+			                    android:text="ciudad" />
+
+			                <EditText
+			                    android:id="@+id/city_txt"
+			                    android:layout_width="0dp"
+			                    android:layout_height="35sp"
+			                    android:layout_marginTop="1dp"
+			                    android:layout_marginBottom="1dp"
+			                    android:layout_weight="0.66"
+			                    android:ems="10" 
+			                    android:background="@color/refri_bg"
+			                    android:inputType="text">
+			                </EditText>
+		                </LinearLayout>
+		                
+		                <LinearLayout
+			                android:layout_width="match_parent"
+			                android:layout_height="wrap_content"
+			                android:orientation="horizontal" >
+
+			                <TextView
+			                    style="@style/menu_label"
+			                    android:layout_width="0dp"
+			                    android:layout_weight="0.33"
+			                    android:layout_height="wrap_content"
+			                    android:text="usuario" />
+
+			                <EditText
+			                    android:id="@+id/user_txt"
+			                    android:layout_width="0dp"
+			                    android:layout_height="35sp"
+			                    android:layout_marginTop="1dp"
+			                    android:layout_marginBottom="1dp"
+			                    android:layout_weight="0.66"
+			                    android:ems="10" 
+			                    android:background="@color/refri_bg"
+			                    android:inputType="text">
+			                </EditText>
+		                </LinearLayout>
+		                
+		                <LinearLayout
+			                android:layout_width="match_parent"
+			                android:layout_height="wrap_content"
+			                android:orientation="horizontal" >
+
+			                <TextView
+			                    style="@style/menu_label"
+			                    android:layout_width="0dp"
+			                    android:layout_weight="0.33"
+			                    android:layout_height="wrap_content"
+			                    android:text="clave" />
+
+			                <EditText
+			                    android:id="@+id/password_txt"
+			                    android:layout_width="0dp"
+			                    android:layout_height="35sp"
+			                    android:layout_marginTop="1dp"
+			                    android:layout_marginBottom="1dp"
+			                    android:layout_weight="0.66"
+			                    android:ems="10" 
+			                    android:background="@color/refri_bg"
+			                    android:inputType="textPassword">
+			                </EditText>
+		                </LinearLayout>
+		                
+		                <LinearLayout
+			                android:layout_width="match_parent"
+			                android:layout_height="wrap_content"
+			                android:orientation="horizontal" >
+
+			                <TextView
+			                    style="@style/menu_label"
+			                    android:layout_width="0dp"
+			                    android:layout_weight="0.33"
+			                    android:layout_height="wrap_content"
+			                    android:text="confirmar clave" />
+
+			                <EditText
+			                    android:id="@+id/confirm_pass_txt"
+			                    android:layout_width="0dp"
+			                    android:layout_height="35sp"
+			                    android:layout_marginTop="1dp"
+			                    android:layout_marginBottom="1dp"
+			                    android:layout_weight="0.66"
+			                    android:ems="10" 
+			                    android:background="@color/refri_bg"
+			                    android:inputType="textPassword">
+			                </EditText>
+		                </LinearLayout>
+		            </LinearLayout>
+	            </ScrollView>
+
+	        </LinearLayout>
+
+	    </LinearLayout>
+    </LinearLayout>
+    
+    <RelativeLayout 
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:paddingBottom="20dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
+        
+
+        <Button
+            android:id="@+id/button1"
+            style="@style/big_button"
+            android:layout_width="match_parent"
+            android:layout_height="55sp"
+            android:gravity="center"
+            android:background="@drawable/rounded_button"
+            android:text="@+string/save" />
+    </RelativeLayout>
+
+</RelativeLayout>

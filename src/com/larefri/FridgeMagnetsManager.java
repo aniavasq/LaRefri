@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.util.JsonReader;
+import android.util.JsonToken;
 import android.util.JsonWriter;
 
 public class FridgeMagnetsManager implements RefriJsonReader, RefriJsonWriter {
@@ -24,9 +25,13 @@ public class FridgeMagnetsManager implements RefriJsonReader, RefriJsonWriter {
 	public List<FridgeMagnet> readMessagesArray(JsonReader reader) throws IOException {
 		List<FridgeMagnet> messages = new ArrayList<FridgeMagnet>();
 
-		reader.beginArray();
-		while (reader.hasNext()) {
-			messages.add(readMagnet(reader));
+		if (reader.peek() != JsonToken.BEGIN_ARRAY) {
+			return messages;
+		} else {
+			reader.beginArray();
+			while (reader.hasNext()) {
+				messages.add(readMagnet(reader));
+			}
 		}
 		reader.endArray();
 		return messages;
@@ -72,8 +77,9 @@ public class FridgeMagnetsManager implements RefriJsonReader, RefriJsonWriter {
 		return fridgeMagnet;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
-	public void writeMessagesArray(JsonWriter writer, List<Object> objectsList)
+	public void writeMessagesArray(JsonWriter writer, List objectsList)
 			throws IOException {
 		writer.beginArray();
 	     for (Object fm : objectsList) {
@@ -82,8 +88,9 @@ public class FridgeMagnetsManager implements RefriJsonReader, RefriJsonWriter {
 	     writer.endArray();		
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
-	public void writeJsonStream(OutputStream out, List<Object> objectsList)
+	public void writeJsonStream(OutputStream out, List objectsList)
 			throws IOException {
 		JsonWriter writer = new JsonWriter(new OutputStreamWriter(out, "UTF-8"));
 		writer.setIndent("  ");

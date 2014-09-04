@@ -55,6 +55,26 @@
             android:name=".AddMagnetActivity"
             android:label="@string/title_activity_add_magnet" >
         </activity>
+        <activity
+            android:name=".SplashActivity"
+            android:label="@string/title_activity_splash" >
+        </activity>
+        <activity
+            android:name=".AccountMenuActivity"
+            android:label="@string/title_activity_account_menu" >
+        </activity>
+        <activity
+            android:name=".NewAccountActivity"
+            android:label="@string/title_activity_new_account" >
+        </activity>
+        <activity
+            android:name=".LogInActivity"
+            android:label="@string/title_activity_log_in" >
+        </activity>
+        <activity
+            android:name=".AccountSettingsActivity"
+            android:label="@string/title_activity_account_settings" >
+        </activity>
     </application>
 
 </manifest>

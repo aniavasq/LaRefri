@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.util.JsonReader;
+import android.util.JsonToken;
 
 public class StoresManager implements RefriJsonReader {
 	public List<Store> readJsonStream(InputStream in) throws IOException {
@@ -18,12 +19,16 @@ public class StoresManager implements RefriJsonReader {
 		 }
 	  }
 
-	public List<Store> readMessagesArray(JsonReader reader) throws IOException {
+	public List<Store> readMessagesArray(JsonReader reader) throws IOException, IllegalStateException {
 		List<Store> messages = new ArrayList<Store>();
 
-		reader.beginArray();
-		while (reader.hasNext()) {
-			messages.add(readStore(reader));
+		if (reader.peek() != JsonToken.BEGIN_ARRAY) {
+			return messages;
+		} else {
+			reader.beginArray();
+			while (reader.hasNext()) {
+				messages.add(readStore(reader));
+			}
 		}
 		reader.endArray();
 		return messages;

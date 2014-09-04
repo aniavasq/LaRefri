@@ -1,7 +1,6 @@
 package com.larefri;
 
-import java.io.IOException;
-
+import java.io.File;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -30,13 +29,11 @@ public class FlyerActivity extends Activity {
 		
 		ImageView image = (ImageView)findViewById(R.id.magnetfridge_logo);
 		TextView nameview = (TextView)findViewById(R.id.magnetfridge_name);
-		try {
-			image.setImageDrawable(Drawable.createFromStream(getAssets().open(logo), null));
-			nameview.setText(nombre);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		File imgFile = new File(getFilesDir(), logo);
+		Drawable d = Drawable.createFromPath(imgFile.getAbsolutePath());
+		image.setImageDrawable(d);
+		//image.setImageDrawable(Drawable.createFromStream(getAssets().open(logo), null));
+		nameview.setText(nombre);
 		Log.v("id_marca",""+id_marca);
 	}
 

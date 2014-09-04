@@ -11,8 +11,11 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.content.res.Resources.NotFoundException;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -32,11 +35,78 @@ public class CallActivity extends Activity {
 	private Integer id_marca;
 	private String logo;
 	private String nombre;
+	private Context context;
+	
+	class ThisRestClient extends RestClient{
+
+		/** progress dialog to show user that the backup is processing. */
+	    private ProgressDialog dialog;
+		
+	    @Override
+		protected void onPreExecute() {
+	        dialog = new ProgressDialog(context);
+	        this.dialog.setMessage("Actualizando Locales");
+	        this.dialog.show();
+	        this.dialog.setCancelable(false);
+	        this.dialog.setCanceledOnTouchOutside(false);
+	    }
+		
+		@Override
+		protected void onPostExecute(Object result) {
+			// TODO Auto-generated method stub
+			if (dialog.isShowing()) {
+	            dialog.dismiss();
+	        }
+			//Log.e("result",result.toString());
+			InputStream is = new ByteArrayInputStream(result.toString().getBytes());
+			StoresManager storesManager = new StoresManager();
+			
+			LinearLayout store_call_pane = (LinearLayout) findViewById(R.id.stores_call_buttons);
+			LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, Gravity.LEFT);
+			Resources resources = getResources();
+			ContextThemeWrapper themeWrapper = new ContextThemeWrapper(context, R.style.menu_button);
+			
+			
+			try {
+				for(final Store s: storesManager.readJsonStream(is)){
+					if(s!=null){
+						Button tmp_button = new Button(themeWrapper);
+						tmp_button.setLayoutParams(lp);
+						tmp_button.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
+						tmp_button.setText(s.nombre);
+						tmp_button.setTextColor(Color.WHITE);
+						tmp_button.setGravity(Gravity.LEFT);
+						tmp_button.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
+						tmp_button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_call, 0);
+						tmp_button.setOnClickListener(new OnClickListener() {							
+							@Override
+							public void onClick(View v) {
+								// TODO Auto-generated method stub
+								onCall(v, s.telefono);
+								
+							}
+						});
+						store_call_pane.addView(tmp_button);
+					}
+				}
+			} catch (NotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			super.onPostExecute(result);
+		}
+		
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_call);
+		this.context = this;
+		
 		//get extra content from previous activity
 		Bundle b = getIntent().getExtras();
 		id_marca = b.getInt("id_marca");
@@ -45,13 +115,6 @@ public class CallActivity extends Activity {
 		
 		ImageView image = (ImageView)findViewById(R.id.magnetfridge_logo);
 		TextView nameview = (TextView)findViewById(R.id.magnetfridge_name);
-		try {
-			image.setImageDrawable(Drawable.createFromStream(getAssets().open(logo), null));
-			nameview.setText(nombre);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 		//Set policy to HTTP
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -63,44 +126,13 @@ public class CallActivity extends Activity {
 	    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
         nameValuePairs.add(new BasicNameValuePair("id_marca", id_marca.toString()));
         
+		(new ThisRestClient()).execute(
+				StaticUrls.SUCURSALES_URL, 
+				params,
+				nameValuePairs);
 		try {
-			Object http_repsonse = (new RestClient()).doInBackground(
-					StaticUrls.SUCURSALES_URL, 
-					params,
-					nameValuePairs);
-			
-			InputStream is = new ByteArrayInputStream(http_repsonse.toString().getBytes());
-			StoresManager storesManager = new StoresManager();
-			
-			LinearLayout store_call_pane = (LinearLayout) findViewById(R.id.stores_call_buttons);
-			LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, Gravity.LEFT);
-			Resources resources = getResources();
-			ContextThemeWrapper themeWrapper = new ContextThemeWrapper(this, R.style.menu_button);
-			
-			for(final Store s: storesManager.readJsonStream(is)){
-				if(s!=null){
-					Button tmp_button = new Button(themeWrapper);
-					tmp_button.setLayoutParams(lp);
-					tmp_button.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
-					tmp_button.setText(s.nombre);
-					tmp_button.setTextColor(Color.WHITE);
-					tmp_button.setGravity(Gravity.LEFT);
-					tmp_button.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
-					tmp_button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_call, 0);
-					tmp_button.setOnClickListener(new OnClickListener() {
-						
-						@Override
-						public void onClick(View v) {
-							// TODO Auto-generated method stub
-							onCall(v, s.telefono);
-							
-						}
-					});
-					store_call_pane.addView(tmp_button);
-				}
-			}
-			
-			//tv.setText(storesReader.readJsonStream(is).toString());
+			image.setImageDrawable(Drawable.createFromStream(getAssets().open(logo), null));
+			nameview.setText(nombre);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

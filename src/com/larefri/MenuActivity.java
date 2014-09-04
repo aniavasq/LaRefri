@@ -23,12 +23,15 @@ public class MenuActivity extends Activity {
 	
 	public void onBackPressed(View view) {
 		this.finish();
-		/**Intent intent = new Intent(view.getContext(), MainActivity.class);
-	    this.startActivity(intent);**/
 	}
 	
 	public void goCategories(View view){
 		Intent intent = new Intent(view.getContext(), CategoriesActivity.class);
+	    this.startActivity(intent);
+	}
+	
+	public void goAccountMenu(View view){
+		Intent intent = new Intent(view.getContext(), AccountMenuActivity.class);
 	    this.startActivity(intent);
 	}
 }

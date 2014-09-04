@@ -2,10 +2,17 @@ package com.larefri;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
 import org.apache.http.NameValuePair;
 
 import android.app.Activity;
@@ -23,7 +30,6 @@ import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -43,10 +49,13 @@ public class AddMagnetActivity extends Activity {
 		/** progress dialog to show user that the backup is processing. */
 	    private ProgressDialog dialog;
 		
+	    @Override
 		protected void onPreExecute() {
 	        dialog = new ProgressDialog(context);
 	        this.dialog.setMessage("Actualizando Imantados");
 	        this.dialog.show();
+	        this.dialog.setCancelable(false);
+	        this.dialog.setCanceledOnTouchOutside(false);
 	    }
 		
 		@Override
@@ -81,7 +90,15 @@ public class AddMagnetActivity extends Activity {
 							public void onClick(View v) {
 								// TODO Auto-generated method stub
 								//onCall(v, s.telefono);
-								
+								try {
+									addMagnetToLocalData(fm);
+								} catch (FileNotFoundException e) {
+									// TODO Auto-generated catch block
+									Log.e("Error",""+e.getMessage(),e);
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									Log.e("Error",""+e.getMessage(),e);
+								}
 							}
 						});
 						store_call_pane.addView(tmp_button);
@@ -119,8 +136,7 @@ public class AddMagnetActivity extends Activity {
 		ImageView image = (ImageView)findViewById(R.id.magnetfridge_logo);
 		TextView nameview = (TextView)findViewById(R.id.magnetfridge_name);
 		File imgFile = new File(getFilesDir(), logo);
-		Bitmap bmp = BitmapFactory.decodeFile(imgFile.getAbsolutePath());			
-		//image.setImageDrawable(Drawable.createFromStream(getAssets().open(logo), null));
+		Bitmap bmp = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
 		image.setImageBitmap(bmp);
 		nameview.setText(nombre);
 		
@@ -131,10 +147,10 @@ public class AddMagnetActivity extends Activity {
 	    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
         nameValuePairs.add(new BasicNameValuePair("id_category", id_category.toString()));
         */
-			(new ThisRestClient()).execute(
-					StaticUrls.MAGNETS_BY_CATEGORY, 
-					new HashMap<String, String>(),
-					new ArrayList<NameValuePair>());
+		(new ThisRestClient()).execute(
+				StaticUrls.MAGNETS_BY_CATEGORY, 
+				new HashMap<String, String>(),
+				new ArrayList<NameValuePair>());
 			//Object http_response = rest_client.getResult();
 			
 	}
@@ -145,17 +161,23 @@ public class AddMagnetActivity extends Activity {
 		getMenuInflater().inflate(R.menu.add_magnet, menu);
 		return true;
 	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
+	
+	public void addMagnetToLocalData(FridgeMagnet fm) throws FileNotFoundException, IOException{
+		File JsonFile = new File(getFilesDir(), "data.json");
+		FridgeMagnetsManager fridgeMagnetReader = new FridgeMagnetsManager();
+		List<FridgeMagnet> fridgeMagnets = fridgeMagnetReader.readJsonStream( new FileInputStream(JsonFile) );
+		fridgeMagnets.add(fm);
+		fridgeMagnetReader.writeJsonStream(new FileOutputStream(JsonFile), fridgeMagnets);
+		downloadImageFromServer(StaticUrls.FRIDGE_MAGNETS, fm.logo);
+		Log.e("FridgeMagnet",fm.nombre);
+	}
+	
+	public void downloadImageFromServer(String url, String file) throws MalformedURLException, IOException {
+		InputStream imageInputStream=new URL(url+file).openStream();
+    	FileOutputStream imageOutputStream;
+    	imageOutputStream = openFileOutput(file, Context.MODE_PRIVATE);
+    	MainActivity.CopyStream(imageInputStream, imageOutputStream);
+    	imageOutputStream.close();
 	}
 	
 	public void onBackPressed(View view) {

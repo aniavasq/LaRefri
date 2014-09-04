@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.util.JsonReader;
+import android.util.JsonToken;
 
 public class CategoriesManager implements RefriJsonReader {
 
@@ -23,9 +24,13 @@ public class CategoriesManager implements RefriJsonReader {
 	public List<Category> readMessagesArray(JsonReader reader) throws IOException {
 		List<Category> messages = new ArrayList<Category>();
 
-		reader.beginArray();
-		while (reader.hasNext()) {
-			messages.add(readCategory(reader));
+		if (reader.peek() != JsonToken.BEGIN_ARRAY) {
+			return messages;
+		} else {
+			reader.beginArray();
+			while (reader.hasNext()) {
+				messages.add(readCategory(reader));
+			}
 		}
 		reader.endArray();
 		return messages;

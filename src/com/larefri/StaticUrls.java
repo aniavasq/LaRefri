@@ -7,4 +7,5 @@ public class StaticUrls {
 	public static String SINGLE_PROMO_URL = "https://gripapps.com/larefri/actions/getSinglePromo.php";
 	public static String CATEGORIES = "https://gripapps.com/larefri/actions/getCategorias.php";
 	public static String ICONS_CATEGORIES = "https://gripapps.com/larefri/categorias/";
+	public static String FRIDGE_MAGNETS = "https://gripapps.com/larefri/imantados/";
 }

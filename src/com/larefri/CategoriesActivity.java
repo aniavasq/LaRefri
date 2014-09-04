@@ -41,14 +41,17 @@ public class CategoriesActivity extends Activity {
 		try {
 			List<Category> categories = getCategoriesFromJSON(new File(getFilesDir(),"categories.json"));
 			Iterator<Category> categoriesIterator = categories.iterator();
+			
+			LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width/3,width/3);//LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			lp.gravity = Gravity.BOTTOM;
+			lp.weight = 1.0f;
+			lp.setMargins(0, 0, 0, 0);
 			for(int j=0; j<BUTTONPAD_ROWS; j++){
 				TableRow tr = new TableRow(mTlayout.getContext());
 				for(int i=0; i<BUTTONPAD_COLS; i++){
 					LinearLayout ll = new LinearLayout(this);
-					LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width/3,width/3);//LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-					lp.setMargins(0, 0, 0, 0);
 					ll.setOrientation(LinearLayout.VERTICAL);
-					
+					ll.setGravity(Gravity.BOTTOM);
 					
 					final Category c = categoriesIterator.next();
 					File imgFile = new File(getFilesDir(), c.icono_categoria);

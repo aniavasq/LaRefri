@@ -62,6 +62,7 @@
             android:id="@+id/shadow_sec"
             android:layout_width="match_parent"
             android:layout_height="23px"
+            android:gravity="top"
             android:background="@drawable/back_ground_with_shadow" >
         </RelativeLayout>
 
