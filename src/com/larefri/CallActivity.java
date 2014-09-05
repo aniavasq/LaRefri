@@ -1,6 +1,7 @@
 package com.larefri;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -130,13 +131,11 @@ public class CallActivity extends Activity {
 				StaticUrls.SUCURSALES_URL, 
 				params,
 				nameValuePairs);
-		try {
-			image.setImageDrawable(Drawable.createFromStream(getAssets().open(logo), null));
-			nameview.setText(nombre);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		File imgFile = new File(getFilesDir(), logo);
+		Drawable d = Drawable.createFromPath(imgFile.getAbsolutePath());
+		image.setImageDrawable(d);
+		nameview.setText(nombre);
+		
 	}
 	
 	public void onBackPressed(View view) {

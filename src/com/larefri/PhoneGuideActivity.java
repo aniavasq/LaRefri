@@ -1,6 +1,7 @@
 package com.larefri;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -124,13 +125,10 @@ public class PhoneGuideActivity extends Activity {
 		
 		ImageView image = (ImageView)findViewById(R.id.magnetfridge_logo);
 		TextView nameview = (TextView)findViewById(R.id.magnetfridge_name);
-		try {
-			image.setImageDrawable(Drawable.createFromStream(getAssets().open(logo), null));
-			nameview.setText(nombre);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		File imgFile = new File(getFilesDir(), logo);
+		Drawable d = Drawable.createFromPath(imgFile.getAbsolutePath());
+		image.setImageDrawable(d);
+		nameview.setText(nombre);
 		
 		//Set policy to HTTP
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();

@@ -1,5 +1,7 @@
 package com.larefri;
 
+//Repository git@github.com:aniavasq/LaRefri.git
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -49,6 +51,7 @@ public class MainActivity extends Activity {
 	private final String PREFS_NAME = "LaRefriPrefsFile";
 	private Integer width;
 	private Context context;
+	private Object[] movNdel;
 	
 	class ThisRestClient extends RestClient{
 
@@ -225,7 +228,7 @@ public class MainActivity extends Activity {
 				((ViewGroup)left_pane_fridgemagnets).removeAllViews();
 				((ViewGroup)right_pane_fridgemagnets).removeAllViews();
 				lp.setMargins(0, 0, 0, 0);
-				lp.gravity = Gravity.TOP;
+				lp.gravity = Gravity.BOTTOM;
 				
 				//add default icons for the fridgeMagnets as buttons
 				try {
@@ -321,7 +324,10 @@ public class MainActivity extends Activity {
 					        view.setVisibility(View.VISIBLE);
 				        }
 				        break;
-					case DragEvent.ACTION_DRAG_ENDED: 
+					case DragEvent.ACTION_DRAG_ENDED:
+						if(movNdel != null){
+							hideEditMagnetView(movNdel);
+						}
 		                // Report the drop/no-drop result to the user
 		                final boolean dropped = evnt.getResult();
 		                if (dropped) {
@@ -370,7 +376,8 @@ public class MainActivity extends Activity {
 					case MotionEvent.ACTION_MOVE:
 						if((touching!=null) && (touching>1)){
 							ClipData data = ClipData.newPlainText("", "");
-						    DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);						      
+						    DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
+						    movNdel = showEditMagnetView(v, evt);
 							v.startDrag(data, shadowBuilder, v, 0);
 						}
 						return true;
@@ -398,5 +405,61 @@ public class MainActivity extends Activity {
 				right_pane_fridgemagnets.addView(rl);
 			}
 		}	
+	}
+	
+	private Object[] showEditMagnetView(View magnetView, MotionEvent evt){
+		RelativeLayout mov = new RelativeLayout(this);
+		RelativeLayout del = new RelativeLayout(this);
+		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width/4, width/4);
+		lp.setMargins(0, 0, 0, 0);
+		lp.gravity = Gravity.TOP;
+		
+		RelativeLayout scrollable = (RelativeLayout) findViewById(R.id.scrollable);
+		mov.setLayoutParams(lp);
+		del.setLayoutParams(lp);
+		mov.setId(20000000);
+		del.setId(20000005);
+		ImageView movImg = new ImageView(context);
+		ImageView delImg = new ImageView(context);
+		movImg.setLayoutParams(lp);
+		delImg.setLayoutParams(lp);
+		movImg.setBackgroundColor(Color.TRANSPARENT);
+		movImg.setScaleType( ImageView.ScaleType.FIT_CENTER );
+		delImg.setBackgroundColor(Color.TRANSPARENT);
+		delImg.setScaleType( ImageView.ScaleType.FIT_CENTER );
+		movImg.setImageResource(R.drawable.ic_move);
+		delImg.setImageResource(R.drawable.ic_delete);
+		mov.addView(movImg);
+		del.addView(delImg);
+		Log.e("MagnetX",""+evt.getRawX()+" W "+width/2);
+		if(evt.getRawX() < width/2){
+			mov.setX(evt.getRawX()+width/4);
+			mov.setY(evt.getRawY());
+			del.setX(evt.getRawX()+width/4);
+			del.setY(evt.getRawY()/2);
+		}else{
+			mov.setX(evt.getRawX()-width/2);
+			mov.setY(evt.getRawY());
+			del.setX(evt.getRawX()-width/2);
+			del.setY(evt.getRawY()/2);
+		}
+				
+		scrollable.addView(mov);
+		scrollable.addView(del);
+		
+		Object[] result = new Object[2];
+		result[0] = mov;
+		result[1] = del;
+		
+		return result;
+	}
+	
+	private void hideEditMagnetView(Object[] movNdel){
+		//Log.e("",""+((View)movNdel[0]).getId());
+		//Log.e("",""+((View)movNdel[1]).getId());
+		try{
+			((ViewGroup) ((RelativeLayout) findViewById(((RelativeLayout)movNdel[0]).getId())).getParent()).removeView((View) findViewById(((RelativeLayout)movNdel[0]).getId()));
+			((ViewGroup) ((RelativeLayout) findViewById(((RelativeLayout)movNdel[1]).getId())).getParent()).removeView((View) findViewById(((RelativeLayout)movNdel[1]).getId()));
+		}catch(Exception donotCare){ }
 	}
 }

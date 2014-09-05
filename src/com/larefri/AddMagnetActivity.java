@@ -150,9 +150,7 @@ public class AddMagnetActivity extends Activity {
 		(new ThisRestClient()).execute(
 				StaticUrls.MAGNETS_BY_CATEGORY, 
 				new HashMap<String, String>(),
-				new ArrayList<NameValuePair>());
-			//Object http_response = rest_client.getResult();
-			
+				new ArrayList<NameValuePair>());			
 	}
 
 	@Override
@@ -166,10 +164,11 @@ public class AddMagnetActivity extends Activity {
 		File JsonFile = new File(getFilesDir(), "data.json");
 		FridgeMagnetsManager fridgeMagnetReader = new FridgeMagnetsManager();
 		List<FridgeMagnet> fridgeMagnets = fridgeMagnetReader.readJsonStream( new FileInputStream(JsonFile) );
-		fridgeMagnets.add(fm);
-		fridgeMagnetReader.writeJsonStream(new FileOutputStream(JsonFile), fridgeMagnets);
-		downloadImageFromServer(StaticUrls.FRIDGE_MAGNETS, fm.logo);
-		Log.e("FridgeMagnet",fm.nombre);
+		try{
+			downloadImageFromServer(StaticUrls.FRIDGE_MAGNETS, fm.logo);
+			fridgeMagnets.add(fm);
+			fridgeMagnetReader.writeJsonStream(new FileOutputStream(JsonFile), fridgeMagnets);
+		}catch (Exception donotCare){ }
 	}
 	
 	public void downloadImageFromServer(String url, String file) throws MalformedURLException, IOException {

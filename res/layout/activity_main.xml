@@ -57,48 +57,54 @@
 	        android:background="@drawable/separator">
 	    </View>
 
+        <RelativeLayout 
+            android:id="@+id/scrollable" 
+            android:layout_height="match_parent"
+            android:layout_width="match_parent">
         <RelativeLayout
             android:layout_width="match_parent"
             android:id="@+id/shadow_sec"
             android:layout_height="23px"
+            android:gravity="top"
 	        android:background="@drawable/back_ground_with_shadow" >
         </RelativeLayout>
-	    <ScrollView 
-	        android:layout_width="match_parent"
-		    android:layout_height="match_parent"
-		    android:fillViewport="true">
-
-		    <LinearLayout
+		    <ScrollView
 		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-		        android:orientation="horizontal" 
-		        android:baselineAligned="false"
-		        android:fillViewport="true">
+			    android:layout_height="match_parent"
+			    android:fillViewport="true">
+	
+			    <LinearLayout
+			        android:layout_width="match_parent"
+			        android:layout_height="wrap_content"
+			        android:orientation="horizontal" 
+			        android:baselineAligned="false"
+			        android:fillViewport="true">
+			
+			        <LinearLayout
+			            android:id="@+id/left_pane_fridgemagnets"
+			            android:layout_width="0dp"
+			            android:layout_height="match_parent"
+			            android:layout_weight="0.5"
+			            android:padding="0dp"
+			            android:paddingRight="0.5dp"
+			            android:orientation="vertical" >
 		
-		        <LinearLayout
-		            android:id="@+id/left_pane_fridgemagnets"
-		            android:layout_width="0dp"
-		            android:layout_height="match_parent"
-		            android:layout_weight="0.5"
-		            android:padding="0dp"
-		            android:paddingRight="0.5dp"
-		            android:orientation="vertical" >
-	
-				</LinearLayout>
-	
-		        <LinearLayout
-		            android:id="@+id/right_pane_fridgemagnets"
-		            android:layout_width="0dp"
-		            android:layout_height="match_parent"
-		            android:layout_weight="0.5"
-		            android:orientation="vertical"
-		            android:padding="0dp"
-		            android:paddingLeft="0.5dp"
-		            android:layout_marginTop="100dp">
-	
-		        </LinearLayout>
-		    </LinearLayout>
-	    </ScrollView>
+					</LinearLayout>
+		
+			        <LinearLayout
+			            android:id="@+id/right_pane_fridgemagnets"
+			            android:layout_width="0dp"
+			            android:layout_height="match_parent"
+			            android:layout_weight="0.5"
+			            android:orientation="vertical"
+			            android:padding="0dp"
+			            android:paddingLeft="0.5dp"
+			            android:layout_marginTop="100dp">
+		
+			        </LinearLayout>
+			    </LinearLayout>
+		    </ScrollView>
+	    </RelativeLayout>
     </LinearLayout>
 
 </RelativeLayout>
