@@ -43,6 +43,7 @@ public class AddMagnetActivity extends Activity {
 	private String nombre;
 	private String logo;
 	private Context context;
+	private List<FridgeMagnet> fridgeMagnets;
 	
 	class ThisRestClient extends RestClient{
 
@@ -122,7 +123,7 @@ public class AddMagnetActivity extends Activity {
 		setContentView(R.layout.activity_add_magnet);	
 		
 		context = this;
-
+			
 		//Set policy to HTTP
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -154,6 +155,20 @@ public class AddMagnetActivity extends Activity {
 	}
 
 	@Override
+	protected void onStart() {
+		// TODO Auto-generated method stub
+		File JsonFile = new File(getFilesDir(), "data.json");
+		FridgeMagnetsManager fridgeMagnetReader = new FridgeMagnetsManager();
+		try {
+			this.fridgeMagnets = fridgeMagnetReader.readJsonStream( new FileInputStream(JsonFile) );
+			//Log.e("",fridgeMagnets.toString());
+		} catch (Exception e) {
+			//this.fridgeMagnets = new ArrayList<FridgeMagnet>();
+		}
+		super.onStart();
+	}
+
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.add_magnet, menu);
@@ -161,13 +176,15 @@ public class AddMagnetActivity extends Activity {
 	}
 	
 	public void addMagnetToLocalData(FridgeMagnet fm) throws FileNotFoundException, IOException{
-		File JsonFile = new File(getFilesDir(), "data.json");
-		FridgeMagnetsManager fridgeMagnetReader = new FridgeMagnetsManager();
-		List<FridgeMagnet> fridgeMagnets = fridgeMagnetReader.readJsonStream( new FileInputStream(JsonFile) );
+		File JsonFile = new File(getFilesDir(), "data.json");		
+		FridgeMagnetsManager fridgeMagnetWriter = new FridgeMagnetsManager();
 		try{
 			downloadImageFromServer(StaticUrls.FRIDGE_MAGNETS, fm.logo);
-			fridgeMagnets.add(fm);
-			fridgeMagnetReader.writeJsonStream(new FileOutputStream(JsonFile), fridgeMagnets);
+			Log.e("",fm.nombre);
+			if(!this.fridgeMagnets.contains(fm)){
+				fridgeMagnets.add(fm);
+				fridgeMagnetWriter.writeJsonStream(new FileOutputStream(JsonFile), fridgeMagnets);
+			}
 		}catch (Exception donotCare){ }
 	}
 	

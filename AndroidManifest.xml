@@ -75,6 +75,10 @@
             android:name=".AccountSettingsActivity"
             android:label="@string/title_activity_account_settings" >
         </activity>
+        <activity
+            android:name=".CustomizingActivity"
+            android:label="@string/title_activity_customizing" >
+        </activity>
     </application>
 
 </manifest>

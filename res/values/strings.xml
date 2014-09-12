@@ -24,5 +24,6 @@
     <string name="title_activity_new_account">NewAccountActivity</string>
     <string name="title_activity_log_in">LogInActivity</string>
     <string name="title_activity_account_settings">AccountSettingsActivity</string>
+    <string name="title_activity_customizing">personaliza tu refri</string>
 
 </resources>

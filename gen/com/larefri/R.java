@@ -1008,7 +1008,8 @@ containing a value of this type.
         public static final int menu_button_bg=0x7f020065;
         public static final int rounded_button=0x7f020066;
         public static final int separator=0x7f020067;
-        public static final int splash=0x7f020068;
+        public static final int skin_button=0x7f020068;
+        public static final int splash=0x7f020069;
     }
     public static final class id {
         public static final int action_bar=0x7f05001c;
@@ -1022,7 +1023,7 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f050016;
         public static final int action_menu_presenter=0x7f050017;
         public static final int action_mode_close_button=0x7f050024;
-        public static final int action_settings=0x7f050059;
+        public static final int action_settings=0x7f05005a;
         public static final int activity_chooser_view_content=0x7f050025;
         public static final int add_fridge_magnets_buttons=0x7f050050;
         public static final int always=0x7f05000b;
@@ -1030,15 +1031,15 @@ containing a value of this type.
         public static final int btn_account=0x7f050043;
         public static final int btn_add_fridge_magnets=0x7f050041;
         public static final int btn_customize=0x7f050042;
-        public static final int btn_notifications=0x7f050056;
+        public static final int btn_notifications=0x7f050057;
         public static final int button1=0x7f05004c;
-        public static final int call_btn=0x7f050058;
+        public static final int call_btn=0x7f050059;
         public static final int category_buttons=0x7f050052;
         public static final int checkbox=0x7f05002d;
         public static final int city_txt=0x7f050048;
         public static final int collapseActionView=0x7f05000d;
         public static final int confirm_pass_txt=0x7f05004b;
-        public static final int contact_btn=0x7f050057;
+        public static final int contact_btn=0x7f050058;
         public static final int default_activity_button=0x7f050028;
         public static final int dialog=0x7f05000e;
         public static final int disableHome=0x7f050008;
@@ -1055,7 +1056,7 @@ containing a value of this type.
         public static final int ifRoom=0x7f05000a;
         public static final int image=0x7f050027;
         public static final int larefri_Icon=0x7f05003d;
-        public static final int left_pane_fridgemagnets=0x7f050054;
+        public static final int left_pane_fridgemagnets=0x7f050055;
         public static final int listMode=0x7f050001;
         public static final int list_item=0x7f050029;
         public static final int magnetfridge_logo=0x7f05004d;
@@ -1072,8 +1073,8 @@ containing a value of this type.
         public static final int progress_horizontal=0x7f050019;
         public static final int radio=0x7f05002f;
         public static final int relativeLayout1=0x7f05003c;
-        public static final int right_pane_fridgemagnets=0x7f050055;
-        public static final int scrollable=0x7f050053;
+        public static final int right_pane_fridgemagnets=0x7f050056;
+        public static final int scrollable=0x7f050054;
         public static final int search_badge=0x7f050032;
         public static final int search_bar=0x7f050031;
         public static final int search_button=0x7f050033;
@@ -1085,6 +1086,7 @@ containing a value of this type.
         public static final int search_src_text=0x7f050037;
         public static final int search_voice_btn=0x7f05003b;
         public static final int separator_sec=0x7f05003f;
+        public static final int set_theme_buttons=0x7f050053;
         public static final int shadow_sec=0x7f050040;
         public static final int shortcut=0x7f05002e;
         public static final int showCustom=0x7f050007;
@@ -1156,14 +1158,15 @@ containing a value of this type.
         public static final int activity_add_magnet=0x7f030019;
         public static final int activity_call=0x7f03001a;
         public static final int activity_categories=0x7f03001b;
-        public static final int activity_log_in=0x7f03001c;
-        public static final int activity_main=0x7f03001d;
-        public static final int activity_menu=0x7f03001e;
-        public static final int activity_new_account=0x7f03001f;
-        public static final int activity_phone_guide=0x7f030020;
-        public static final int activity_splash=0x7f030021;
-        public static final int flyer_activity=0x7f030022;
-        public static final int support_simple_spinner_dropdown_item=0x7f030023;
+        public static final int activity_customizing=0x7f03001c;
+        public static final int activity_log_in=0x7f03001d;
+        public static final int activity_main=0x7f03001e;
+        public static final int activity_menu=0x7f03001f;
+        public static final int activity_new_account=0x7f030020;
+        public static final int activity_phone_guide=0x7f030021;
+        public static final int activity_splash=0x7f030022;
+        public static final int flyer_activity=0x7f030023;
+        public static final int support_simple_spinner_dropdown_item=0x7f030024;
     }
     public static final class menu {
         public static final int account_menu=0x7f0c0000;
@@ -1171,13 +1174,14 @@ containing a value of this type.
         public static final int add_magnet=0x7f0c0002;
         public static final int call=0x7f0c0003;
         public static final int categories=0x7f0c0004;
-        public static final int flyer=0x7f0c0005;
-        public static final int log_in=0x7f0c0006;
-        public static final int main=0x7f0c0007;
-        public static final int menu=0x7f0c0008;
-        public static final int new_account=0x7f0c0009;
-        public static final int phone_guide=0x7f0c000a;
-        public static final int splash=0x7f0c000b;
+        public static final int customizing=0x7f0c0005;
+        public static final int flyer=0x7f0c0006;
+        public static final int log_in=0x7f0c0007;
+        public static final int main=0x7f0c0008;
+        public static final int menu=0x7f0c0009;
+        public static final int new_account=0x7f0c000a;
+        public static final int phone_guide=0x7f0c000b;
+        public static final int splash=0x7f0c000c;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
@@ -1237,6 +1241,7 @@ containing a value of this type.
         public static final int title_activity_add_magnet=0x7f0a001e;
         public static final int title_activity_call=0x7f0a001b;
         public static final int title_activity_categories=0x7f0a001d;
+        public static final int title_activity_customizing=0x7f0a0024;
         public static final int title_activity_flyer=0x7f0a0019;
         public static final int title_activity_log_in=0x7f0a0022;
         public static final int title_activity_menu=0x7f0a0010;

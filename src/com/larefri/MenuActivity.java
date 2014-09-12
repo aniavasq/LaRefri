@@ -34,4 +34,9 @@ public class MenuActivity extends Activity {
 		Intent intent = new Intent(view.getContext(), AccountMenuActivity.class);
 	    this.startActivity(intent);
 	}
+	
+	public void goCustomize(View view){
+		Intent intent = new Intent(view.getContext(), CustomizingActivity.class);
+	    this.startActivity(intent);
+	}
 }

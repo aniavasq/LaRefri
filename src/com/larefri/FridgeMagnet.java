@@ -29,4 +29,15 @@ public class FridgeMagnet {
 	Integer estado;
 	Integer pos_x;
 	Integer pos_y;
+	
+	@Override
+	public boolean equals(Object o) {
+		// TODO Auto-generated method stub
+		return ((FridgeMagnet) o).id_marca == this.id_marca;
+	}
+	
+	@Override
+	public String toString(){
+		return this.nombre+" "+this.id_marca;
+	}
 }
