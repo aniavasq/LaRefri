@@ -3,17 +3,21 @@ package com.larefri;
 import java.io.File;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class FlyerActivity extends Activity {
 	
+	private SharedPreferences settings;
 	private Integer id_marca;
 	private String logo;
 	private String nombre;
@@ -27,6 +31,8 @@ public class FlyerActivity extends Activity {
 		logo = b.getString("logo");
 		nombre = b.getString("nombre");
 		
+		settings = getSharedPreferences("LaRefriPrefsFile", 0);
+		
 		ImageView image = (ImageView)findViewById(R.id.magnetfridge_logo);
 		TextView nameview = (TextView)findViewById(R.id.magnetfridge_name);
 		File imgFile = new File(getFilesDir(), logo);
@@ -34,7 +40,23 @@ public class FlyerActivity extends Activity {
 		image.setImageDrawable(d);
 		//image.setImageDrawable(Drawable.createFromStream(getAssets().open(logo), null));
 		nameview.setText(nombre);
-		Log.v("id_marca",""+id_marca);
+		//Log.v("id_marca",""+id_marca);
+	}
+
+	@Override
+	protected void onStart() {
+		// TODO Auto-generated method stub
+		super.onStart();
+		setBackground();
+	}
+
+	protected void setBackground() {
+		RelativeLayout head = (RelativeLayout)findViewById(R.id.relativeLayout1);
+		LinearLayout article = (LinearLayout)findViewById(R.id.article);
+		int bg_color = settings.getInt("bg_color", Color.parseColor("#999089"));
+		int menu_bg_color = settings.getInt("menu_bg_color", Color.parseColor("#6B6560"));
+		article.setBackgroundColor(menu_bg_color);
+		head.setBackgroundColor(bg_color);
 	}
 
 	@Override

@@ -15,6 +15,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
 import android.graphics.Color;
@@ -30,9 +31,11 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class CallActivity extends Activity {
+	private SharedPreferences settings;
 	private Integer id_marca;
 	private String logo;
 	private String nombre;
@@ -107,6 +110,7 @@ public class CallActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_call);
 		this.context = this;
+		settings = getSharedPreferences("LaRefriPrefsFile", 0);
 		
 		//get extra content from previous activity
 		Bundle b = getIntent().getExtras();
@@ -136,6 +140,22 @@ public class CallActivity extends Activity {
 		image.setImageDrawable(d);
 		nameview.setText(nombre);
 		
+	}
+
+	@Override
+	protected void onStart() {
+		// TODO Auto-generated method stub
+		super.onStart();
+		setBackground();
+	}
+
+	protected void setBackground() {
+		RelativeLayout head = (RelativeLayout)findViewById(R.id.relativeLayout1);
+		LinearLayout article = (LinearLayout)findViewById(R.id.article);
+		int bg_color = settings.getInt("bg_color", Color.parseColor("#999089"));
+		int menu_bg_color = settings.getInt("menu_bg_color", Color.parseColor("#6B6560"));
+		article.setBackgroundColor(menu_bg_color);
+		head.setBackgroundColor(bg_color);
 	}
 	
 	public void onBackPressed(View view) {

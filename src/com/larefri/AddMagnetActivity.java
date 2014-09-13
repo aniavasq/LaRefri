@@ -18,6 +18,7 @@ import org.apache.http.NameValuePair;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
 import android.graphics.Bitmap;
@@ -35,10 +36,12 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class AddMagnetActivity extends Activity {
 
+	private SharedPreferences settings;
 	private Integer id_category;
 	private String nombre;
 	private String logo;
@@ -123,6 +126,7 @@ public class AddMagnetActivity extends Activity {
 		setContentView(R.layout.activity_add_magnet);	
 		
 		context = this;
+		settings = getSharedPreferences("LaRefriPrefsFile", 0);
 			
 		//Set policy to HTTP
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -156,7 +160,7 @@ public class AddMagnetActivity extends Activity {
 
 	@Override
 	protected void onStart() {
-		// TODO Auto-generated method stub
+		setBackground();
 		File JsonFile = new File(getFilesDir(), "data.json");
 		FridgeMagnetsManager fridgeMagnetReader = new FridgeMagnetsManager();
 		try {
@@ -198,5 +202,14 @@ public class AddMagnetActivity extends Activity {
 	
 	public void onBackPressed(View view) {
 		this.finish();
+	}
+
+	protected void setBackground() {
+		RelativeLayout head = (RelativeLayout)findViewById(R.id.relativeLayout1);
+		LinearLayout article = (LinearLayout)findViewById(R.id.article);
+		int bg_color = settings.getInt("bg_color", Color.parseColor("#999089"));
+		int menu_bg_color = settings.getInt("menu_bg_color", Color.parseColor("#6B6560"));
+		article.setBackgroundColor(menu_bg_color);
+		head.setBackgroundColor(bg_color);
 	}
 }

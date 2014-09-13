@@ -56,6 +56,7 @@ public class MainActivity extends Activity {
 	private final String PREFS_NAME = "LaRefriPrefsFile";
 	private final Integer movViewId = 20000000, delViewId = 20000005, enableViewId = 20000010;
 	private final Integer delay = 800;
+	private SharedPreferences settings;
 	private Integer width;
 	private Context context;
 	private Object[] movNdel;
@@ -234,7 +235,7 @@ public class MainActivity extends Activity {
 		//setContentView(R.layout.activity_main);		
 		
 		//check first time installed
-		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);       
+		settings = getSharedPreferences(PREFS_NAME, 0);
         if (settings.getBoolean("my_first_time", true)) {
 		    //the APP is being launched for first time, do something        
 		    Log.e("Comments", "First time for ");
@@ -308,7 +309,7 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onStart() {
-		// TODO Auto-generated method stub
+		setBackground();
 		//add fridgeMagnets from local data
 		LinearLayout left_pane_fridgemagnets = (LinearLayout) findViewById(R.id.left_pane_fridgemagnets);
 		LinearLayout right_pane_fridgemagnets = (LinearLayout)findViewById(R.id.right_pane_fridgemagnets);
@@ -379,7 +380,7 @@ public class MainActivity extends Activity {
 		//List<FridgeMagnet> fridgeMagnets = fridgeMagnetReader.readJsonStream(getAssets().open("data.json"));
 		this.fridgeMagnets = fridgeMagnetReader.readJsonStream( new FileInputStream(new File(getFilesDir(), "data.json")) );
 		for(final FridgeMagnet fm: fridgeMagnets){
-			Log.e("LOAD",fridgeMagnets.toString());
+			//Log.e("LOAD",fridgeMagnets.toString());
 			OnTouchListener fridgeMagnetOnTouchListener = new FridgeMagnetOnTouchListener(fm);
 			ImageButton tmp_imageButtom = new ImageButton(this);
 			//Drawable d = Drawable.createFromStream(getAssets().open(fm.logo), null);
@@ -468,7 +469,7 @@ public class MainActivity extends Activity {
 		
 		if(from_v!=null && from_view!=null){
 			int i = fridgeMagnets.indexOf(from_v), j = fridgeMagnets.indexOf(from_view);
-			Log.e("SWAP",i+","+j);
+			//Log.e("SWAP",i+","+j);
 			Collections.swap(fridgeMagnets, i, j);
 		}
 	}
@@ -711,7 +712,15 @@ public class MainActivity extends Activity {
 	private void saveFridgeMagnetsList() throws FileNotFoundException, IOException {
 		File JsonFile = new File(getFilesDir(), "data.json");		
 		FridgeMagnetsManager fridgeMagnetWriter = new FridgeMagnetsManager();
-		Log.e("SAVE", fridgeMagnets.toString());
+		//Log.e("SAVE", fridgeMagnets.toString());
 		fridgeMagnetWriter.writeJsonStream(new FileOutputStream(JsonFile), fridgeMagnets);
+	}
+	
+	protected void setBackground() {
+		RelativeLayout head = (RelativeLayout)findViewById(R.id.relativeLayout1);
+		LinearLayout article = (LinearLayout)findViewById(R.id.article);
+		int bg_color = settings.getInt("bg_color", Color.parseColor("#999089"));
+		article.setBackgroundColor(bg_color);
+		head.setBackgroundColor(bg_color);
 	}
 }

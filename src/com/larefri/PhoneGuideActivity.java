@@ -14,6 +14,7 @@ import org.apache.http.message.BasicNameValuePair;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
 import android.graphics.Color;
@@ -27,9 +28,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class PhoneGuideActivity extends Activity {
+	private SharedPreferences settings;
 	private Integer id_marca;
 	private String logo;
 	private String nombre;
@@ -123,6 +126,8 @@ public class PhoneGuideActivity extends Activity {
 		logo = b.getString("logo");
 		nombre = b.getString("nombre");
 		
+		settings = getSharedPreferences("LaRefriPrefsFile", 0);
+		
 		ImageView image = (ImageView)findViewById(R.id.magnetfridge_logo);
 		TextView nameview = (TextView)findViewById(R.id.magnetfridge_name);
 		File imgFile = new File(getFilesDir(), logo);
@@ -144,6 +149,21 @@ public class PhoneGuideActivity extends Activity {
 				StaticUrls.SUCURSALES_URL, 
 				params,
 				nameValuePairs);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		setBackground();
+	}
+
+	protected void setBackground() {
+		RelativeLayout head = (RelativeLayout)findViewById(R.id.relativeLayout1);
+		LinearLayout article = (LinearLayout)findViewById(R.id.article);
+		int bg_color = settings.getInt("bg_color", Color.parseColor("#999089"));
+		int menu_bg_color = settings.getInt("menu_bg_color", Color.parseColor("#6B6560"));
+		article.setBackgroundColor(menu_bg_color);
+		head.setBackgroundColor(bg_color);
 	}
 	
 	public void onBackPressed(View view) {

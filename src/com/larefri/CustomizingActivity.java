@@ -7,16 +7,13 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
+import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ShapeDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,14 +22,16 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 public class CustomizingActivity extends Activity {
 
+	private SharedPreferences settings;
 	private static Integer BUTTONPAD_COLS = 2;
-	private static Integer BUTTONPAD_ROWS = 2;
+	private static Integer BUTTONPAD_ROWS = 10;
 	private Context context;
 	
 	@Override
@@ -40,11 +39,13 @@ public class CustomizingActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_customizing);
 		
+		this.context = this;
 		DisplayMetrics dm = new DisplayMetrics();
 		this.getWindow().getWindowManager().getDefaultDisplay().getMetrics(dm);
 		int width = dm.widthPixels;
 		
-		this.context = this;
+		settings = getSharedPreferences("LaRefriPrefsFile", 0);
+		setBackground();
 		
 		TableLayout mTlayout = (TableLayout) findViewById(R.id.set_theme_buttons);
 		try {
@@ -55,68 +56,47 @@ public class CustomizingActivity extends Activity {
 			lp.gravity = Gravity.BOTTOM;
 			lp.weight = 1.0f;
 			lp.setMargins(0, 0, 0, 0);
+			ContextThemeWrapper themeWrapper = new ContextThemeWrapper(context, R.style.menu_label);
 			for(int j=0; j<BUTTONPAD_ROWS; j++){
 				TableRow tr = new TableRow(mTlayout.getContext());
 				for(int i=0; i<BUTTONPAD_COLS; i++){
-					LinearLayout ll = new LinearLayout(this);
+					LinearLayout ll = new LinearLayout(context);
 					ll.setOrientation(LinearLayout.VERTICAL);
 					ll.setGravity(Gravity.BOTTOM);
-					
-					final Skin s = skinsIterator.next();
-					/*File imgFile = new File(getFilesDir(), c.icono_categoria);
-					ImageButton btn = new ImageButton(this);
-					Bitmap bmp = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-					btn.setLayoutParams(lp);
-					btn.setImageBitmap(bmp);
-					btn.setBackgroundColor(Color.TRANSPARENT);
-					btn.setScaleType( ImageView.ScaleType.FIT_CENTER );
-					btn.setOnClickListener(new OnClickListener() {
+					if(skinsIterator.hasNext()){
+						final Skin s = skinsIterator.next();					
+						ImageButton btn = new ImageButton(context);
+						GradientDrawable d = new GradientDrawable();
+						d.setColor(Color.parseColor(s.head_skin));
+						d.setShape(GradientDrawable.OVAL);
+						d.setStroke(5, Color.WHITE);
 						
-						@Override
-						public void onClick(View v) {
-							// TODO Auto-generated method stub
-							//onCall(v, s.telefono);
-							//goToAddMagnets(v, c);
-						}
-					});
-					
-					
-					TextView tv = new TextView(this);
-					tv.setText(c.nombre_categoria);
-					tv.setTextColor(Color.WHITE);
-					tv.setGravity(Gravity.CENTER_HORIZONTAL);*/
-					
-					ImageButton btn = new ImageButton(this);
-					//ShapeDrawable d = (ShapeDrawable) context.getResources().getDrawable(R.drawable.skin_button);
-					GradientDrawable d = new GradientDrawable();
-					d.setColor(Color.parseColor(s.skin));
-					d.setShape(GradientDrawable.OVAL);
-					d.setStroke(10, Color.WHITE);
-					
-					//d.setColorFilter(Color.parseColor(s.skin), PorterDuff.Mode.SRC_ATOP);
-					btn.setLayoutParams(lp);
-					btn.setBackground(d);
-					//btn.setImageDrawable(d);
-					//btn.setBackgroundColor(Color.TRANSPARENT);
-					btn.setScaleType( ImageView.ScaleType.FIT_CENTER );
-					btn.setOnClickListener(new OnClickListener() {
+						btn.setLayoutParams(lp);
+						btn.setImageDrawable(d);
+						btn.setBackgroundColor(Color.TRANSPARENT);
+						btn.setScaleType( ImageView.ScaleType.FIT_CENTER );
+						btn.setOnClickListener(new OnClickListener() {							
+							@Override
+							public void onClick(View v) {
+								// TODO Auto-generated method stub
+								SharedPreferences.Editor editor = settings.edit();
+								editor.putInt("bg_color", Color.parseColor(s.head_skin));
+								editor.putInt("menu_bg_color", Color.parseColor(s.article_skin));
+								editor.commit();
+								setBackground();
+							}
+						});
 						
-						@Override
-						public void onClick(View v) {
-							// TODO Auto-generated method stub
-							//onCall(v, s.telefono);
-							//goToAddMagnets(v, c);
-						}
-					});
-					
-					
-					TextView tv = new TextView(this);
-					tv.setText(s.name);
-					tv.setTextColor(Color.WHITE);
-					tv.setGravity(Gravity.CENTER_HORIZONTAL);
-		            tr.addView(ll);
-					ll.addView(btn);
-					ll.addView(tv);
+						TextView tv = new TextView(themeWrapper);
+						tv.setText(s.name);
+						tv.setTextColor(Color.WHITE);
+						tv.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
+						tv.setGravity(Gravity.CENTER_HORIZONTAL);
+						
+			            tr.addView(ll);
+						ll.addView(btn);
+						ll.addView(tv);
+					}
 				}
 				mTlayout.addView(tr);
 			}
@@ -124,6 +104,15 @@ public class CustomizingActivity extends Activity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	protected void setBackground() {
+		RelativeLayout head = (RelativeLayout)findViewById(R.id.relativeLayout1);
+		LinearLayout article = (LinearLayout)findViewById(R.id.article);
+		int bg_color = settings.getInt("bg_color", Color.parseColor("#999089"));
+		int menu_bg_color = settings.getInt("menu_bg_color", Color.parseColor("#6B6560"));
+		article.setBackgroundColor(menu_bg_color);
+		head.setBackgroundColor(bg_color);
 	}
 
 	@Override

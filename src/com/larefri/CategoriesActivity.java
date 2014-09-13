@@ -7,6 +7,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -20,12 +21,14 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 public class CategoriesActivity extends Activity {
 
+	private SharedPreferences settings;
 	private static Integer BUTTONPAD_COLS = 3;
 	private static Integer BUTTONPAD_ROWS = 5;
 	@Override
@@ -36,6 +39,7 @@ public class CategoriesActivity extends Activity {
 		DisplayMetrics dm = new DisplayMetrics();
 		this.getWindow().getWindowManager().getDefaultDisplay().getMetrics(dm);
 		int width = dm.widthPixels;
+		settings = getSharedPreferences("LaRefriPrefsFile", 0);
 		
 		TableLayout mTlayout = (TableLayout) findViewById(R.id.category_buttons);
 		try {
@@ -91,6 +95,13 @@ public class CategoriesActivity extends Activity {
 		//tv.setText(input.);
 	}
 
+	@Override
+	protected void onStart() {
+		// TODO Auto-generated method stub
+		super.onStart();
+		setBackground();
+	}
+
 	protected void goToAddMagnets(View view, Category c) {
 		// TODO Auto-generated method stub
 		Intent intent = new Intent(view.getContext(), AddMagnetActivity.class);
@@ -131,5 +142,14 @@ public class CategoriesActivity extends Activity {
 	
 	public void onBackPressed(View view) {
 		this.finish();
+	}
+
+	protected void setBackground() {
+		RelativeLayout head = (RelativeLayout)findViewById(R.id.relativeLayout1);
+		LinearLayout article = (LinearLayout)findViewById(R.id.article);
+		int bg_color = settings.getInt("bg_color", Color.parseColor("#999089"));
+		int menu_bg_color = settings.getInt("menu_bg_color", Color.parseColor("#6B6560"));
+		article.setBackgroundColor(menu_bg_color);
+		head.setBackgroundColor(bg_color);
 	}
 }

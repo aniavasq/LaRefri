@@ -43,9 +43,11 @@ public class SkinsManager implements RefriJsonReader{
 			String name = reader.nextName();
 			if(name.equalsIgnoreCase("name")){
 				skin.name = reader.nextString();
-			}else if(name.equalsIgnoreCase("skin")){
-				skin.skin = reader.nextString();
-			}else {
+			}else if(name.equalsIgnoreCase("article_skin")){
+				skin.article_skin = reader.nextString();
+			}else if(name.equalsIgnoreCase("head_skin")){
+				skin.head_skin = reader.nextString();
+			}else{
 				reader.skipValue();
 			}
 		}
@@ -57,5 +59,6 @@ public class SkinsManager implements RefriJsonReader{
 
 class Skin{
 	String name;
-	String skin;
+	String head_skin;
+	String article_skin;
 }
