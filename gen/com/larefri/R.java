@@ -1023,7 +1023,7 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f050016;
         public static final int action_menu_presenter=0x7f050017;
         public static final int action_mode_close_button=0x7f050024;
-        public static final int action_settings=0x7f05005b;
+        public static final int action_settings=0x7f05005c;
         public static final int activity_chooser_view_content=0x7f050025;
         public static final int add_fridge_magnets_buttons=0x7f050051;
         public static final int always=0x7f05000b;
@@ -1034,13 +1034,13 @@ containing a value of this type.
         public static final int btn_customize=0x7f050042;
         public static final int btn_notifications=0x7f050058;
         public static final int button1=0x7f05004c;
-        public static final int call_btn=0x7f05005a;
+        public static final int call_btn=0x7f05005b;
         public static final int category_buttons=0x7f050053;
         public static final int checkbox=0x7f05002d;
         public static final int city_txt=0x7f050048;
         public static final int collapseActionView=0x7f05000d;
         public static final int confirm_pass_txt=0x7f05004b;
-        public static final int contact_btn=0x7f050059;
+        public static final int contact_btn=0x7f05005a;
         public static final int default_activity_button=0x7f050028;
         public static final int dialog=0x7f05000e;
         public static final int disableHome=0x7f050008;
@@ -1085,6 +1085,7 @@ containing a value of this type.
         public static final int search_mag_icon=0x7f050035;
         public static final int search_plate=0x7f050036;
         public static final int search_src_text=0x7f050037;
+        public static final int search_txt=0x7f050059;
         public static final int search_voice_btn=0x7f05003b;
         public static final int separator_sec=0x7f05003f;
         public static final int set_theme_buttons=0x7f050054;
@@ -1165,9 +1166,10 @@ containing a value of this type.
         public static final int activity_menu=0x7f03001f;
         public static final int activity_new_account=0x7f030020;
         public static final int activity_phone_guide=0x7f030021;
-        public static final int activity_splash=0x7f030022;
-        public static final int flyer_activity=0x7f030023;
-        public static final int support_simple_spinner_dropdown_item=0x7f030024;
+        public static final int activity_search_fridge_magnet=0x7f030022;
+        public static final int activity_splash=0x7f030023;
+        public static final int flyer_activity=0x7f030024;
+        public static final int support_simple_spinner_dropdown_item=0x7f030025;
     }
     public static final class menu {
         public static final int account_menu=0x7f0c0000;
@@ -1182,7 +1184,8 @@ containing a value of this type.
         public static final int menu=0x7f0c0009;
         public static final int new_account=0x7f0c000a;
         public static final int phone_guide=0x7f0c000b;
-        public static final int splash=0x7f0c000c;
+        public static final int search_fridge_magnet=0x7f0c000c;
+        public static final int splash=0x7f0c000d;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
@@ -1248,6 +1251,7 @@ containing a value of this type.
         public static final int title_activity_menu=0x7f0a0010;
         public static final int title_activity_new_account=0x7f0a0021;
         public static final int title_activity_phone_guide=0x7f0a001c;
+        public static final int title_activity_search_fridge_magnet=0x7f0a0025;
         public static final int title_activity_splash=0x7f0a001f;
     }
     public static final class style {

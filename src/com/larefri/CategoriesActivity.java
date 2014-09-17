@@ -65,16 +65,20 @@ public class CategoriesActivity extends Activity {
 					btn.setImageBitmap(bmp);
 					btn.setBackgroundColor(Color.TRANSPARENT);
 					btn.setScaleType( ImageView.ScaleType.FIT_CENTER );
-					btn.setOnClickListener(new OnClickListener() {
-						
-						@Override
-						public void onClick(View v) {
-							// TODO Auto-generated method stub
-							//onCall(v, s.telefono);
-							goToAddMagnets(v, c);
-						}
-					});
-					
+					if(c.nombre_categoria.equalsIgnoreCase("buscar"))
+						btn.setOnClickListener(new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								goToAddMagnets(v, c);
+							}
+						});
+					else
+						btn.setOnClickListener(new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								goToSearchMagnets(v, c);
+							}
+						});
 					
 					TextView tv = new TextView(this);
 					tv.setText(c.nombre_categoria);
@@ -103,6 +107,16 @@ public class CategoriesActivity extends Activity {
 	}
 
 	protected void goToAddMagnets(View view, Category c) {
+		// TODO Auto-generated method stub
+		Intent intent = new Intent(view.getContext(), SearchFridgeMagnetActivity.class);
+	    Bundle b = new Bundle();
+	    b.putInt("id_categoria", c.id_categoria); //Your id
+	    b.putString("logo", c.icono_categoria);
+	    intent.putExtras(b); //Put your id to your next Intent
+	    this.startActivity(intent);
+	}
+	
+	protected void goToSearchMagnets(View view, Category c) {
 		// TODO Auto-generated method stub
 		Intent intent = new Intent(view.getContext(), AddMagnetActivity.class);
 	    Bundle b = new Bundle();

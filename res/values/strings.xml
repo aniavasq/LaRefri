@@ -25,5 +25,6 @@
     <string name="title_activity_log_in">LogInActivity</string>
     <string name="title_activity_account_settings">AccountSettingsActivity</string>
     <string name="title_activity_customizing">personaliza tu refri</string>
+    <string name="title_activity_search_fridge_magnet">SearchFridgeMagnetActivity</string>
 
 </resources>

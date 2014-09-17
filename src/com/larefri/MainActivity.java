@@ -74,9 +74,9 @@ public class MainActivity extends Activity {
 	        this.dialog.setMessage("Cargando...");
 	        this.dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 	        this.dialog.setIndeterminate(false);
-	        this.dialog.show();
 	        this.dialog.setCancelable(false);
 	        this.dialog.setCanceledOnTouchOutside(false);
+	        this.dialog.show();
 	    }
 		
 		@Override
@@ -198,7 +198,7 @@ public class MainActivity extends Activity {
 				        }
 					}catch(Exception donotcare){ }
 				}
-				return true;
+				return false;
 			case MotionEvent.ACTION_CANCEL:
 			case MotionEvent.ACTION_UP:
 				handler.removeCallbacks(counting);	

@@ -79,6 +79,10 @@
             android:name=".CustomizingActivity"
             android:label="@string/title_activity_customizing" >
         </activity>
+        <activity
+            android:name=".SearchFridgeMagnetActivity"
+            android:label="@string/title_activity_search_fridge_magnet" >
+        </activity>
     </application>
 
 </manifest>
