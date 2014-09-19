@@ -44,11 +44,11 @@ public class CallActivity extends Activity {
 	class ThisRestClient extends RestClient{
 
 		/** progress dialog to show user that the backup is processing. */
-	    private ProgressDialog dialog;
+	    private List<Store> stores;
 		
 	    @Override
 		protected void onPreExecute() {
-	        dialog = new ProgressDialog(context);
+	        this.dialog = new ProgressDialog(context);
 	        this.dialog.setMessage("Actualizando Locales");
 	        this.dialog.show();
 	        this.dialog.setCancelable(false);
@@ -57,22 +57,19 @@ public class CallActivity extends Activity {
 		
 		@Override
 		protected void onPostExecute(Object result) {
-			// TODO Auto-generated method stub
 			if (dialog.isShowing()) {
 	            dialog.dismiss();
 	        }
-			//Log.e("result",result.toString());
-			InputStream is = new ByteArrayInputStream(result.toString().getBytes());
-			StoresManager storesManager = new StoresManager();
+			/*InputStream is = new ByteArrayInputStream(result.toString().getBytes());
+			StoresManager storesManager = new StoresManager();*/
 			
 			LinearLayout store_call_pane = (LinearLayout) findViewById(R.id.stores_call_buttons);
 			LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, Gravity.LEFT);
 			Resources resources = getResources();
-			ContextThemeWrapper themeWrapper = new ContextThemeWrapper(context, R.style.menu_button);
-			
+			ContextThemeWrapper themeWrapper = new ContextThemeWrapper(context, R.style.menu_button);			
 			
 			try {
-				for(final Store s: storesManager.readJsonStream(is)){
+				for(final Store s: stores){
 					if(s!=null){
 						Button tmp_button = new Button(themeWrapper);
 						tmp_button.setLayoutParams(lp);
@@ -85,7 +82,6 @@ public class CallActivity extends Activity {
 						tmp_button.setOnClickListener(new OnClickListener() {							
 							@Override
 							public void onClick(View v) {
-								// TODO Auto-generated method stub
 								onCall(v, s.telefono);
 								
 							}
@@ -94,15 +90,23 @@ public class CallActivity extends Activity {
 					}
 				}
 			} catch (NotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			super.onPostExecute(result);
 		}
-		
+
+		@Override
+		protected Object doInBackground(Object... params) {
+			// TODO Auto-generated method stub
+			Object result = super.doInBackground(params);
+			InputStream is = new ByteArrayInputStream(result.toString().getBytes());
+			try {
+				stores = (new StoresManager()).readJsonStream(is);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return result;
+		}		
 	}
 	
 	@Override

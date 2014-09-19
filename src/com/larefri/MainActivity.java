@@ -114,13 +114,10 @@ public class MainActivity extends Activity {
 
     			return httpResponse;
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			return super.doInBackground(params);
@@ -160,7 +157,6 @@ public class MainActivity extends Activity {
 		
 		@Override
 		public boolean onTouch(View v, MotionEvent evt) {
-			// TODO Auto-generated method stub
 			Integer action = evt.getAction() & MotionEvent.ACTION_MASK;
 			
 			v.performClick();
@@ -403,14 +399,8 @@ public class MainActivity extends Activity {
 					switch(action){
 					case DragEvent.ACTION_DRAG_STARTED:
 						v.invalidate();
-						//v.setVisibility(View.INVISIBLE);
 						return true;
-					case DragEvent.ACTION_DRAG_LOCATION:
-						//collisionDetection(evnt, (View)movNdel[0] );
-						break;
 					case DragEvent.ACTION_DRAG_ENTERED:
-						//Log.e("",""+v.getId());
-						//v.setVisibility(View.INVISIBLE);
 						chageOpacityFridgeMagnets(v, 0.5f);
 						break;
 					case DragEvent.ACTION_DROP:

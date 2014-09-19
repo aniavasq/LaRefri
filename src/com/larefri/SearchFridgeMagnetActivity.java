@@ -12,8 +12,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-
 import org.apache.http.NameValuePair;
 
 import android.annotation.SuppressLint;
@@ -112,19 +110,22 @@ public class SearchFridgeMagnetActivity extends Activity {
 		public void run() {
 			handler.postDelayed(this, delay);
 			String queryText = String.valueOf(search_txt.getText());
-			//Log.e("QUERY TEXT EMPTY",""+queryText.isEmpty());
+			List<FridgeMagnet> tmpQueryFridgeMagnets;
 			if(!queryText.isEmpty()){
-				queryFridgeMagnets = new ArrayList<FridgeMagnet>();
+				tmpQueryFridgeMagnets = new ArrayList<FridgeMagnet>();
 				for(FridgeMagnet match: this.fridgeMagnets){
 					if(match.nombre!= null && match.nombre.toLowerCase().startsWith(queryText.toLowerCase())){
-						//Log.e("MATCH",""+match.nombre.toLowerCase());
-						queryFridgeMagnets.add(match);
+						tmpQueryFridgeMagnets.add(match);
 					}
 				}
 			}else{
-				queryFridgeMagnets = this.fridgeMagnets;
+				tmpQueryFridgeMagnets = this.fridgeMagnets;
 			}
-			loadFridgeMagnetsButtons(queryFridgeMagnets);
+			if(tmpQueryFridgeMagnets != queryFridgeMagnets){
+				loadFridgeMagnetsButtons(tmpQueryFridgeMagnets);
+			}else{
+				tmpQueryFridgeMagnets = queryFridgeMagnets;
+			}
 		}		
 	}
 	
@@ -150,7 +151,6 @@ public class SearchFridgeMagnetActivity extends Activity {
 		File imgFile = new File(getFilesDir(), logo);
 		Bitmap bmp = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
 		image.setImageBitmap(bmp);
-		//nameview.setText(nombre);
 		
 		/*HashMap<String, String> params = new HashMap<String, String>();
 		params.put("id_category", id_category.toString());
@@ -160,7 +160,7 @@ public class SearchFridgeMagnetActivity extends Activity {
         nameValuePairs.add(new BasicNameValuePair("id_category", id_category.toString()));
         */
 		(new ThisRestClient()).execute(
-				StaticUrls.MAGNETS_BY_CATEGORY, 
+				StaticUrls.MAGNETS, 
 				new HashMap<String, String>(),
 				new ArrayList<NameValuePair>());		
 	}
@@ -185,15 +185,12 @@ public class SearchFridgeMagnetActivity extends Activity {
 					
 					@Override
 					public void onClick(View v) {
-						// TODO Auto-generated method stub
 						//onCall(v, s.telefono);
 						try {
 							addMagnetToLocalData(fm);
 						} catch (FileNotFoundException e) {
-							// TODO Auto-generated catch block
 							Log.e("Error",""+e.getMessage(),e);
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							Log.e("Error",""+e.getMessage(),e);
 						}
 					}

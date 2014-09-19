@@ -53,13 +53,11 @@ public class RestClient  extends AsyncTask<Object,String, Object>{
 	@SuppressWarnings("unchecked")
 	@Override
 	protected Object doInBackground(Object... params) {
-		// TODO Auto-generated method stub
 		try {
 			Object httpResponse = this.makeRequestByForm((String)params[0], (Map)params[1], (List<NameValuePair>)params[2]);
 			//Log.e("error", httpResponse.toString());
 			return httpResponse;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -67,15 +65,11 @@ public class RestClient  extends AsyncTask<Object,String, Object>{
 
 	@Override
 	protected void onPostExecute(Object result) {
-		// TODO Auto-generated method stub
-		//super.onPostExecute(result);
-		//Log.e("result",result.toString());
 		setResult(result);
 	}
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return this.getResult().toString();
 	}
 }

@@ -32,7 +32,6 @@ public class FridgeMagnet {
 	
 	@Override
 	public boolean equals(Object o) {
-		// TODO Auto-generated method stub
 		return ((FridgeMagnet) o).id_marca == this.id_marca;
 	}
 	
