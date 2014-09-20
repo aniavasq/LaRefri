@@ -289,7 +289,6 @@ public class MainActivity extends Activity {
 	        FileOutputStream out = null;
 	        try {
 	          in = assetManager.open(filename);
-	          //File outFile = new File(getExternalFilesDir(null), filename);
 	          out = openFileOutput(filename, Context.MODE_PRIVATE);
 	          CopyStream(in, out);
 	          in.close();
@@ -319,11 +318,9 @@ public class MainActivity extends Activity {
 		try {
 			loadFridgeMagnetsFromFile(left_pane_fridgemagnets, right_pane_fridgemagnets, lp);
 	    } catch (IOException e) {
-			// TODO Auto-generated catch block
 			Log.e("No file",e.getMessage());
 			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		super.onStart();
@@ -393,7 +390,6 @@ public class MainActivity extends Activity {
 				
 				@Override
 				public boolean onDrag(View v, DragEvent evnt) {
-					// TODO Auto-generated method stub
 					Integer action = evnt.getAction();
 					View view;
 					switch(action){

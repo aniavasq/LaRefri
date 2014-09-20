@@ -14,8 +14,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-
 import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -52,10 +52,7 @@ public class AddMagnetActivity extends Activity {
 	
 	class ThisRestClient extends RestClient{
 
-		/** progress dialog to show user that the backup is processing. */
-	    private ProgressDialog dialog;
-		
-	    @Override
+		@Override
 		protected void onPreExecute() {
 	        dialog = new ProgressDialog(context);
 	        this.dialog.setMessage("Actualizando Imantados");
@@ -88,6 +85,87 @@ public class AddMagnetActivity extends Activity {
 		
 	}
 	
+	class DownloadMagnetStoresRestClient extends RestClient{
+		@Override
+		protected Object doInBackground(Object... params) {
+			this.setResult(super.doInBackground(params));
+			
+			@SuppressWarnings("unchecked")
+			HashMap<String, String> form = (HashMap<String, String>)params[1];
+			FridgeMagnet for_add = new FridgeMagnet();
+			
+			for(FridgeMagnet fm: loadedFridgeMagnets){
+				if(fm.id_marca == Integer.valueOf(form.get("id_marca"))){
+					for_add = fm;
+				}
+			}
+			InputStream is = new ByteArrayInputStream(getResult().toString().getBytes());
+			StoresManager storesManager = new StoresManager();
+			try {
+				addMagnetToLocalData(for_add);
+				
+				List<Store> stores = storesManager.readJsonStream(is);
+				File JsonFile = new File(getFilesDir(), for_add.id_marca+"_sucursales.json");
+				storesManager.writeJsonStream(new FileOutputStream(JsonFile), stores);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return this.getResult();
+		}
+	}
+	
+	class AddOnClickListener implements OnClickListener{
+		private FridgeMagnet fm;
+		private Button button;
+		
+		public AddOnClickListener(FridgeMagnet fm, Button button){
+			this.fm = fm;
+			this.button = button;
+		}
+		@Override
+		public void onClick(View v) {
+			Resources resources = getResources();
+			HashMap<String, String> params = new HashMap<String, String>();
+			params.put("id_marca", fm.id_marca.toString());
+			//construct form to HttpRequest
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("id_marca", fm.id_marca.toString()));
+
+			(new DownloadMagnetStoresRestClient()).execute(
+					StaticUrls.SUCURSALES_URL, 
+					params,
+					nameValuePairs);
+			button.setBackground(resources.getDrawable(R.drawable.menu_button_bg_disabled));
+			button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_favorite, 0);
+			button.setOnClickListener(new RemoveOnClickListener(fm, button));
+		}
+	}
+	
+	class RemoveOnClickListener implements OnClickListener{
+		private FridgeMagnet fm;
+		private Button button;
+		
+		public RemoveOnClickListener(FridgeMagnet fm, Button button){
+			this.fm = fm;
+			this.button = button;
+		}
+		@Override
+		public void onClick(View v) {
+			Resources resources = getResources();
+			myFridgeMagnets.remove(fm);
+			try {
+				saveFridgeMagnetsList();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			button.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
+			button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_add, 0);
+			button.setOnClickListener(new AddOnClickListener(fm, button));
+		}
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -113,13 +191,6 @@ public class AddMagnetActivity extends Activity {
 		image.setImageBitmap(bmp);
 		nameview.setText(nombre);
 		
-		/*HashMap<String, String> params = new HashMap<String, String>();
-		params.put("id_category", id_category.toString());
-		
-		//construct form to HttpRequest
-	    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-        nameValuePairs.add(new BasicNameValuePair("id_category", id_category.toString()));
-        */
 		(new ThisRestClient()).execute(
 				StaticUrls.MAGNETS_BY_CATEGORY, 
 				new HashMap<String, String>(),
@@ -146,11 +217,11 @@ public class AddMagnetActivity extends Activity {
 	}
 	
 	public void addMagnetToLocalData(FridgeMagnet fm) throws FileNotFoundException, IOException{
-		File JsonFile = new File(getFilesDir(), "data.json");		
+		File JsonFile = new File(getFilesDir(), "data.json");	
 		FridgeMagnetsManager fridgeMagnetWriter = new FridgeMagnetsManager();
 		try{
 			downloadImageFromServer(StaticUrls.FRIDGE_MAGNETS, fm.logo);
-			Log.e("",fm.nombre);
+			//Log.e("",fm.nombre);
 			if(!this.myFridgeMagnets.contains(fm)){
 				myFridgeMagnets.add(fm);
 				fridgeMagnetWriter.writeJsonStream(new FileOutputStream(JsonFile), myFridgeMagnets);
@@ -190,7 +261,7 @@ public class AddMagnetActivity extends Activity {
 		store_call_pane.removeAllViews();
 		for(final FridgeMagnet fm: remove){
 			if(fm.nombre!=null){
-				Button tmp_button = new Button(themeWrapper);
+				final Button tmp_button = new Button(themeWrapper);
 				tmp_button.setLayoutParams(lp);
 				tmp_button.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
 				tmp_button.setText(fm.nombre);
@@ -198,19 +269,7 @@ public class AddMagnetActivity extends Activity {
 				tmp_button.setGravity(Gravity.LEFT);
 				tmp_button.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
 				tmp_button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_add, 0);
-				tmp_button.setOnClickListener(new OnClickListener() {					
-					@Override
-					public void onClick(View v) {
-						try {
-							addMagnetToLocalData(fm);
-							loadFridgeMagnetsButtons(loadedFridgeMagnets);
-						} catch (FileNotFoundException e) {
-							Log.e("Error",""+e.getMessage(),e);
-						} catch (IOException e) {
-							Log.e("Error",""+e.getMessage(),e);
-						}
-					}
-				});
+				tmp_button.setOnClickListener(new AddOnClickListener(fm, tmp_button));
 				buttons.add(tmp_button);
 			}
 		}
@@ -227,20 +286,7 @@ public class AddMagnetActivity extends Activity {
 			tmp_title.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
 			tmp_title.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_favorite, 0);
 			tmp_title.setPadding(0, 0, 5, 0);
-			tmp_title.setOnClickListener(new OnClickListener() {				
-				@Override
-				public void onClick(View v) {
-					myFridgeMagnets.remove(fm);
-					try {
-						saveFridgeMagnetsList();
-					} catch (FileNotFoundException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					loadFridgeMagnetsButtons(loadedFridgeMagnets);
-				}
-			});
+			tmp_title.setOnClickListener(new RemoveOnClickListener(fm, tmp_title));
 			buttons.add(tmp_title);
 		}
 		Collections.sort(buttons, new Comparator<Button>() {

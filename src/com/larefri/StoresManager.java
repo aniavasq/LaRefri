@@ -3,21 +3,24 @@ package com.larefri;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.util.JsonReader;
 import android.util.JsonToken;
+import android.util.JsonWriter;
 
-public class StoresManager implements RefriJsonReader {
+public class StoresManager implements RefriJsonReader, RefriJsonWriter {
 	public List<Store> readJsonStream(InputStream in) throws IOException {
 		JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
 		try {
 			return readMessagesArray(reader);
 		}finally{
 		   reader.close();
-		 }
-	  }
+		}
+	}
 
 	public List<Store> readMessagesArray(JsonReader reader) throws IOException, IllegalStateException {
 		List<Store> messages = new ArrayList<Store>();
@@ -59,5 +62,38 @@ public class StoresManager implements RefriJsonReader {
 		}
 		reader.endObject();
 		return store;
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public void writeMessagesArray(JsonWriter writer, List objectsList)
+			throws IOException {
+		writer.beginArray();
+	     for (Object s : objectsList) {
+	    	 if(s!=null)
+	    		 writeStores(writer, (Store)s);
+	     }
+	     writer.endArray();	
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public void writeJsonStream(OutputStream out, List objectsList)
+			throws IOException {
+		JsonWriter writer = new JsonWriter(new OutputStreamWriter(out, "UTF-8"));
+		writer.setIndent("  ");
+		writeMessagesArray(writer, objectsList);
+		writer.close();
+	}
+	
+	private void writeStores(JsonWriter writer, Store s) throws IOException{
+		writer.beginObject();
+		writer.name("id_marca").value(s.id_marca.toString());
+		writer.name("id_marcas_sucursal").value(s.id_marcas_sucursal.toString());
+		writer.name("nombre").value(s.nombre.toString());
+		writer.name("telefono").value(s.telefono.toString());
+		writer.name("direccion").value(s.direccion.toString());
+		writer.name("estado").value(s.estado.toString());
+	    writer.endObject();
 	}
 }

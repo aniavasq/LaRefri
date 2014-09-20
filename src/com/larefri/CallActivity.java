@@ -2,6 +2,8 @@ package com.larefri;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -135,10 +137,17 @@ public class CallActivity extends Activity {
 	    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
         nameValuePairs.add(new BasicNameValuePair("id_marca", id_marca.toString()));
         
-		(new ThisRestClient()).execute(
+		/*(new ThisRestClient()).execute(
 				StaticUrls.SUCURSALES_URL, 
 				params,
-				nameValuePairs);
+				nameValuePairs);*/
+        try {
+        	loadStores((new StoresManager()).readJsonStream( new FileInputStream(new File(getFilesDir(), this.id_marca+"_sucursales.json")) ));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		File imgFile = new File(getFilesDir(), logo);
 		Drawable d = Drawable.createFromPath(imgFile.getAbsolutePath());
 		image.setImageDrawable(d);
@@ -151,6 +160,34 @@ public class CallActivity extends Activity {
 		// TODO Auto-generated method stub
 		super.onStart();
 		setBackground();
+	}
+	
+	private void loadStores(List<Store> stores){		
+		LinearLayout store_call_pane = (LinearLayout) findViewById(R.id.stores_call_buttons);
+		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, Gravity.LEFT);
+		Resources resources = getResources();
+		ContextThemeWrapper themeWrapper = new ContextThemeWrapper(context, R.style.menu_button);
+	
+		for(final Store s: stores){
+			if(s!=null){
+				Button tmp_button = new Button(themeWrapper);
+				tmp_button.setLayoutParams(lp);
+				tmp_button.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
+				tmp_button.setText(s.nombre);
+				tmp_button.setTextColor(Color.WHITE);
+				tmp_button.setGravity(Gravity.LEFT);
+				tmp_button.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
+				tmp_button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_call, 0);
+				tmp_button.setOnClickListener(new OnClickListener() {							
+					@Override
+					public void onClick(View v) {
+						onCall(v, s.telefono);
+						
+					}
+				});
+				store_call_pane.addView(tmp_button);
+			}
+		}
 	}
 
 	protected void setBackground() {
