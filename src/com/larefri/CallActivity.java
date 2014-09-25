@@ -23,6 +23,8 @@ import android.content.res.Resources.NotFoundException;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -151,8 +153,11 @@ public class CallActivity extends Activity {
 		File imgFile = new File(getFilesDir(), logo);
 		Drawable d = Drawable.createFromPath(imgFile.getAbsolutePath());
 		image.setImageDrawable(d);
-		nameview.setText(nombre);
-		
+		nameview.setText(nombre);		
+
+        LocationManager locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
+        LocationListener locationListener = new LaRefriLocationListener(context);
+        locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, locationListener, null);
 	}
 
 	@Override

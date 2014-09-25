@@ -1024,7 +1024,7 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f050016;
         public static final int action_menu_presenter=0x7f050017;
         public static final int action_mode_close_button=0x7f050024;
-        public static final int action_settings=0x7f05005c;
+        public static final int action_settings=0x7f05005d;
         public static final int activity_chooser_view_content=0x7f050025;
         public static final int add_fridge_magnets_buttons=0x7f050051;
         public static final int always=0x7f05000b;
@@ -1033,15 +1033,15 @@ containing a value of this type.
         public static final int btn_account=0x7f050043;
         public static final int btn_add_fridge_magnets=0x7f050041;
         public static final int btn_customize=0x7f050042;
-        public static final int btn_notifications=0x7f050058;
+        public static final int btn_notifications=0x7f050059;
         public static final int button1=0x7f05004c;
-        public static final int call_btn=0x7f05005b;
+        public static final int call_btn=0x7f05005c;
         public static final int category_buttons=0x7f050053;
         public static final int checkbox=0x7f05002d;
         public static final int city_txt=0x7f050048;
         public static final int collapseActionView=0x7f05000d;
         public static final int confirm_pass_txt=0x7f05004b;
-        public static final int contact_btn=0x7f05005a;
+        public static final int contact_btn=0x7f05005b;
         public static final int default_activity_button=0x7f050028;
         public static final int dialog=0x7f05000e;
         public static final int disableHome=0x7f050008;
@@ -1058,7 +1058,7 @@ containing a value of this type.
         public static final int ifRoom=0x7f05000a;
         public static final int image=0x7f050027;
         public static final int larefri_Icon=0x7f05003d;
-        public static final int left_pane_fridgemagnets=0x7f050056;
+        public static final int left_pane_fridgemagnets=0x7f050057;
         public static final int listMode=0x7f050001;
         public static final int list_item=0x7f050029;
         public static final int magnetfridge_logo=0x7f05004e;
@@ -1075,7 +1075,7 @@ containing a value of this type.
         public static final int progress_horizontal=0x7f050019;
         public static final int radio=0x7f05002f;
         public static final int relativeLayout1=0x7f05003c;
-        public static final int right_pane_fridgemagnets=0x7f050057;
+        public static final int right_pane_fridgemagnets=0x7f050058;
         public static final int scrollable=0x7f050055;
         public static final int search_badge=0x7f050032;
         public static final int search_bar=0x7f050031;
@@ -1086,7 +1086,7 @@ containing a value of this type.
         public static final int search_mag_icon=0x7f050035;
         public static final int search_plate=0x7f050036;
         public static final int search_src_text=0x7f050037;
-        public static final int search_txt=0x7f050059;
+        public static final int search_txt=0x7f05005a;
         public static final int search_voice_btn=0x7f05003b;
         public static final int separator_sec=0x7f05003f;
         public static final int set_theme_buttons=0x7f050054;
@@ -1100,6 +1100,7 @@ containing a value of this type.
         public static final int submit_area=0x7f050039;
         public static final int sure_name_txt=0x7f050045;
         public static final int tabMode=0x7f050002;
+        public static final int the_scroll_view=0x7f050056;
         public static final int title=0x7f05002b;
         public static final int top_action_bar=0x7f050020;
         public static final int up=0x7f050021;

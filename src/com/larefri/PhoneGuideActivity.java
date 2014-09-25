@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -13,6 +12,9 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.ContextThemeWrapper;
@@ -30,6 +32,9 @@ public class PhoneGuideActivity extends Activity {
 	private String logo;
 	private String nombre;
 	private Context context;
+    Location currentLocation;
+    double currentLatitude;
+    double currentLongitude;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +68,9 @@ public class PhoneGuideActivity extends Activity {
 			e.printStackTrace();
 		}
         
+        LocationManager locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
+        LocationListener locationListener = new LaRefriLocationListener(context);
+        locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, locationListener, null);
 	}
 
 	private void loadStores(List<Store> stores){		

@@ -55,7 +55,6 @@ public class RestClient  extends AsyncTask<Object,String, Object>{
 	protected Object doInBackground(Object... params) {
 		try {
 			Object httpResponse = this.makeRequestByForm((String)params[0], (Map)params[1], (List<NameValuePair>)params[2]);
-			//Log.e("error", httpResponse.toString());
 			return httpResponse;
 		} catch (Exception e) {
 			e.printStackTrace();

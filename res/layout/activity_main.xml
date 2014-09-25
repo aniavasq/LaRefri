@@ -70,6 +70,7 @@
 	        android:background="@drawable/back_ground_with_shadow" >
         </RelativeLayout>
 		    <ScrollView
+		        android:id="@+id/the_scroll_view"
 		        android:layout_width="match_parent"
 			    android:layout_height="match_parent"
 			    android:fillViewport="true">
