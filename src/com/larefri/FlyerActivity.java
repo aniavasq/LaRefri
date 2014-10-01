@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,19 +22,24 @@ public class FlyerActivity extends Activity {
 	private Integer id_marca;
 	private String logo;
 	private String nombre;
+	private Integer width;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.flyer_activity);
 		Bundle b = getIntent().getExtras();
-		id_marca = b.getInt("id_marca");
-		logo = b.getString("logo");
-		nombre = b.getString("nombre");
-		
-		settings = getSharedPreferences("LaRefriPrefsFile", 0);
+		this.id_marca = b.getInt("id_marca");
+		this.logo = b.getString("logo");
+		this.nombre = b.getString("nombre");		
+		this.settings = getSharedPreferences("LaRefriPrefsFile", 0);
+		DisplayMetrics dm = new DisplayMetrics();
+		this.getWindow().getWindowManager().getDefaultDisplay().getMetrics(dm);
+		this.width = dm.widthPixels;		
 		
 		ImageView image = (ImageView)findViewById(R.id.magnetfridge_logo);
+		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width/2,width/2);
+		image.setLayoutParams(lp);
 		TextView nameview = (TextView)findViewById(R.id.magnetfridge_name);
 		File imgFile = new File(getFilesDir(), logo);
 		Drawable d = Drawable.createFromPath(imgFile.getAbsolutePath());

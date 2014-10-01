@@ -45,7 +45,7 @@ public class StoresManager implements RefriJsonReader, RefriJsonWriter {
 			String name = reader.nextName();
 			if(name.equalsIgnoreCase("id_marca")){
 				store.id_marca = reader.nextInt();
-			}else if(name.equalsIgnoreCase("id_marcas_sucursal")){
+			}else if(name.equalsIgnoreCase("id_local")){
 				store.id_marcas_sucursal = reader.nextInt();
 			}else if(name.equalsIgnoreCase("direccion")){
 				store.direccion = reader.nextString();				
@@ -55,6 +55,12 @@ public class StoresManager implements RefriJsonReader, RefriJsonWriter {
 				store.nombre = reader.nextString();				
 			}else if(name.equalsIgnoreCase("telefono")){
 				store.telefono = reader.nextString();				
+			}else if(name.equalsIgnoreCase("telefono2")){
+				store.telefono2 = reader.nextString();				
+			}else if(name.equalsIgnoreCase("telefono3")){
+				store.telefono3 = reader.nextString();				
+			}else if(name.equalsIgnoreCase("tipo")){
+				store.tipo = reader.nextString();				
 			}else{
 				store = null;
 				reader.skipValue();
@@ -89,10 +95,13 @@ public class StoresManager implements RefriJsonReader, RefriJsonWriter {
 	private void writeStores(JsonWriter writer, Store s) throws IOException{
 		writer.beginObject();
 		writer.name("id_marca").value(s.id_marca.toString());
-		writer.name("id_marcas_sucursal").value(s.id_marcas_sucursal.toString());
+		writer.name("id_local").value(s.id_marcas_sucursal.toString());
 		writer.name("nombre").value(s.nombre.toString());
 		writer.name("telefono").value(s.telefono.toString());
+		writer.name("telefono2").value(s.telefono2.toString());
+		writer.name("telefono3").value(s.telefono3.toString());
 		writer.name("direccion").value(s.direccion.toString());
+		writer.name("tipo").value(s.tipo.toString());
 		writer.name("estado").value(s.estado.toString());
 	    writer.endObject();
 	}

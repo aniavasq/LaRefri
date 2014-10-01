@@ -1469,24 +1469,29 @@ containing a value of this type.
         public static final int Widget_AppCompat_ProgressBar=0x7f0b000a;
         public static final int Widget_AppCompat_ProgressBar_Horizontal=0x7f0b0009;
         public static final int Widget_AppCompat_Spinner_DropDown_ActionBar=0x7f0b0022;
-        /**  <item name="android:shadowColor" >#000000</item>
+        /** <item name="android:fontFamily">sans-serif-light</item>
+ <item name="android:shadowColor" >#000000</item>
 	    <item name="android:shadowDx" >1</item>
 	    <item name="android:shadowDy" >1</item>
 	    <item name="android:shadowRadius" >2</item>
          */
         public static final int big_button=0x7f0b0088;
-        /**  <item name="android:shadowColor" >#000000</item>
+        /** <item name="android:fontFamily">sans-serif-light</item>
+ <item name="android:shadowColor" >#000000</item>
 	    <item name="android:shadowDx" >1</item>
 	    <item name="android:shadowDy" >1</item>
 	    <item name="android:shadowRadius" >2</item>
          */
         public static final int category_button=0x7f0b0087;
-        /**  <item name="android:shadowColor" >#000000</item>
+        /** <item name="android:fontFamily">sans-serif-light</item>
+ <item name="android:shadowColor" >#000000</item>
 	    <item name="android:shadowDx" >1</item>
 	    <item name="android:shadowDy" >1</item>
 	    <item name="android:shadowRadius" >2</item>
          */
         public static final int menu_button=0x7f0b0085;
+        /**  <item name="android:fontFamily">sans-serif-light</item>
+         */
         public static final int menu_label=0x7f0b0086;
     }
     public static final class styleable {

@@ -81,7 +81,7 @@ public class CallActivity extends Activity {
 						tmp_button.setText(s.nombre);
 						tmp_button.setTextColor(Color.WHITE);
 						tmp_button.setGravity(Gravity.LEFT);
-						tmp_button.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
+						//tmp_button.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
 						tmp_button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_call, 0);
 						tmp_button.setOnClickListener(new OnClickListener() {							
 							@Override

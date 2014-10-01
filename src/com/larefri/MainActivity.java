@@ -219,8 +219,7 @@ public class MainActivity extends Activity {
 				}
 				if (array[1] > 3*height/4) {
 					myScrollView.smoothScrollBy(0, 75);
-					}
-				//Log.e("LOC",3*height/4+" "+height/4);
+				}
 				break;
 			case DragEvent.ACTION_DROP:
 				view = (View) evnt.getLocalState();
@@ -259,6 +258,8 @@ public class MainActivity extends Activity {
 		this.context = this;
 		this.fridgeMagnetsClickable = true;
 		this.fridgeMagnetsDraggable = false;
+		
+		FontsOverride.setDefaultFont(this, "MONOSPACE", "Roboto-Thin.ttf");
 		//Set policy to HTTP
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -453,8 +454,8 @@ public class MainActivity extends Activity {
 	private Object[] createEditMagnetView(){
 		RelativeLayout mov = new RelativeLayout(this);
 		RelativeLayout del = new RelativeLayout(this);
-		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width/4, width/4);
-		lp.setMargins(0, 0, 0, 0);
+		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width/4, width/6);
+		lp.setMargins(5,5,5,5);
 		lp.gravity = Gravity.BOTTOM;
 		LinearLayout.LayoutParams enable_lp = new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 		enable_lp.setMargins(0, 0, 0, 0);
@@ -479,7 +480,6 @@ public class MainActivity extends Activity {
 		del.addView(delImg);
 		mov.setVisibility(View.INVISIBLE);
 		del.setVisibility(View.INVISIBLE);
-		//Log.e("MagnetX",""+evt.getRawX()+" W "+width/2);
 		
 		RelativeLayout enable_layout = new RelativeLayout(context);
 		enable_layout.setId(enableViewId);
@@ -593,10 +593,13 @@ public class MainActivity extends Activity {
 	}
 
 	private void showEditMagnetView(final View view, MotionEvent evt){
-		View mov = (RelativeLayout)findViewById(movViewId);
-		View del = (RelativeLayout)findViewById(delViewId);
+		RelativeLayout mov = (RelativeLayout)findViewById(movViewId);
+		RelativeLayout del = (RelativeLayout)findViewById(delViewId);
+		RelativeLayout.LayoutParams lp = (android.widget.RelativeLayout.LayoutParams) del.getLayoutParams();
+		lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		del.setLayoutParams(lp);
 		View enable_layout =  (RelativeLayout)findViewById(enableViewId);
-		if(evt.getRawX() < width/2){
+		/*if(evt.getRawX() < width/2){
 			mov.setX(evt.getRawX()+width/6);
 			mov.setY(evt.getRawY()-(int)(width/1.9));
 			del.setX(evt.getRawX()+width/6);
@@ -606,7 +609,7 @@ public class MainActivity extends Activity {
 			mov.setY(evt.getRawY()-(int)(width/1.9));
 			del.setX(evt.getRawX()-width/3);
 			del.setY(evt.getRawY()-width/8);
-		}
+		}*/
 		
 		mov.setVisibility(View.VISIBLE);
 		del.setVisibility(View.VISIBLE);

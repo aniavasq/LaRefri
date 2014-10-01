@@ -9,7 +9,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -90,7 +89,7 @@ public class CustomizingActivity extends Activity {
 						TextView tv = new TextView(themeWrapper);
 						tv.setText(s.name);
 						tv.setTextColor(Color.WHITE);
-						tv.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
+						//tv.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
 						tv.setGravity(Gravity.CENTER_HORIZONTAL);
 						
 			            tr.addView(ll);
