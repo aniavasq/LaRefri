@@ -45,6 +45,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnDragListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -56,13 +57,12 @@ public class MainActivity extends Activity {
 	
 	private final String PREFS_NAME = "LaRefriPrefsFile";
 	private final Integer movViewId = 20000000, delViewId = 20000005, enableViewId = 20000010;
-	private final Integer delay = 800;
-	//private int mScrollDistance;
+	private final Integer delay = 700;
+	private final Handler handler = new Handler();
 	private SharedPreferences settings;
 	private Integer width, height;
 	private Context context;
 	private Object[] movNdel;
-	private final Handler handler = new Handler();
 	private boolean fridgeMagnetsClickable;
 	private boolean fridgeMagnetsDraggable;
 	private List<FridgeMagnet> fridgeMagnets;
@@ -455,7 +455,7 @@ public class MainActivity extends Activity {
 		RelativeLayout mov = new RelativeLayout(this);
 		RelativeLayout del = new RelativeLayout(this);
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width/4, width/6);
-		lp.setMargins(5,5,5,5);
+		lp.setMargins(15,15,15,15);
 		lp.gravity = Gravity.BOTTOM;
 		LinearLayout.LayoutParams enable_lp = new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 		enable_lp.setMargins(0, 0, 0, 0);
@@ -551,8 +551,7 @@ public class MainActivity extends Activity {
 	private void modifyOverflowButton() {
 		ImageButton menuButton = (ImageButton)findViewById(R.id.overflowbutton);
 		menuButton.setImageResource(R.drawable.ic_action_previous_item);
-		menuButton.setOnClickListener(new OnClickListener() {
-			
+		menuButton.setOnClickListener(new OnClickListener() {			
 			@Override
 			public void onClick(View v) {
 				fridgeMagnetsDraggable = false;
@@ -599,20 +598,23 @@ public class MainActivity extends Activity {
 		lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 		del.setLayoutParams(lp);
 		View enable_layout =  (RelativeLayout)findViewById(enableViewId);
-		/*if(evt.getRawX() < width/2){
-			mov.setX(evt.getRawX()+width/6);
-			mov.setY(evt.getRawY()-(int)(width/1.9));
-			del.setX(evt.getRawX()+width/6);
-			del.setY(evt.getRawY()-width/8);
-		}else{
-			mov.setX(evt.getRawX()-width/3);
-			mov.setY(evt.getRawY()-(int)(width/1.9));
-			del.setX(evt.getRawX()-width/3);
-			del.setY(evt.getRawY()-width/8);
-		}*/
-		
+		TranslateAnimation anim = new TranslateAnimation( 
+				-mov.getWidth(), width/4-mov.getWidth()/2,
+				mov.getHeight(), height/2-mov.getHeight());
+	    anim.setDuration(300);
+	    anim.setFillAfter(true);
+	    mov.startAnimation(anim);
+	    anim = new TranslateAnimation( 
+	    		del.getWidth(), -width/4+del.getWidth()/2, 
+	    		del.getHeight(), height/2-del.getHeight());
+	    anim.setDuration(300);
+	    anim.setFillAfter(true);
+	    del.startAnimation(anim);
+	    //
 		mov.setVisibility(View.VISIBLE);
 		del.setVisibility(View.VISIBLE);
+		mov.getChildAt(0).setVisibility(View.VISIBLE);
+		del.getChildAt(0).setVisibility(View.VISIBLE);
 		enable_layout.setVisibility(View.VISIBLE);
 				
 		enable_layout.setOnTouchListener(new OnTouchListener() {
@@ -666,8 +668,12 @@ public class MainActivity extends Activity {
 	}
 
 	private void hideEditMagnetView(){
-		( (RelativeLayout)findViewById(movViewId) ).setVisibility(View.INVISIBLE);
-		( (RelativeLayout)findViewById(delViewId) ).setVisibility(View.INVISIBLE);
+		RelativeLayout del = (RelativeLayout)findViewById(delViewId);
+		RelativeLayout mov = (RelativeLayout)findViewById(movViewId);
+		mov.setVisibility(View.INVISIBLE);
+		del.setVisibility(View.INVISIBLE);
+		mov.getChildAt(0).setVisibility(View.INVISIBLE);
+		del.getChildAt(0).setVisibility(View.INVISIBLE);
 		RelativeLayout enable_layout = (RelativeLayout)findViewById(enableViewId);
 		enable_layout.setVisibility(View.INVISIBLE);
 		enable_layout.setOnTouchListener(null);

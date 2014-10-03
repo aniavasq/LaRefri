@@ -26,7 +26,6 @@ import android.content.res.Resources.NotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -195,10 +194,10 @@ public class AddMagnetActivity extends Activity {
         StrictMode.setThreadPolicy(policy);
 		
 		Bundle b = getIntent().getExtras();
-		id_category = b.getInt("id_category");
+		id_category = b.getInt("id_categoria");
 		logo = b.getString("logo");
 		nombre = b.getString("nombre");
-		Log.v("id_category",id_category.toString());
+		Log.v("id_categoria",id_category.toString());
 		
 		ImageView image = (ImageView)findViewById(R.id.magnetfridge_logo);
 		TextView nameview = (TextView)findViewById(R.id.magnetfridge_name);
@@ -206,12 +205,16 @@ public class AddMagnetActivity extends Activity {
 		Bitmap bmp = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
 		image.setImageBitmap(bmp);
 		nameview.setText(nombre);
-		
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("id_categoria", id_category.toString());
+		//construct form to HttpRequest
+		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+		nameValuePairs.add(new BasicNameValuePair("id_categoria", id_category.toString()));
 		(new ThisRestClient()).execute(
-				StaticUrls.MAGNETS,
-				//StaticUrls.MAGNETS_BY_CATEGORY, 
-				new HashMap<String, String>(),
-				new ArrayList<NameValuePair>());			
+				//StaticUrls.MAGNETS,
+				StaticUrls.MAGNETS_BY_CATEGORY, 
+				params,
+				nameValuePairs);			
 	}
 
 	@Override
@@ -239,8 +242,11 @@ public class AddMagnetActivity extends Activity {
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, Gravity.LEFT);
 		Resources resources = getResources();
 		ContextThemeWrapper themeWrapper = new ContextThemeWrapper(context, R.style.menu_button);
-		ArrayList<FridgeMagnet> remove = new ArrayList<FridgeMagnet>(fridgeMagnets);
 		ArrayList<Button> buttons = new ArrayList<Button>();
+		
+		//ArrayList<FridgeMagnet> metaRemove = new ArrayList<FridgeMagnet>(loadedFridgeMagnets);
+		
+		ArrayList<FridgeMagnet> remove = new ArrayList<FridgeMagnet>(fridgeMagnets);
 		remove.removeAll(this.myFridgeMagnets);		
 		store_call_pane.removeAllViews();
 		for(final FridgeMagnet fm: remove){
@@ -251,14 +257,19 @@ public class AddMagnetActivity extends Activity {
 				tmp_button.setText(fm.nombre);
 				tmp_button.setTextColor(Color.WHITE);
 				tmp_button.setGravity(Gravity.LEFT);
-				tmp_button.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
 				tmp_button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_add, 0);
 				tmp_button.setOnClickListener(new AddOnClickListener(fm, tmp_button));
 				buttons.add(tmp_button);
 			}
 		}
+		
+		//metaRemove.removeAll(fridgeMagnets);
+		
+		ArrayList<FridgeMagnet> metaRemove = new ArrayList<FridgeMagnet>(this.myFridgeMagnets);
 		ArrayList<FridgeMagnet> myRemove = new ArrayList<FridgeMagnet>(this.myFridgeMagnets);
-		myRemove.removeAll(remove);
+		//myRemove.removeAll(metaRemove);
+		metaRemove.removeAll(fridgeMagnets);
+		myRemove.removeAll(metaRemove);
 		for(final FridgeMagnet fm: myRemove){
 			Button tmp_title = new Button(themeWrapper);
 			tmp_title.setLayoutParams(lp);
@@ -266,12 +277,11 @@ public class AddMagnetActivity extends Activity {
 			tmp_title.setText(fm.nombre);
 			tmp_title.setTextColor(Color.WHITE);
 			tmp_title.setGravity(Gravity.LEFT);
-			tmp_title.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
 			tmp_title.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_favorite, 0);
+			tmp_title.setPadding(0, 0, 5, 0);
 			tmp_title.setOnClickListener(new RemoveOnClickListener(fm, tmp_title));
 			buttons.add(tmp_title);
 		}
-		//Log.e("FM", myRemove.toString());
 		Collections.sort(buttons, new Comparator<Button>() {
 			@Override
 			public int compare(Button lhs, Button rhs) {				

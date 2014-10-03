@@ -14,8 +14,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
@@ -65,7 +63,7 @@ public class CategoriesActivity extends Activity {
 					btn.setImageBitmap(bmp);
 					btn.setBackgroundColor(Color.TRANSPARENT);
 					btn.setScaleType( ImageView.ScaleType.FIT_CENTER );
-					if(c.nombre_categoria.equalsIgnoreCase("buscar"))
+					if(!c.nombre_categoria.equalsIgnoreCase("buscar"))
 						btn.setOnClickListener(new OnClickListener() {
 							@Override
 							public void onClick(View v) {
@@ -92,7 +90,6 @@ public class CategoriesActivity extends Activity {
 				mTlayout.addView(tr);
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -101,49 +98,28 @@ public class CategoriesActivity extends Activity {
 
 	@Override
 	protected void onStart() {
-		// TODO Auto-generated method stub
 		super.onStart();
 		setBackground();
 	}
 
 	protected void goToAddMagnets(View view, Category c) {
-		// TODO Auto-generated method stub
-		Intent intent = new Intent(view.getContext(), SearchFridgeMagnetActivity.class);
+		Intent intent = new Intent(view.getContext(), AddMagnetActivity.class);
 	    Bundle b = new Bundle();
-	    b.putInt("id_categoria", c.id_categoria); //Your id
+	    b.putInt("id_categoria", c.id_categoria);
 	    b.putString("logo", c.icono_categoria);
-	    intent.putExtras(b); //Put your id to your next Intent
+	    b.putString("nombre", c.nombre_categoria);
+	    intent.putExtras(b);
 	    this.startActivity(intent);
 	}
 	
 	protected void goToSearchMagnets(View view, Category c) {
-		// TODO Auto-generated method stub
-		Intent intent = new Intent(view.getContext(), AddMagnetActivity.class);
+		Intent intent = new Intent(view.getContext(), SearchFridgeMagnetActivity.class);
 	    Bundle b = new Bundle();
-	    b.putInt("id_categoria", c.id_categoria); //Your id
+	    b.putInt("id_categoria", c.id_categoria);
 	    b.putString("logo", c.icono_categoria);
 	    b.putString("nombre", c.nombre_categoria);
-	    intent.putExtras(b); //Put your id to your next Intent
+	    intent.putExtras(b);
 	    this.startActivity(intent);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.categories, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
 	}
 
 	public static List<Category> getCategoriesFromJSON (File fl) throws Exception {

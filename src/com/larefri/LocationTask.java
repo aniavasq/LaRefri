@@ -5,25 +5,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import android.app.Activity;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
-public class LaRefriLocationListener implements LocationListener {
+public class LocationTask extends AsyncTask<Void, Void, List<Address>> implements LocationListener {
 
 	private Location currentLocation;
+	private LocationManager locationManager;
 	private double currentLatitude;
 	private double currentLongitude;
 	private Context context;
+	private Activity parent;
 	private List<Address> addresses;
 
-	public LaRefriLocationListener(Context context) {
+	public LocationTask(Context context, Activity parent) {
 		super();
 		this.context = context;
+		this.parent = parent;
 	}
 
 	@Override
@@ -70,5 +76,23 @@ public class LaRefriLocationListener implements LocationListener {
 
 	public void setCurrentLocation(Location currentLocation) {
 		this.currentLocation = currentLocation;
+	}
+
+	@Override
+	protected void onPreExecute() {
+		locationManager = (LocationManager) parent.getSystemService(Context.LOCATION_SERVICE);
+        locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, this, null);        
+	}
+
+	@Override
+	protected List<Address> doInBackground(Void... params) {
+		setAddresses();
+		return getAddresses();
+	}
+
+	@Override
+	protected void onPostExecute(List<Address> result) {
+		locationManager = (LocationManager) parent.getSystemService(Context.LOCATION_SERVICE);
+		locationManager.removeUpdates(this);
 	}
 }

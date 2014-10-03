@@ -12,8 +12,6 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.ContextThemeWrapper;
@@ -67,9 +65,8 @@ public class PhoneGuideActivity extends Activity {
 			e.printStackTrace();
 		}
         
-        LocationManager locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
-        LocationListener locationListener = new LaRefriLocationListener(context);
-        locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, locationListener, null);
+        LocationTask locationTask = new LocationTask(context, this);
+		locationTask.execute();
 	}
 
 	private void loadStores(List<Store> stores){		
@@ -91,7 +88,6 @@ public class PhoneGuideActivity extends Activity {
 				tmp_title.setText(s.nombre);
 				tmp_title.setTextColor(Color.WHITE);
 				tmp_title.setGravity(Gravity.LEFT);
-				//tmp_title.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
 				tmp_title.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_contact, 0);
 				tmp_title.setPadding(0, 0, 5, 0);				
 				phone_num_pane.addView(tmp_title);
@@ -102,7 +98,6 @@ public class PhoneGuideActivity extends Activity {
 				phone_num.setText(s.telefono);
 				phone_num.setTextColor(Color.WHITE);
 				phone_num.setGravity(Gravity.LEFT);
-				//phone_num.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
 				phone_num.setPadding(0, 0, 0, 15);				
 				phone_num_pane.addView(phone_num);
 				
@@ -113,7 +108,6 @@ public class PhoneGuideActivity extends Activity {
 					phone_num2.setText(s.telefono2);
 					phone_num2.setTextColor(Color.WHITE);
 					phone_num2.setGravity(Gravity.LEFT);
-					//phone_num2.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
 					phone_num2.setPadding(0, 0, 0, 15);				
 					phone_num_pane.addView(phone_num2);
 				}

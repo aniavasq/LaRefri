@@ -26,7 +26,6 @@ import android.content.res.Resources.NotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -84,8 +83,6 @@ public class SearchFridgeMagnetActivity extends Activity {
 		}
 		
 	}
-	
-
 	
 	class DownloadMagnetStoresRestClient extends RestClient{
 		@Override
@@ -273,7 +270,6 @@ public class SearchFridgeMagnetActivity extends Activity {
 				tmp_button.setText(fm.nombre);
 				tmp_button.setTextColor(Color.WHITE);
 				tmp_button.setGravity(Gravity.LEFT);
-				tmp_button.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
 				tmp_button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_add, 0);
 				tmp_button.setOnClickListener(new AddOnClickListener(fm, tmp_button));
 				buttons.add(tmp_button);
@@ -292,7 +288,6 @@ public class SearchFridgeMagnetActivity extends Activity {
 			tmp_title.setText(fm.nombre);
 			tmp_title.setTextColor(Color.WHITE);
 			tmp_title.setGravity(Gravity.LEFT);
-			tmp_title.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
 			tmp_title.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_favorite, 0);
 			tmp_title.setPadding(0, 0, 5, 0);
 			tmp_title.setOnClickListener(new RemoveOnClickListener(fm, tmp_title));
