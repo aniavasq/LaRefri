@@ -64,9 +64,6 @@ public class PhoneGuideActivity extends Activity {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-        
-        LocationTask locationTask = new LocationTask(context, this);
-		locationTask.execute();
 	}
 
 	private void loadStores(List<Store> stores){		
@@ -92,37 +89,14 @@ public class PhoneGuideActivity extends Activity {
 				tmp_title.setPadding(0, 0, 5, 0);				
 				phone_num_pane.addView(tmp_title);
 				
-				TextView phone_num = new Button(themeWrapper);
-				phone_num.setLayoutParams(lp);
-				phone_num.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
-				phone_num.setText(s.telefono);
-				phone_num.setTextColor(Color.WHITE);
-				phone_num.setGravity(Gravity.LEFT);
-				phone_num.setPadding(0, 0, 0, 15);				
-				phone_num_pane.addView(phone_num);
-				
-				if(!s.telefono2.isEmpty()){
-					TextView phone_num2 = new Button(themeWrapper);
-					phone_num2.setLayoutParams(lp);
-					phone_num2.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
-					phone_num2.setText(s.telefono2);
-					phone_num2.setTextColor(Color.WHITE);
-					phone_num2.setGravity(Gravity.LEFT);
-					phone_num2.setPadding(0, 0, 0, 15);				
-					phone_num_pane.addView(phone_num2);
-				}
-				
-				if(!s.telefono3.isEmpty()){
-					TextView phone_num3 = new Button(themeWrapper);
-					phone_num3.setLayoutParams(lp);
-					phone_num3.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
-					phone_num3.setText(s.telefono3);
-					phone_num3.setTextColor(Color.WHITE);
-					phone_num3.setGravity(Gravity.LEFT);
-					//phone_num3.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
-					phone_num3.setPadding(0, 0, 0, 15);				
-					phone_num_pane.addView(phone_num3);
-				}
+				TextView phone_dir = new TextView(themeWrapper);
+				phone_dir.setLayoutParams(lp);
+				phone_dir.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
+				phone_dir.setText(s.direccion);
+				phone_dir.setTextColor(Color.WHITE);
+				phone_dir.setGravity(Gravity.LEFT);
+				phone_dir.setPadding(0, 0, 0, 15);				
+				phone_num_pane.addView(phone_dir);
 				store_call_pane.addView(phone_num_pane);
 			}		
 		}

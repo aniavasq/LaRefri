@@ -57,10 +57,16 @@ public class SearchFridgeMagnetActivity extends Activity {
 	        dialog = new ProgressDialog(context);
 	        this.dialog.setMessage("Actualizando Imantados");
 	        this.dialog.show();
-	        this.dialog.setCancelable(false);
+	        this.dialog.setCancelable(true);
 	        this.dialog.setCanceledOnTouchOutside(false);
 	    }
 		
+		@Override
+		protected Object doInBackground(Object... params) {
+			Log.e("REQUESTING",params.toString());
+			return super.doInBackground(params);
+		}
+
 		@Override
 		protected void onPostExecute(Object result) {
 			if (dialog.isShowing()) {

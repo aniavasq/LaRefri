@@ -43,7 +43,7 @@ public class CallActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_call);
 		this.context = this;
-		settings = getSharedPreferences("LaRefriPrefsFile", 0);
+		this.settings = getSharedPreferences("LaRefriPrefsFile", 0);
 		
 		//get extra content from previous activity
 		Bundle b = getIntent().getExtras();
@@ -74,10 +74,7 @@ public class CallActivity extends Activity {
 		File imgFile = new File(getFilesDir(), logo);
 		Drawable d = Drawable.createFromPath(imgFile.getAbsolutePath());
 		image.setImageDrawable(d);
-		nameview.setText(nombre);		
-
-        LocationTask locationTask = new LocationTask(context, this);
-		locationTask.execute();
+		nameview.setText(nombre);
 	}
 
 	@Override
@@ -94,21 +91,76 @@ public class CallActivity extends Activity {
 	
 		for(final Store s: stores){
 			if(s!=null){
-				Button tmp_button = new Button(themeWrapper);
-				tmp_button.setLayoutParams(lp);
-				tmp_button.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
-				tmp_button.setText(s.nombre);
-				tmp_button.setTextColor(Color.WHITE);
-				tmp_button.setGravity(Gravity.LEFT);
-				tmp_button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_call, 0);
-				tmp_button.setOnClickListener(new OnClickListener() {							
+				LinearLayout phone_num_pane = new LinearLayout(themeWrapper);
+				phone_num_pane.setOrientation(LinearLayout.VERTICAL);
+				phone_num_pane.setLayoutParams(lp);
+				
+				TextView tmp_title = new Button(themeWrapper);
+				tmp_title.setLayoutParams(lp);
+				tmp_title.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
+				tmp_title.setBackgroundColor(Color.parseColor("#4B4743"));
+				tmp_title.setText(s.nombre);
+				tmp_title.setTextColor(Color.WHITE);
+				tmp_title.setGravity(Gravity.LEFT);
+				//tmp_title.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_contact, 0);
+				tmp_title.setPadding(0, 0, 5, 0);				
+				phone_num_pane.addView(tmp_title);
+				
+				Button phone_num = new Button(themeWrapper);
+				phone_num.setLayoutParams(lp);
+				phone_num.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
+				phone_num.setText(s.telefono);
+				phone_num.setTextColor(Color.WHITE);
+				phone_num.setGravity(Gravity.LEFT);
+				phone_num.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_call, 0);
+				phone_num.setPadding(0, 0, 0, 15);	
+				phone_num.setOnClickListener(new OnClickListener() {							
 					@Override
 					public void onClick(View v) {
 						onCall(v, s.telefono);
 						
 					}
 				});
-				store_call_pane.addView(tmp_button);
+				phone_num_pane.addView(phone_num);
+				
+				if(!s.telefono2.isEmpty()){
+					Button phone_num2 = new Button(themeWrapper);
+					phone_num2.setLayoutParams(lp);
+					phone_num2.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
+					phone_num2.setText(s.telefono2);
+					phone_num2.setTextColor(Color.WHITE);
+					phone_num2.setGravity(Gravity.LEFT);
+					phone_num2.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_call, 0);
+					phone_num2.setPadding(0, 0, 0, 15);
+					phone_num2.setOnClickListener(new OnClickListener() {							
+						@Override
+						public void onClick(View v) {
+							onCall(v, s.telefono2);
+							
+						}
+					});
+					phone_num_pane.addView(phone_num2);
+				}
+				
+				if(!s.telefono3.isEmpty()){
+					Button phone_num3 = new Button(themeWrapper);
+					phone_num3.setLayoutParams(lp);
+					phone_num3.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
+					phone_num3.setText(s.telefono3);
+					phone_num3.setTextColor(Color.WHITE);
+					phone_num3.setGravity(Gravity.LEFT);
+					phone_num3.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_call, 0);
+					phone_num3.setPadding(0, 0, 0, 15);
+					phone_num3.setOnClickListener(new OnClickListener() {							
+						@Override
+						public void onClick(View v) {
+							onCall(v, s.telefono3);
+							
+						}
+					});
+					phone_num_pane.addView(phone_num3);
+				}
+				store_call_pane.addView(phone_num_pane);
 			}
 		}
 	}

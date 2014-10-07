@@ -37,7 +37,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.Gravity;
-import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.DragShadowBuilder;
@@ -67,6 +66,7 @@ public class MainActivity extends Activity {
 	private boolean fridgeMagnetsDraggable;
 	private List<FridgeMagnet> fridgeMagnets;
 	private ScrollView myScrollView;
+	private LocationTask locationTask;
 	
 	class ThisRestClient extends RestClient{
 		@Override
@@ -286,8 +286,11 @@ public class MainActivity extends Activity {
 		    settings.edit().putBoolean("my_first_time", false).commit(); 
 		}
         this.movNdel = createEditMagnetView();	
-        //SCROLLVIEW
+        //ScrolView
         this.myScrollView = (ScrollView) findViewById(R.id.the_scroll_view);
+        //Location
+        locationTask = new LocationTask(context, this);
+		locationTask.execute();
 	}
 
 	public void downloadImageFromServer(String url, String file) throws MalformedURLException, IOException {
@@ -345,6 +348,7 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onStart() {
+		super.onStart();
 		setBackground();
 		//add fridgeMagnets from local data
 		LinearLayout left_pane_fridgemagnets = (LinearLayout) findViewById(R.id.left_pane_fridgemagnets);
@@ -354,25 +358,29 @@ public class MainActivity extends Activity {
 		((ViewGroup)right_pane_fridgemagnets).removeAllViews();
 		lp.setMargins(0, 0, 0, 0);
 		lp.gravity = Gravity.BOTTOM;
-		
 		//add default icons for the fridgeMagnets as buttons
 		try {
 			loadFridgeMagnetsFromFile(left_pane_fridgemagnets, right_pane_fridgemagnets, lp);
-	    } catch (IOException e) {
+		} catch (IOException e) {
 			Log.e("No file",e.getMessage());
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		super.onStart();
-		//refresh user location and update phone guide
+		//Update phone guide
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
+	protected void onResume() {
+		super.onResume();
+		locationTask.cancel(true);
+		locationTask = new LocationTask(context, this);
+		locationTask.execute();
+	}
+
+	@Override
+	protected void onRestart() {
+		super.onRestart();
 	}
 
 	public void goToMenu(View view) {
