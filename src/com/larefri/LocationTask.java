@@ -12,14 +12,11 @@ import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Looper;
 import android.util.Log;
 
-public class LocationTask extends AsyncTask<Void, Void, List<Address>> implements LocationListener {
+public class LocationTask extends AsyncTask<Void, Void, List<Address>> {
 
 	private Location currentLocation;
 	private LocationManager locationManager;
@@ -43,21 +40,6 @@ public class LocationTask extends AsyncTask<Void, Void, List<Address>> implement
 		this.settings = parent.getSharedPreferences("LaRefriPrefsFile", 0);
 	}
 
-	@Override
-	public void onLocationChanged(Location location) {
-		updateLocation(location);
-        setAddresses();
-	}
-
-	@Override
-	public void onProviderDisabled(String provider) {	}
-
-	@Override
-	public void onProviderEnabled(String provider) { }
-
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) { }
-	
 	private void updateLocation(Location location){
         this.currentLocation = location;
         this.currentLatitude = this.currentLocation.getLatitude();
@@ -119,26 +101,19 @@ public class LocationTask extends AsyncTask<Void, Void, List<Address>> implement
 
 	@Override
 	protected List<Address> doInBackground(Void... params) {
-		Looper.prepare();
 		Criteria criteria = initCriteria();
 		criteria.setAccuracy(Criteria.ACCURACY_FINE);		
 		this.providerFine = this.locationManager.getBestProvider(criteria, true);
 		criteria.setAccuracy(Criteria.ACCURACY_COARSE);
 		this.providerCoarse = this.locationManager.getBestProvider(criteria, true);
         if (providerCoarse != null) {
-			this.locationManager.requestSingleUpdate(this.providerCoarse, this, Looper.myLooper());
+        	updateLocation(this.locationManager.getLastKnownLocation(providerCoarse));
 		}else if(providerFine != null){
-			this.locationManager.requestSingleUpdate(this.providerFine, this, Looper.myLooper());
+			updateLocation(this.locationManager.getLastKnownLocation(providerFine));
 		}else{
-			this.locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, this, Looper.myLooper());
+			updateLocation(this.locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
 		}
 		setAddresses();
-		Log.e("STOP","Has stoped");
 		return getAddresses();
-	}
-
-	@Override
-	protected void onPostExecute(List<Address> result) {
-		this.locationManager.removeUpdates(this);
 	}
 }

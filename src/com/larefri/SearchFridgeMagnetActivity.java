@@ -63,7 +63,6 @@ public class SearchFridgeMagnetActivity extends Activity {
 		
 		@Override
 		protected Object doInBackground(Object... params) {
-			Log.e("REQUESTING",params.toString());
 			return super.doInBackground(params);
 		}
 

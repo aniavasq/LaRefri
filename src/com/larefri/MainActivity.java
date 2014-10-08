@@ -21,6 +21,8 @@ import org.apache.http.NameValuePair;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -44,7 +46,6 @@ import android.view.View.OnClickListener;
 import android.view.View.OnDragListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -290,7 +291,6 @@ public class MainActivity extends Activity {
         this.myScrollView = (ScrollView) findViewById(R.id.the_scroll_view);
         //Location
         locationTask = new LocationTask(context, this);
-		locationTask.execute();
 	}
 
 	public void downloadImageFromServer(String url, String file) throws MalformedURLException, IOException {
@@ -378,11 +378,6 @@ public class MainActivity extends Activity {
 		locationTask.execute();
 	}
 
-	@Override
-	protected void onRestart() {
-		super.onRestart();
-	}
-
 	public void goToMenu(View view) {
 	    Intent intent = new Intent(view.getContext(), MenuActivity.class);
 	    this.startActivity(intent);
@@ -463,7 +458,7 @@ public class MainActivity extends Activity {
 		RelativeLayout mov = new RelativeLayout(this);
 		RelativeLayout del = new RelativeLayout(this);
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width/4, width/6);
-		lp.setMargins(15,15,15,15);
+		lp.setMargins(0, 0, 0, 0);
 		lp.gravity = Gravity.BOTTOM;
 		LinearLayout.LayoutParams enable_lp = new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 		enable_lp.setMargins(0, 0, 0, 0);
@@ -488,6 +483,7 @@ public class MainActivity extends Activity {
 		del.addView(delImg);
 		mov.setVisibility(View.INVISIBLE);
 		del.setVisibility(View.INVISIBLE);
+		//Log.e("MagnetX",""+evt.getRawX()+" W "+width/2);
 		
 		RelativeLayout enable_layout = new RelativeLayout(context);
 		enable_layout.setId(enableViewId);
@@ -606,18 +602,16 @@ public class MainActivity extends Activity {
 		lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 		del.setLayoutParams(lp);
 		View enable_layout =  (RelativeLayout)findViewById(enableViewId);
-		TranslateAnimation anim = new TranslateAnimation( 
-				-mov.getWidth(), width/4-mov.getWidth()/2,
-				mov.getHeight(), height/2-mov.getHeight());
-	    anim.setDuration(300);
-	    anim.setFillAfter(true);
-	    mov.startAnimation(anim);
-	    anim = new TranslateAnimation( 
-	    		del.getWidth(), -width/4+del.getWidth()/2, 
-	    		del.getHeight(), height/2-del.getHeight());
-	    anim.setDuration(300);
-	    anim.setFillAfter(true);
-	    del.startAnimation(anim);
+		//Animation
+		ObjectAnimator animMovX = ObjectAnimator.ofFloat(mov, "x", -mov.getWidth(), width/4-mov.getWidth()/2);
+		ObjectAnimator animMovY = ObjectAnimator.ofFloat(mov, "y", mov.getHeight(), height/2-mov.getHeight());
+		ObjectAnimator animDelX = ObjectAnimator.ofFloat(del, "x", width, 3*width/4-del.getWidth()/2);
+		ObjectAnimator animDelY = ObjectAnimator.ofFloat(del, "y", del.getHeight(), height/2-del.getHeight());
+		animMovX.setDuration(250); animMovY.setDuration(250);
+		animDelX.setDuration(250); animDelY.setDuration(250);
+	    AnimatorSet animSetXY = new AnimatorSet();
+	    animSetXY.playTogether(animMovX, animMovY, animDelX, animDelY);
+	    animSetXY.start();
 	    //
 		mov.setVisibility(View.VISIBLE);
 		del.setVisibility(View.VISIBLE);
