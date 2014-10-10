@@ -47,6 +47,8 @@ public class StoresManager implements RefriJsonReader, RefriJsonWriter {
 				store.id_marca = reader.nextInt();
 			}else if(name.equalsIgnoreCase("id_local")){
 				store.id_marcas_sucursal = reader.nextInt();
+			}else if(name.equalsIgnoreCase("ciudad")){
+				store.ciudad = reader.nextString();				
 			}else if(name.equalsIgnoreCase("direccion")){
 				store.direccion = reader.nextString();				
 			}else if(name.equalsIgnoreCase("estado")){
@@ -100,6 +102,7 @@ public class StoresManager implements RefriJsonReader, RefriJsonWriter {
 		writer.name("telefono").value(s.telefono.toString());
 		writer.name("telefono2").value(s.telefono2.toString());
 		writer.name("telefono3").value(s.telefono3.toString());
+		writer.name("ciudad").value(s.ciudad.toString());
 		writer.name("direccion").value(s.direccion.toString());
 		writer.name("tipo").value(s.tipo.toString());
 		writer.name("estado").value(s.estado.toString());

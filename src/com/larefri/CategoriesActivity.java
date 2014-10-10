@@ -44,7 +44,7 @@ public class CategoriesActivity extends Activity {
 			List<Category> categories = getCategoriesFromJSON(new File(getFilesDir(),"categories.json"));
 			Iterator<Category> categoriesIterator = categories.iterator();
 			
-			LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width/3,width/3);//LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width/3,width/3);
 			lp.gravity = Gravity.BOTTOM;
 			lp.weight = 1.0f;
 			lp.setMargins(0, 0, 0, 0);
@@ -92,8 +92,6 @@ public class CategoriesActivity extends Activity {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		//tv.setText(input.);
 	}
 
 	@Override

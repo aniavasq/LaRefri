@@ -10,9 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -270,18 +268,20 @@ public class MainActivity extends Activity {
 		this.getWindow().getWindowManager().getDefaultDisplay().getMetrics(dm);
 		this.width = dm.widthPixels;
 		this.height = dm.heightPixels;
-		
-		//check first time installed
-		settings = getSharedPreferences(PREFS_NAME, 0);
-        if (settings.getBoolean("my_first_time", true)) {
-		    //the APP is being launched for first time, do something        
-		    Log.e("Comments", "First time for ");
+		settings = getSharedPreferences(PREFS_NAME, 0);		
 
+        //EULA
+    	AppEULA appEULA = new AppEULA(this);
+        if (settings.getBoolean(appEULA.getEulaKey(), true)) {
+        	appEULA.show();
+		}
+        //check first time installed
+        if (settings.getBoolean("my_first_time", true)) {
 		    //Create RestClient object to get HTTP response data and get the categories in the server
-			(new ThisRestClient()).execute(
+			/*(new ThisRestClient()).execute(
 					StaticUrls.CATEGORIES, 
 					new HashMap<Object, Object>(),
-					new ArrayList<Object>());
+					new ArrayList<Object>());*/
 		    // record the fact that the APP has been started at least once
 			copyAssets();
 		    settings.edit().putBoolean("my_first_time", false).commit(); 
@@ -290,7 +290,7 @@ public class MainActivity extends Activity {
         //ScrolView
         this.myScrollView = (ScrollView) findViewById(R.id.the_scroll_view);
         //Location
-        locationTask = new LocationTask(context, this);
+        this.locationTask = new LocationTask(this.context, this);
 	}
 
 	public void downloadImageFromServer(String url, String file) throws MalformedURLException, IOException {
@@ -307,10 +307,7 @@ public class MainActivity extends Activity {
 	    try {
 	        files = assetManager.list("");
 	        images = assetManager.list("images");
-	    	//files = assetManager.
-	    } catch (IOException e) {
-	        Log.e("tag", "Failed to get asset file list.");
-	    }
+	    } catch (IOException doNotCare) {  }
 	    for(String filename : files) {
 	        InputStream in = null;
 	        FileOutputStream out = null;
@@ -323,9 +320,7 @@ public class MainActivity extends Activity {
 	          out.flush();
 	          out.close();
 	          out = null;
-	        } catch(IOException e) {
-	            Log.e("tag", "Failed to copy asset file: " + filename, e);
-	        }       
+	        } catch(IOException doNotCare) {  }       
 	    }
 	    
 	    for(String filename : images) {
@@ -340,9 +335,7 @@ public class MainActivity extends Activity {
 	          out.flush();
 	          out.close();
 	          out = null;
-	        } catch(IOException e) {
-	            Log.e("tag", "Failed to copy asset file: " + filename);
-	        }       
+	        } catch(IOException doNotCare) {  }       
 	    }
 	}
 

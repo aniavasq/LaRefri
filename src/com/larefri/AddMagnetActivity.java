@@ -29,7 +29,6 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.View;
@@ -64,7 +63,7 @@ public class AddMagnetActivity extends Activity {
 		protected void onPostExecute(Object result) {
 			if (dialog.isShowing()) {
 	            dialog.dismiss();
-	        }	
+	        }
 			InputStream is = new ByteArrayInputStream(result.toString().getBytes());
 			FridgeMagnetsManager fridgeMagnetsManager = new FridgeMagnetsManager();
 			try {
@@ -197,7 +196,6 @@ public class AddMagnetActivity extends Activity {
 		id_category = b.getInt("id_categoria");
 		logo = b.getString("logo");
 		nombre = b.getString("nombre");
-		Log.v("id_categoria",id_category.toString());
 		
 		ImageView image = (ImageView)findViewById(R.id.magnetfridge_logo);
 		TextView nameview = (TextView)findViewById(R.id.magnetfridge_name);
@@ -244,13 +242,11 @@ public class AddMagnetActivity extends Activity {
 		ContextThemeWrapper themeWrapper = new ContextThemeWrapper(context, R.style.menu_button);
 		ArrayList<Button> buttons = new ArrayList<Button>();
 		
-		//ArrayList<FridgeMagnet> metaRemove = new ArrayList<FridgeMagnet>(loadedFridgeMagnets);
-		
 		ArrayList<FridgeMagnet> remove = new ArrayList<FridgeMagnet>(fridgeMagnets);
 		remove.removeAll(this.myFridgeMagnets);		
 		store_call_pane.removeAllViews();
 		for(final FridgeMagnet fm: remove){
-			if(fm.nombre!=null){
+			if(fm!=null){
 				final Button tmp_button = new Button(themeWrapper);
 				tmp_button.setLayoutParams(lp);
 				tmp_button.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
@@ -271,16 +267,18 @@ public class AddMagnetActivity extends Activity {
 		metaRemove.removeAll(fridgeMagnets);
 		myRemove.removeAll(metaRemove);
 		for(final FridgeMagnet fm: myRemove){
-			Button tmp_title = new Button(themeWrapper);
-			tmp_title.setLayoutParams(lp);
-			tmp_title.setBackground(resources.getDrawable(R.drawable.menu_button_bg_disabled));
-			tmp_title.setText(fm.nombre);
-			tmp_title.setTextColor(Color.WHITE);
-			tmp_title.setGravity(Gravity.LEFT);
-			tmp_title.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_favorite, 0);
-			tmp_title.setPadding(0, 0, 5, 0);
-			tmp_title.setOnClickListener(new RemoveOnClickListener(fm, tmp_title));
-			buttons.add(tmp_title);
+			if(fm!=null){
+				Button tmp_title = new Button(themeWrapper);
+				tmp_title.setLayoutParams(lp);
+				tmp_title.setBackground(resources.getDrawable(R.drawable.menu_button_bg_disabled));
+				tmp_title.setText(fm.nombre);
+				tmp_title.setTextColor(Color.WHITE);
+				tmp_title.setGravity(Gravity.LEFT);
+				tmp_title.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_favorite, 0);
+				tmp_title.setPadding(0, 0, 5, 0);
+				tmp_title.setOnClickListener(new RemoveOnClickListener(fm, tmp_title));
+				buttons.add(tmp_title);
+			}
 		}
 		Collections.sort(buttons, new Comparator<Button>() {
 			@Override

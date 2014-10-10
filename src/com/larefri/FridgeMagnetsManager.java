@@ -11,16 +11,20 @@ import java.util.List;
 import android.util.JsonReader;
 import android.util.JsonToken;
 import android.util.JsonWriter;
+import android.util.Log;
 
 public class FridgeMagnetsManager implements RefriJsonReader, RefriJsonWriter {
 	public List<FridgeMagnet> readJsonStream(InputStream in) throws IOException {
 		JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
 		try {
 			return readMessagesArray(reader);
+		}catch(Exception e){
+			Log.e("ERROR",e.getMessage(),e);
+			return null;
 		}finally{
-		   reader.close();
-		 }
-	  }
+			reader.close();
+		}
+	}
 
 	public List<FridgeMagnet> readMessagesArray(JsonReader reader) throws IOException {
 		List<FridgeMagnet> messages = new ArrayList<FridgeMagnet>();
@@ -30,7 +34,8 @@ public class FridgeMagnetsManager implements RefriJsonReader, RefriJsonWriter {
 		} else {
 			reader.beginArray();
 			while (reader.hasNext()) {
-				messages.add(readMagnet(reader));
+				FridgeMagnet fm = readMagnet(reader);
+				if(fm!=null) messages.add(fm);
 			}
 		}
 		reader.endArray();
@@ -39,7 +44,7 @@ public class FridgeMagnetsManager implements RefriJsonReader, RefriJsonWriter {
 
 	public FridgeMagnet readMagnet(JsonReader reader) throws IOException {
 		FridgeMagnet fridgeMagnet = new FridgeMagnet();
-		
+
 		reader.beginObject();
 		while (reader.hasNext()) {
 			String name = reader.nextName();
@@ -70,6 +75,7 @@ public class FridgeMagnetsManager implements RefriJsonReader, RefriJsonWriter {
 			}else if(name.equalsIgnoreCase("pos_y")){
 				fridgeMagnet.pos_y = reader.nextInt();
 			}else {
+				fridgeMagnet = null;
 				reader.skipValue();
 			}
 		}
@@ -82,10 +88,12 @@ public class FridgeMagnetsManager implements RefriJsonReader, RefriJsonWriter {
 	public void writeMessagesArray(JsonWriter writer, List objectsList)
 			throws IOException {
 		writer.beginArray();
-	     for (Object fm : objectsList) {
-	    	 writeFridgeMagnet(writer, (FridgeMagnet)fm);
-	     }
-	     writer.endArray();		
+		for (Object fm : objectsList) {
+			if(fm!=null){
+				writeFridgeMagnet(writer, (FridgeMagnet)fm);
+			}
+		}	
+		writer.endArray();		
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -100,16 +108,16 @@ public class FridgeMagnetsManager implements RefriJsonReader, RefriJsonWriter {
 
 	private void writeFridgeMagnet(JsonWriter writer, FridgeMagnet fm) throws IOException{
 		writer.beginObject();
-	    writer.name("id_marca").value(fm.id_marca);
-	    writer.name("id_pais").value(fm.id_pais);
-	    writer.name("id_categoria").value(fm.id_categoria);
-	    writer.name("nombre").value(fm.nombre);
-	    writer.name("logo").value(fm.logo);
-	    writer.name("descripcion").value(fm.descripcion);
-	    writer.name("info").value(fm.info);
-	    writer.name("imantado_default").value(fm.imantado_default);
-	    writer.name("imantado_busqueda_top").value(fm.imantado_busqueda_top);
-	    writer.name("imantado_busqueda_cat").value(fm.imantado_busqueda_cat);
-	    writer.endObject();
+		writer.name("id_marca").value(fm.id_marca);
+		writer.name("id_pais").value(fm.id_pais);
+		writer.name("id_categoria").value(fm.id_categoria);
+		writer.name("nombre").value(fm.nombre);
+		writer.name("logo").value(fm.logo);
+		writer.name("descripcion").value(fm.descripcion);
+		writer.name("info").value(fm.info);
+		writer.name("imantado_default").value(fm.imantado_default);
+		writer.name("imantado_busqueda_top").value(fm.imantado_busqueda_top);
+		writer.name("imantado_busqueda_cat").value(fm.imantado_busqueda_cat);
+		writer.endObject();
 	}
 }

@@ -11,7 +11,8 @@ public class Store {
 	telefono3: null,
 	direccion: "",
 	tipo: "",
-	estado: "1"
+	estado: "1",
+	ciudad: "",
 	}
 	*/
 	Integer id_marcas_sucursal;
@@ -22,5 +23,6 @@ public class Store {
 	String telefono3;
 	String direccion;
 	String tipo;
+	String ciudad;
 	Integer estado; 
 }

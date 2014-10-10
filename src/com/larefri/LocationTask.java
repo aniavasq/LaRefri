@@ -14,7 +14,6 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
-import android.util.Log;
 
 public class LocationTask extends AsyncTask<Void, Void, List<Address>> {
 
@@ -68,12 +67,11 @@ public class LocationTask extends AsyncTask<Void, Void, List<Address>> {
 			try {
 				this.addresses = gcd.getFromLocation(currentLatitude, currentLongitude,10);
 				break;
-			} catch (IOException e) { tryes--; }
+			} catch (IOException doNotCare) { }
 			tryes++;
         }
 		if (addresses.size() > 0){
             this.setCity(this.addresses.get(0).getLocality().toString());
-            Log.e("CURRENT CITY",this.getCity());
         }
 	}
 
