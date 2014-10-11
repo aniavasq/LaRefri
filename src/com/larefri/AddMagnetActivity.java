@@ -135,7 +135,9 @@ public class AddMagnetActivity extends Activity {
 			//construct form to HttpRequest
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("id_marca", fm.id_marca.toString()));
-			(new DownloadFridgeMagnetLogo()).execute(StaticUrls.FRIDGE_MAGNETS, fm.logo);
+			(new DownloadFridgeMagnetLogo()).execute(
+					StaticUrls.FRIDGE_MAGNETS, 
+					fm.logo);
 			/**/
 			try {
 				addMagnetToLocalData(this.fm);
@@ -146,6 +148,11 @@ public class AddMagnetActivity extends Activity {
 			}
 			(new DownloadMagnetStoresRestClient()).execute(
 					StaticUrls.SUCURSALES_URL, 
+					params,
+					nameValuePairs,
+					this.fm);
+			(new DownloadFlyerRestClient((Activity)context)).execute(
+					StaticUrls.FLYER_PROMO, 
 					params,
 					nameValuePairs,
 					this.fm);
@@ -289,7 +296,7 @@ public class AddMagnetActivity extends Activity {
 		for(Button b:buttons){
 			store_call_pane.addView(b);
 		}
-	}	
+	}
 
 	private void saveFridgeMagnetsList() throws FileNotFoundException, IOException {
 		File JsonFile = new File(getFilesDir(), "data.json");		

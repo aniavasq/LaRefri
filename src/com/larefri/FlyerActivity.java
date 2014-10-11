@@ -1,6 +1,12 @@
 package com.larefri;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,20 +45,45 @@ public class FlyerActivity extends Activity {
 		this.width = dm.widthPixels;		
 		
 		ImageView image = (ImageView)findViewById(R.id.magnetfridge_logo);
-		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width/2,width/2);
-		image.setLayoutParams(lp);
+		RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams((int)(width*0.9),(int)(width*0.75));
+
+		List<Flyer> flyers = getFlyer(this.id_marca);
+		for (Flyer f: flyers){
+			ImageView flyer = (ImageView)findViewById(R.id.flyer_view);
+			flyer.setLayoutParams(lp);
+			File imgFlyer = new File(getFilesDir(), f.imagen);
+			Drawable df = Drawable.createFromPath(imgFlyer.getAbsolutePath());
+			
+			flyer.setImageDrawable(df);
+		}
+		LinearLayout.LayoutParams ll = new LinearLayout.LayoutParams(width/2,width/2);
+		image.setLayoutParams(ll);
 		TextView nameview = (TextView)findViewById(R.id.magnetfridge_name);
 		File imgFile = new File(getFilesDir(), logo);
 		Drawable d = Drawable.createFromPath(imgFile.getAbsolutePath());
 		image.setImageDrawable(d);
 		//image.setImageDrawable(Drawable.createFromStream(getAssets().open(logo), null));
 		nameview.setText(nombre);
-		//Log.v("id_marca",""+id_marca);
+	}
+
+	private List<Flyer> getFlyer(Integer id_marca) {		
+		try {
+			File fl = new File(getFilesDir(),id_marca+"_flyer.json");
+			FileInputStream fin;
+			fin = new FileInputStream(fl);
+		    List<Flyer> ret = (new FlyerManager()).readJsonStream(fin);
+		    fin.close();
+		    return ret;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return new ArrayList<Flyer>();
 	}
 
 	@Override
 	protected void onStart() {
-		// TODO Auto-generated method stub
 		super.onStart();
 		setBackground();
 	}

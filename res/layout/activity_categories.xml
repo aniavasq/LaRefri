@@ -20,8 +20,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/logorefri" 
-            android:contentDescription="@string/desc"/>
+            android:contentDescription="@string/desc"
+            android:src="@drawable/logorefri" />
 
         <ImageButton
             android:id="@+id/overflowbutton"
@@ -29,11 +29,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_action_previous_item"
-     		android:background="@android:color/transparent"
-     		android:onClick="onBackPressed" 
-            android:contentDescription="@string/desc"/>
-
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/desc"
+            android:onClick="onBackPressed"
+            android:src="@drawable/ic_action_previous_item" />
     </RelativeLayout>
 
     <LinearLayout
@@ -56,28 +55,29 @@
             android:orientation="horizontal" >
         </View>
 
-        <RelativeLayout 
-            android:layout_height="match_parent"
-            android:layout_width="match_parent">
         <RelativeLayout
-            android:id="@+id/shadow_sec"
             android:layout_width="match_parent"
-            android:layout_height="23px"
-            android:gravity="top"
-            android:background="@drawable/back_ground_with_shadow" >
-        </RelativeLayout>
+            android:layout_height="match_parent" >
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="bottom" >
-
-            <TableLayout
-                android:id="@+id/category_buttons"
+            <RelativeLayout
+                android:id="@+id/shadow_sec"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
-            </TableLayout>
-        </ScrollView>
+                android:layout_height="23px"
+                android:background="@drawable/back_ground_with_shadow"
+                android:gravity="top" >
+            </RelativeLayout>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="bottom" >
+
+                <TableLayout
+                    android:id="@+id/category_buttons"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+                </TableLayout>
+            </ScrollView>
         </RelativeLayout>
     </LinearLayout>
 

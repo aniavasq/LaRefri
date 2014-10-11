@@ -9,4 +9,6 @@ public class StaticUrls {
 	public final static String CATEGORIES = "https://gripapps.com/larefri/actions/getCategorias.php";
 	public final static String ICONS_CATEGORIES = "https://gripapps.com/larefri/categorias/";
 	public final static String FRIDGE_MAGNETS = "http://gripapps.com/larefri/img/";//"https://gripapps.com/larefri/imantados/";
+	public final static String FLYER_PROMO = "https://gripapps.com/larefri/actions/getSinglePromo.php";
+	public final static String FLYER_IMGS = "http://gripapps.com/larefri/img/";
 }
