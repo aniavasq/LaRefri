@@ -14,7 +14,6 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -133,7 +132,7 @@ public class FlyerActivity extends Activity {
 	public void onPhoneGuide(View view) {
 		Intent intent = new Intent(view.getContext(), PhoneGuideActivity.class);
 		Bundle b = new Bundle();
-	    b.putInt("id_marca", id_marca); //Your id
+	    b.putInt("id_marca", id_marca); //ID
 	    b.putString("logo", logo);
 	    b.putString("nombre", nombre);
 	    intent.putExtras(b); //Put your id to your next Intent

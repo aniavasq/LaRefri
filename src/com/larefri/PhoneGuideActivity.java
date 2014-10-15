@@ -73,7 +73,7 @@ public class PhoneGuideActivity extends Activity {
 		ContextThemeWrapper themeWrapper = new ContextThemeWrapper(context, R.style.menu_button);
 	
 		for(final Store s: stores){
-			if(s!=null){
+			if(s!=null && s.ciudad.equalsIgnoreCase(settings.getString("current_city", "NO_CITY"))){
 				LinearLayout phone_num_pane = new LinearLayout(themeWrapper);
 				phone_num_pane.setOrientation(LinearLayout.VERTICAL);
 				phone_num_pane.setLayoutParams(lp);

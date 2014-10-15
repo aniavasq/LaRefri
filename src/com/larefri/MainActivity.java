@@ -277,13 +277,8 @@ public class MainActivity extends Activity {
 		}
         //check first time installed
         if (settings.getBoolean("my_first_time", true)) {
-		    //Create RestClient object to get HTTP response data and get the categories in the server
-			/*(new ThisRestClient()).execute(
-					StaticUrls.CATEGORIES, 
-					new HashMap<Object, Object>(),
-					new ArrayList<Object>());*/
-		    // record the fact that the APP has been started at least once
 			copyAssets();
+		    // record the fact that the APP has been started at least once
 		    settings.edit().putBoolean("my_first_time", false).commit(); 
 		}
         this.movNdel = createEditMagnetView();	

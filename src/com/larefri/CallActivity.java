@@ -1,12 +1,18 @@
 package com.larefri;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -18,9 +24,13 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.provider.Settings.Secure;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.View;
@@ -90,7 +100,7 @@ public class CallActivity extends Activity {
 		ContextThemeWrapper themeWrapper = new ContextThemeWrapper(context, R.style.menu_button);
 	
 		for(final Store s: stores){
-			if(s!=null){
+			if(s!=null && s.ciudad.equalsIgnoreCase(settings.getString("current_city", "NO_CITY"))){
 				LinearLayout phone_num_pane = new LinearLayout(themeWrapper);
 				phone_num_pane.setOrientation(LinearLayout.VERTICAL);
 				phone_num_pane.setLayoutParams(lp);
@@ -135,8 +145,7 @@ public class CallActivity extends Activity {
 					phone_num2.setOnClickListener(new OnClickListener() {							
 						@Override
 						public void onClick(View v) {
-							onCall(v, s.telefono2);
-							
+							onCall(v, s.telefono2);							
 						}
 					});
 					phone_num_pane.addView(phone_num2);
@@ -180,6 +189,84 @@ public class CallActivity extends Activity {
 	
 	public void onCall(View view, String phone){
 	    Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+phone));
+	    onCallLog(phone);
 	    startActivity(callIntent);
 	}
+	
+	public void onCallLog(String phone){
+		String android_id = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
+	    /*id_usuario id_marca*/
+	    HashMap<String, String> params = new HashMap<String, String>();
+		params.put("id_marca[]", id_marca.toString());
+		params.put("id_usuario", android_id);
+		//construct form to HttpRequest
+	    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+        nameValuePairs.add(new BasicNameValuePair("id_marca[]", id_marca.toString()));
+        nameValuePairs.add(new BasicNameValuePair("id_usuario", (android_id == null) ? "0": android_id));
+        if (isNetworkAvailable()){
+	        try {
+				for(LogCall l: getLocalCallLog()){
+					params.put("id_marca[]", l.id_marca.toString());
+					nameValuePairs.add(new BasicNameValuePair("id_marca[]", l.id_marca.toString()));
+				}
+			} catch (IOException doNotCare) { /*Lost Data*/ }
+	        RestClient restClient = new RestClient();
+	        restClient.execute(StaticUrls.LOG_CALLS,params, nameValuePairs);
+        }else{
+        	try {
+				saveLocalCallLog(phone);
+			} catch (IOException doNotCare) { /*Lost Data*/ }
+        }
+	}
+	
+	private void saveLocalCallLog(String phone) throws IOException{
+		FileOutputStream outputStream;
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss", Locale.getDefault()); 
+		String now = df.format(new Date());
+		File file = new File(getFilesDir(), "callLog.json");
+		outputStream = new FileOutputStream(file, true);
+        outputStream.write((id_marca.toString()+","+phone+","+now+"\n").getBytes());
+        outputStream.flush(); 
+        outputStream.close();
+	}
+	
+	private ArrayList<LogCall> getLocalCallLog() throws IOException{
+		FileInputStream inputStream;
+		ArrayList<LogCall> logCalls = new ArrayList<LogCall>();
+		BufferedReader reader;
+		File file = new File(getFilesDir(), "callLog.json");
+		inputStream = new FileInputStream(file);
+		reader = new BufferedReader(new InputStreamReader(inputStream));
+		String line = reader.readLine();
+		while(line != null && !line.equalsIgnoreCase("\n")){
+			Log.e("LinE",line);
+			line = reader.readLine();
+			try{
+				String[] tmp = line.split(",");
+				logCalls.add(new LogCall(Integer.parseInt(tmp[0]) , tmp[1], tmp[2]));
+			}catch(Exception doNotCare){ /*Lost Data*/ }
+		}
+		inputStream.close();
+		file.delete();
+		return logCalls;		
+	}
+	
+	private boolean isNetworkAvailable() {
+	    ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+	    return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+	}
+}
+
+class LogCall{
+	Integer id_marca;
+	String phone;
+	String date_time;
+	
+	public LogCall(Integer id_marca, String phone, String date_time) {
+		super();
+		this.id_marca = id_marca;
+		this.phone = phone;
+		this.date_time = date_time;
+	}	
 }
