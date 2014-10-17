@@ -159,6 +159,7 @@ public class AddMagnetActivity extends Activity {
 			button.setBackground(resources.getDrawable(R.drawable.menu_button_bg_disabled));
 			button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_favorite, 0);
 			button.setOnClickListener(new RemoveOnClickListener(fm, button));
+			button.setPadding(10, 0, 10, 1);
 		}
 	}
 	
@@ -184,6 +185,7 @@ public class AddMagnetActivity extends Activity {
 			button.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
 			button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_add, 0);
 			button.setOnClickListener(new AddOnClickListener(fm, button));
+			button.setPadding(10, 0, 10, 1);
 		}
 	}
 	
@@ -245,6 +247,7 @@ public class AddMagnetActivity extends Activity {
 	public void loadFridgeMagnetsButtons(List<FridgeMagnet> fridgeMagnets) {
 		LinearLayout store_call_pane = (LinearLayout) findViewById(R.id.add_fridge_magnets_buttons);
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, Gravity.LEFT);
+		lp.setMargins(0, 0, 0, 0);
 		Resources resources = getResources();
 		ContextThemeWrapper themeWrapper = new ContextThemeWrapper(context, R.style.menu_button);
 		ArrayList<Button> buttons = new ArrayList<Button>();
@@ -259,9 +262,10 @@ public class AddMagnetActivity extends Activity {
 				tmp_button.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
 				tmp_button.setText(fm.nombre);
 				tmp_button.setTextColor(Color.WHITE);
-				tmp_button.setGravity(Gravity.LEFT);
 				tmp_button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_add, 0);
 				tmp_button.setOnClickListener(new AddOnClickListener(fm, tmp_button));
+				tmp_button.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+				tmp_button.setPadding(10, 0, 10, 1);
 				buttons.add(tmp_button);
 			}
 		}
@@ -280,9 +284,9 @@ public class AddMagnetActivity extends Activity {
 				tmp_title.setBackground(resources.getDrawable(R.drawable.menu_button_bg_disabled));
 				tmp_title.setText(fm.nombre);
 				tmp_title.setTextColor(Color.WHITE);
-				tmp_title.setGravity(Gravity.LEFT);
+				tmp_title.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
 				tmp_title.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_favorite, 0);
-				tmp_title.setPadding(0, 0, 5, 0);
+				tmp_title.setPadding(10, 0, 10, 1);
 				tmp_title.setOnClickListener(new RemoveOnClickListener(fm, tmp_title));
 				buttons.add(tmp_title);
 			}

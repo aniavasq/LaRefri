@@ -72,11 +72,25 @@
                 android:layout_height="match_parent"
                 android:gravity="bottom" >
 
-                <TableLayout
-                    android:id="@+id/category_buttons"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" >
-                </TableLayout>
+                	android:layout_height="wrap_content"
+                	android:orientation="vertical">
+
+                    <TableLayout
+                        android:id="@+id/category_buttons"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+                    </TableLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:background="@android:color/transparent"
+                        android:gravity="top" >
+                    </RelativeLayout>
+
+                </LinearLayout>
             </ScrollView>
         </RelativeLayout>
     </LinearLayout>

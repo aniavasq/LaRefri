@@ -14,13 +14,12 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -52,12 +51,23 @@ public class CustomizingActivity extends Activity {
 			Iterator<Skin> skinsIterator = skins.iterator();
 			
 			LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width/2,width/2);
+			LinearLayout.LayoutParams lptx = new LinearLayout.LayoutParams(width/2,LayoutParams.WRAP_CONTENT);
+			LinearLayout.LayoutParams lptr = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+			lptr.setMargins(0, 0, 0, 0);
+			///
 			lp.gravity = Gravity.BOTTOM;
 			lp.weight = 1.0f;
 			lp.setMargins(0, 0, 0, 0);
+			///
+			lptx.gravity = Gravity.BOTTOM;
+			lptx.weight = 1.0f;
+			lptx.setMargins(0, 0, 0, 0);
+			///
+			mTlayout.setLayoutParams(lptr);
 			ContextThemeWrapper themeWrapper = new ContextThemeWrapper(context, R.style.menu_label);
 			for(int j=0; j<BUTTONPAD_ROWS; j++){
 				TableRow tr = new TableRow(mTlayout.getContext());
+				tr.setLayoutParams(lptr);
 				for(int i=0; i<BUTTONPAD_COLS; i++){
 					LinearLayout ll = new LinearLayout(context);
 					ll.setOrientation(LinearLayout.VERTICAL);
@@ -69,15 +79,18 @@ public class CustomizingActivity extends Activity {
 						d.setColor(Color.parseColor(s.head_skin));
 						d.setShape(GradientDrawable.OVAL);
 						d.setStroke(5, Color.WHITE);
-						
+
 						btn.setLayoutParams(lp);
 						btn.setImageDrawable(d);
 						btn.setBackgroundColor(Color.TRANSPARENT);
 						btn.setScaleType( ImageView.ScaleType.FIT_CENTER );
+						if(i%2 != 0)
+							btn.setPadding(10, 30, 20, 0);
+						else
+							btn.setPadding(20, 30, 10, 0);
 						btn.setOnClickListener(new OnClickListener() {							
 							@Override
 							public void onClick(View v) {
-								// TODO Auto-generated method stub
 								SharedPreferences.Editor editor = settings.edit();
 								editor.putInt("bg_color", Color.parseColor(s.head_skin));
 								editor.putInt("menu_bg_color", Color.parseColor(s.article_skin));
@@ -87,10 +100,15 @@ public class CustomizingActivity extends Activity {
 						});
 						
 						TextView tv = new TextView(themeWrapper);
+						tv.setLayoutParams(lptx);
 						tv.setText(s.name);
 						tv.setTextColor(Color.WHITE);
-						//tv.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
-						tv.setGravity(Gravity.CENTER_HORIZONTAL);
+						tv.setGravity(Gravity.CENTER);
+						tv.setPadding(0, 0, 0, 0);
+						if(i%2 == 0)
+							tv.setPadding(30, 0, 20, 0);
+						else
+							tv.setPadding(20, 0, 30, 0);
 						
 			            tr.addView(ll);
 						ll.addView(btn);
@@ -100,7 +118,6 @@ public class CustomizingActivity extends Activity {
 				mTlayout.addView(tr);
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -114,25 +131,6 @@ public class CustomizingActivity extends Activity {
 		head.setBackgroundColor(bg_color);
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.customizing, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-	
 	public static List<Skin> getSkinsFromJSON (File fl) throws Exception {
 	    FileInputStream fin = new FileInputStream(fl);
 	    List<Skin> ret = (new SkinsManager()).readJsonStream(fin);

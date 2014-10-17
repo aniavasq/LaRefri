@@ -78,11 +78,17 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical" >
 
-                    <LinearLayout
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="23px"
+                        android:background="@android:color/transparent" >
+                    </RelativeLayout>
+
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="20dp"
-                        android:paddingRight="20dp" >
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp" >
 
                         <TextView
                             android:id="@+id/btn_add_fridge_magnets"
@@ -91,15 +97,24 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/menu_button_bg"
                             android:text="@string/title_activity_customizing" />
-                    </LinearLayout>
+                    </RelativeLayout>
 
                     <TableLayout
                         android:id="@+id/set_theme_buttons"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" >
                     </TableLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:background="@android:color/transparent"
+                        android:gravity="top" >
+                    </RelativeLayout>
+
                 </LinearLayout>
             </ScrollView>
         </RelativeLayout>
     </LinearLayout>
+
 </RelativeLayout>

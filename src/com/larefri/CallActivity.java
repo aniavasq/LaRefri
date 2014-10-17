@@ -112,8 +112,8 @@ public class CallActivity extends Activity {
 				tmp_title.setText(s.nombre);
 				tmp_title.setTextColor(Color.WHITE);
 				tmp_title.setGravity(Gravity.LEFT);
-				//tmp_title.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_contact, 0);
-				tmp_title.setPadding(0, 0, 5, 0);				
+				tmp_title.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+				tmp_title.setPadding(10, 0, 10, 1);		
 				phone_num_pane.addView(tmp_title);
 				
 				Button phone_num = new Button(themeWrapper);
@@ -123,7 +123,8 @@ public class CallActivity extends Activity {
 				phone_num.setTextColor(Color.WHITE);
 				phone_num.setGravity(Gravity.LEFT);
 				phone_num.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_call, 0);
-				phone_num.setPadding(0, 0, 0, 15);	
+				phone_num.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+				phone_num.setPadding(10, 0, 10, 1);		
 				phone_num.setOnClickListener(new OnClickListener() {							
 					@Override
 					public void onClick(View v) {
@@ -141,7 +142,8 @@ public class CallActivity extends Activity {
 					phone_num2.setTextColor(Color.WHITE);
 					phone_num2.setGravity(Gravity.LEFT);
 					phone_num2.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_call, 0);
-					phone_num2.setPadding(0, 0, 0, 15);
+					phone_num2.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+					phone_num2.setPadding(10, 0, 10, 1);
 					phone_num2.setOnClickListener(new OnClickListener() {							
 						@Override
 						public void onClick(View v) {
@@ -159,7 +161,9 @@ public class CallActivity extends Activity {
 					phone_num3.setTextColor(Color.WHITE);
 					phone_num3.setGravity(Gravity.LEFT);
 					phone_num3.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_call, 0);
-					phone_num3.setPadding(0, 0, 0, 15);
+					phone_num3.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+					phone_num3.setPadding(10, 0, 10, 1);		
+					//phone_num3.setPadding(0, 0, 0, 15);
 					phone_num3.setOnClickListener(new OnClickListener() {							
 						@Override
 						public void onClick(View v) {
