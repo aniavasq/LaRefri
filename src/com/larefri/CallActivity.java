@@ -111,7 +111,6 @@ public class CallActivity extends Activity {
 				tmp_title.setBackgroundColor(Color.parseColor("#4B4743"));
 				tmp_title.setText(s.nombre);
 				tmp_title.setTextColor(Color.WHITE);
-				tmp_title.setGravity(Gravity.LEFT);
 				tmp_title.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
 				tmp_title.setPadding(10, 0, 10, 1);		
 				phone_num_pane.addView(tmp_title);
@@ -121,7 +120,6 @@ public class CallActivity extends Activity {
 				phone_num.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
 				phone_num.setText(s.telefono);
 				phone_num.setTextColor(Color.WHITE);
-				phone_num.setGravity(Gravity.LEFT);
 				phone_num.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_call, 0);
 				phone_num.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
 				phone_num.setPadding(10, 0, 10, 1);		
@@ -140,7 +138,6 @@ public class CallActivity extends Activity {
 					phone_num2.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
 					phone_num2.setText(s.telefono2);
 					phone_num2.setTextColor(Color.WHITE);
-					phone_num2.setGravity(Gravity.LEFT);
 					phone_num2.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_call, 0);
 					phone_num2.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
 					phone_num2.setPadding(10, 0, 10, 1);
@@ -159,11 +156,9 @@ public class CallActivity extends Activity {
 					phone_num3.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
 					phone_num3.setText(s.telefono3);
 					phone_num3.setTextColor(Color.WHITE);
-					phone_num3.setGravity(Gravity.LEFT);
 					phone_num3.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_call, 0);
 					phone_num3.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-					phone_num3.setPadding(10, 0, 10, 1);		
-					//phone_num3.setPadding(0, 0, 0, 15);
+					phone_num3.setPadding(10, 0, 10, 1);
 					phone_num3.setOnClickListener(new OnClickListener() {							
 						@Override
 						public void onClick(View v) {

@@ -84,9 +84,10 @@ public class PhoneGuideActivity extends Activity {
 				tmp_title.setBackgroundColor(Color.parseColor("#4B4743"));
 				tmp_title.setText(s.nombre);
 				tmp_title.setTextColor(Color.WHITE);
-				tmp_title.setGravity(Gravity.LEFT);
 				tmp_title.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_contact, 0);
-				tmp_title.setPadding(0, 0, 5, 0);				
+				tmp_title.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+				tmp_title.setPadding(10, 0, 10, 1);
+				//tmp_title.setPadding(0, 0, 5, 0);		
 				phone_num_pane.addView(tmp_title);
 				
 				TextView phone_dir = new TextView(themeWrapper);
@@ -94,8 +95,9 @@ public class PhoneGuideActivity extends Activity {
 				phone_dir.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
 				phone_dir.setText(s.direccion);
 				phone_dir.setTextColor(Color.WHITE);
-				phone_dir.setGravity(Gravity.LEFT);
-				phone_dir.setPadding(0, 0, 0, 15);				
+				phone_dir.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+				phone_dir.setPadding(10, 0, 10, 1);
+				//phone_dir.setPadding(0, 0, 0, 15);				
 				phone_num_pane.addView(phone_dir);
 				store_call_pane.addView(phone_num_pane);
 			}		

@@ -44,12 +44,12 @@ public class FlyerActivity extends Activity {
 		this.width = dm.widthPixels;		
 		
 		ImageView image = (ImageView)findViewById(R.id.magnetfridge_logo);
-		RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams((int)(width*0.9),(int)(width*0.75));
+		//RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams((int)(width*0.95),(int)(width*0.95));
 
 		List<Flyer> flyers = getFlyer(this.id_marca);
 		for (Flyer f: flyers){
 			ImageView flyer = (ImageView)findViewById(R.id.flyer_view);
-			flyer.setLayoutParams(lp);
+			//flyer.setLayoutParams(lp);
 			File imgFlyer = new File(getFilesDir(), f.imagen);
 			Drawable df = Drawable.createFromPath(imgFlyer.getAbsolutePath());
 			

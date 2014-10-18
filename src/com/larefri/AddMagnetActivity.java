@@ -64,9 +64,9 @@ public class AddMagnetActivity extends Activity {
 			if (dialog.isShowing()) {
 	            dialog.dismiss();
 	        }
-			InputStream is = new ByteArrayInputStream(result.toString().getBytes());
-			FridgeMagnetsManager fridgeMagnetsManager = new FridgeMagnetsManager();
 			try {
+				InputStream is = new ByteArrayInputStream(result.toString().getBytes());
+				FridgeMagnetsManager fridgeMagnetsManager = new FridgeMagnetsManager();
 				loadedFridgeMagnets = fridgeMagnetsManager.readJsonStream(is);
 				loadFridgeMagnetsButtons(loadedFridgeMagnets);
 			} catch (NotFoundException e) {
@@ -218,10 +218,9 @@ public class AddMagnetActivity extends Activity {
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 		nameValuePairs.add(new BasicNameValuePair("id_categoria", id_category.toString()));
 		(new ThisRestClient()).execute(
-				//StaticUrls.MAGNETS,
 				StaticUrls.MAGNETS_BY_CATEGORY, 
 				params,
-				nameValuePairs);			
+				nameValuePairs);
 	}
 
 	@Override

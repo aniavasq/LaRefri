@@ -1024,7 +1024,7 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f050016;
         public static final int action_menu_presenter=0x7f050017;
         public static final int action_mode_close_button=0x7f050024;
-        public static final int action_settings=0x7f05005d;
+        public static final int action_settings=0x7f05005e;
         public static final int activity_chooser_view_content=0x7f050025;
         public static final int add_fridge_magnets_buttons=0x7f050051;
         public static final int always=0x7f05000b;
@@ -1035,13 +1035,13 @@ containing a value of this type.
         public static final int btn_customize=0x7f050043;
         public static final int btn_notifications=0x7f050059;
         public static final int button1=0x7f05004d;
-        public static final int call_btn=0x7f05005c;
+        public static final int call_btn=0x7f05005d;
         public static final int category_buttons=0x7f050053;
         public static final int checkbox=0x7f05002d;
         public static final int city_txt=0x7f050049;
         public static final int collapseActionView=0x7f05000d;
         public static final int confirm_pass_txt=0x7f05004c;
-        public static final int contact_btn=0x7f05005b;
+        public static final int contact_btn=0x7f05005c;
         public static final int default_activity_button=0x7f050028;
         public static final int dialog=0x7f05000e;
         public static final int disableHome=0x7f050008;
@@ -1095,6 +1095,7 @@ containing a value of this type.
         public static final int showCustom=0x7f050007;
         public static final int showHome=0x7f050004;
         public static final int showTitle=0x7f050006;
+        public static final int some_relative_layout=0x7f05005b;
         public static final int split_action_bar=0x7f05001e;
         public static final int stores_call_buttons=0x7f050052;
         public static final int submit_area=0x7f050039;
