@@ -34,7 +34,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.DragEvent;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -212,16 +211,6 @@ public class MainActivity extends Activity {
         this.myScrollView = (ScrollView) findViewById(R.id.the_scroll_view);
         //Location
         this.locationTask = new LocationTask(this.context, this);
-        //Check Updates
-        HashMap<String, String> params = new HashMap<String, String>();
-		String last_update = settings.getString("last_update", "2014-10-14 18:49:50");
-		params.put("ultima_actualizacion", last_update);
-        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-        nameValuePairs.add(new BasicNameValuePair("ultima_actualizacion", last_update));
-		(new UpdateFridgeMagnetsListener(this)).execute(
-				StaticUrls.UPDATES, 
-				params,
-				nameValuePairs);
 	}
 
 	public void downloadImageFromServer(String url, String file) throws MalformedURLException, IOException {
@@ -286,12 +275,22 @@ public class MainActivity extends Activity {
 		try {
 			loadFridgeMagnetsFromFile(left_pane_fridgemagnets, right_pane_fridgemagnets, lp);
 		} catch (IOException e) {
-			Log.e("No file",e.getMessage());
+			//Log.e("No file",e.getMessage());
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		//Update phone guide
+        //Check Updates
+        HashMap<String, String> params = new HashMap<String, String>();
+		String last_update = settings.getString("last_update", "2014-10-14 18:49:50");
+		params.put("ultima_actualizacion", last_update);
+        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+        nameValuePairs.add(new BasicNameValuePair("ultima_actualizacion", last_update));
+		(new UpdateFridgeMagnetsListener(this, fridgeMagnets)).execute(
+				StaticUrls.UPDATES, 
+				params,
+				nameValuePairs);
 	}
 
 	@Override

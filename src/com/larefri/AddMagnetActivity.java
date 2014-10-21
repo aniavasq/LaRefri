@@ -81,26 +81,6 @@ public class AddMagnetActivity extends Activity {
 		
 	}
 	
-	class DownloadMagnetStoresRestClient extends RestClient{
-		@Override
-		protected Object doInBackground(Object... params) {
-			this.setResult(super.doInBackground(params));
-			FridgeMagnet for_add = new FridgeMagnet();
-			
-			for_add = (FridgeMagnet) params[3];
-			InputStream is = new ByteArrayInputStream(getResult().toString().getBytes());
-			StoresManager storesManager = new StoresManager();
-			try {			
-				List<Store> stores = storesManager.readJsonStream(is);
-				File JsonFile = new File(getFilesDir(), for_add.id_marca+"_sucursales.json");
-				storesManager.writeJsonStream(new FileOutputStream(JsonFile), stores);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			return this.getResult();
-		}
-	}
-	
 	class DownloadFridgeMagnetLogo extends AsyncTask<String, String, Boolean>{
 		@Override
 		protected Boolean doInBackground(String... params) {
@@ -146,7 +126,7 @@ public class AddMagnetActivity extends Activity {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			(new DownloadMagnetStoresRestClient()).execute(
+			(new DownloadMagnetStoresRestClient((Activity)context)).execute(
 					StaticUrls.SUCURSALES_URL, 
 					params,
 					nameValuePairs,
@@ -323,5 +303,32 @@ public class AddMagnetActivity extends Activity {
 	public void onHomePressed(View view){
 		Intent intent = new Intent(view.getContext(), MainActivity.class);
 	    this.startActivity(intent);
+	}
+}
+
+class DownloadMagnetStoresRestClient extends RestClient{
+	private Activity master;
+	
+	public DownloadMagnetStoresRestClient(Activity master) {
+		super();
+		this.master = master;
+	}
+
+	@Override
+	protected Object doInBackground(Object... params) {
+		this.setResult(super.doInBackground(params));
+		FridgeMagnet for_add = new FridgeMagnet();
+		
+		for_add = (FridgeMagnet) params[3];
+		InputStream is = new ByteArrayInputStream(getResult().toString().getBytes());
+		StoresManager storesManager = new StoresManager();
+		try {			
+			List<Store> stores = storesManager.readJsonStream(is);
+			File JsonFile = new File(master.getFilesDir(), for_add.id_marca+"_sucursales.json");
+			storesManager.writeJsonStream(new FileOutputStream(JsonFile), stores);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return this.getResult();
 	}
 }

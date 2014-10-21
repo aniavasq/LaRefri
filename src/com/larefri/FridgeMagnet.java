@@ -30,6 +30,15 @@ public class FridgeMagnet {
 	Integer pos_x;
 	Integer pos_y;
 	
+	public FridgeMagnet(Integer id_marca) {
+		super();
+		this.id_marca = id_marca;
+	}
+
+	public FridgeMagnet() {
+		super();
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		return ((FridgeMagnet) o).id_marca == this.id_marca;

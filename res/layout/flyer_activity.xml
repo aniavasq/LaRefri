@@ -71,7 +71,8 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" >
+                    android:layout_height="wrap_content" 
+                    android:layout_margin="0dp">
 
                     <RelativeLayout
                         android:id="@+id/some_relative_layout"
@@ -84,7 +85,7 @@
                             android:layout_alignParentTop="true"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="80dp"
+                            android:layout_marginTop="85dp"
                             android:gravity="center" >
 
                             <ImageView
@@ -101,6 +102,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
+                            android:layout_marginTop="5dp"
                             android:orientation="horizontal"
                             android:paddingTop="2dp" >
 
@@ -115,7 +117,7 @@
                                 android:id="@+id/magnetfridge_name"
                                 style="@style/menu_button"
                                 android:layout_width="0dp"
-                                android:layout_height="85dp"
+                                android:layout_height="150dp"
                                 android:layout_weight="0.5"
                                 android:gravity="center_vertical" />
                         </LinearLayout>
