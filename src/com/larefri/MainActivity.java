@@ -140,8 +140,7 @@ public class MainActivity extends Activity {
 				v.getLocationOnScreen(array);
 				if (array[1] < height/4) {
 					myScrollView.smoothScrollBy(0, -75);
-				}
-				if (array[1] > 3*height/4) {
+				}else if (array[1] > 3*height/4) {
 					myScrollView.smoothScrollBy(0, 75);
 				}
 				break;
@@ -288,7 +287,7 @@ public class MainActivity extends Activity {
         List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
         nameValuePairs.add(new BasicNameValuePair("ultima_actualizacion", last_update));
 		(new UpdateFridgeMagnetsListener(this, fridgeMagnets)).execute(
-				StaticUrls.UPDATES, 
+				StaticUrls.UPDATES,
 				params,
 				nameValuePairs);
 	}
@@ -332,7 +331,7 @@ public class MainActivity extends Activity {
 	          os.write(bytes, 0, count);
 	        }
 	    }
-	    catch(Exception ex){}
+	    catch(Exception ex){ }
 	}
 	
 	public void loadFridgeMagnetsFromFile(LinearLayout left_pane_fridgemagnets, LinearLayout right_pane_fridgemagnets, LayoutParams lp) throws IOException{

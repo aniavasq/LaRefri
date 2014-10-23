@@ -248,10 +248,11 @@ int drawable ic_move 0x7f020063
 int drawable logorefri 0x7f020064
 int drawable menu_button_bg 0x7f020065
 int drawable menu_button_bg_disabled 0x7f020066
-int drawable rounded_button 0x7f020067
-int drawable separator 0x7f020068
-int drawable skin_button 0x7f020069
-int drawable splash 0x7f02006a
+int drawable menu_label_bg 0x7f020067
+int drawable rounded_button 0x7f020068
+int drawable separator 0x7f020069
+int drawable skin_button 0x7f02006a
+int drawable splash 0x7f02006b
 int id action_bar 0x7f05001c
 int id action_bar_activity_content 0x7f050015
 int id action_bar_container 0x7f05001b

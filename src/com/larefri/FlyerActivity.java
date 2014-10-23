@@ -14,8 +14,6 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -51,8 +49,7 @@ public class FlyerActivity extends Activity {
 			ImageView flyer = (ImageView)findViewById(R.id.flyer_view);
 			//flyer.setLayoutParams(lp);
 			File imgFlyer = new File(getFilesDir(), f.imagen);
-			Drawable df = Drawable.createFromPath(imgFlyer.getAbsolutePath());
-			
+			Drawable df = Drawable.createFromPath(imgFlyer.getAbsolutePath());			
 			flyer.setImageDrawable(df);
 		}
 		LinearLayout.LayoutParams ll = new LinearLayout.LayoutParams(width/2,width/2);
@@ -94,25 +91,6 @@ public class FlyerActivity extends Activity {
 		int menu_bg_color = settings.getInt("menu_bg_color", Color.parseColor("#6B6560"));
 		article.setBackgroundColor(menu_bg_color);
 		head.setBackgroundColor(bg_color);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.flyer, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
 	}
 	
 	public void onBackPressed(View view) {

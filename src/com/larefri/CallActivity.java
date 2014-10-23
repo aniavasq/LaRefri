@@ -30,6 +30,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.Settings.Secure;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
@@ -60,6 +61,9 @@ public class CallActivity extends Activity {
 		id_marca = b.getInt("id_marca");
 		logo = b.getString("logo");
 		nombre = b.getString("nombre");
+		DisplayMetrics dm = new DisplayMetrics();
+		this.getWindow().getWindowManager().getDefaultDisplay().getMetrics(dm);
+		int width = dm.widthPixels;	
 		
 		ImageView image = (ImageView)findViewById(R.id.magnetfridge_logo);
 		TextView nameview = (TextView)findViewById(R.id.magnetfridge_name);
@@ -81,6 +85,8 @@ public class CallActivity extends Activity {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+        LinearLayout.LayoutParams ll = new LinearLayout.LayoutParams(width/2-20,width/2-20);
+		image.setLayoutParams(ll);
 		File imgFile = new File(getFilesDir(), logo);
 		Drawable d = Drawable.createFromPath(imgFile.getAbsolutePath());
 		image.setImageDrawable(d);
@@ -107,8 +113,7 @@ public class CallActivity extends Activity {
 				
 				TextView tmp_title = new Button(themeWrapper);
 				tmp_title.setLayoutParams(lp);
-				tmp_title.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
-				tmp_title.setBackgroundColor(Color.parseColor("#4B4743"));
+				tmp_title.setBackground(resources.getDrawable(R.drawable.menu_label_bg));
 				tmp_title.setText(s.nombre);
 				tmp_title.setTextColor(Color.WHITE);
 				tmp_title.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
@@ -117,10 +122,10 @@ public class CallActivity extends Activity {
 				
 				Button phone_num = new Button(themeWrapper);
 				phone_num.setLayoutParams(lp);
-				phone_num.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
 				phone_num.setText(s.telefono);
 				phone_num.setTextColor(Color.WHITE);
 				phone_num.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_call, 0);
+				phone_num.setBackgroundColor(Color.TRANSPARENT);
 				phone_num.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
 				phone_num.setPadding(10, 0, 10, 1);		
 				phone_num.setOnClickListener(new OnClickListener() {							
@@ -132,12 +137,14 @@ public class CallActivity extends Activity {
 				});
 				phone_num_pane.addView(phone_num);
 				
+				Button phone_num2 = new Button(themeWrapper);
 				if(!s.telefono2.isEmpty()){
-					Button phone_num2 = new Button(themeWrapper);
+					phone_num.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
+					phone_num.setPadding(10, 0, 10, 1);
 					phone_num2.setLayoutParams(lp);
-					phone_num2.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
 					phone_num2.setText(s.telefono2);
 					phone_num2.setTextColor(Color.WHITE);
+					phone_num2.setBackgroundColor(Color.TRANSPARENT);
 					phone_num2.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_call, 0);
 					phone_num2.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
 					phone_num2.setPadding(10, 0, 10, 1);
@@ -151,11 +158,14 @@ public class CallActivity extends Activity {
 				}
 				
 				if(!s.telefono3.isEmpty()){
+					phone_num2.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
+					phone_num2.setPadding(10, 0, 10, 1);
 					Button phone_num3 = new Button(themeWrapper);
 					phone_num3.setLayoutParams(lp);
 					phone_num3.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
 					phone_num3.setText(s.telefono3);
 					phone_num3.setTextColor(Color.WHITE);
+					phone_num3.setBackgroundColor(Color.TRANSPARENT);
 					phone_num3.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_call, 0);
 					phone_num3.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
 					phone_num3.setPadding(10, 0, 10, 1);
@@ -168,6 +178,11 @@ public class CallActivity extends Activity {
 					});
 					phone_num_pane.addView(phone_num3);
 				}
+				LinearLayout ll = new LinearLayout(this);
+				LinearLayout.LayoutParams trlp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 20);
+				ll.setLayoutParams(trlp);
+				ll.setBackgroundColor(Color.TRANSPARENT);
+				phone_num_pane.addView(ll);
 				store_call_pane.addView(phone_num_pane);
 			}
 		}

@@ -23,6 +23,7 @@ import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.LinearLayout.LayoutParams;
 
 public class CategoriesActivity extends Activity {
 
@@ -33,28 +34,37 @@ public class CategoriesActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_categories);
-		
+
 		DisplayMetrics dm = new DisplayMetrics();
 		this.getWindow().getWindowManager().getDefaultDisplay().getMetrics(dm);
 		int width = dm.widthPixels;
 		settings = getSharedPreferences("LaRefriPrefsFile", 0);
-		
+
 		TableLayout mTlayout = (TableLayout) findViewById(R.id.category_buttons);
 		try {
 			List<Category> categories = getCategoriesFromJSON(new File(getFilesDir(),"categories.json"));
 			Iterator<Category> categoriesIterator = categories.iterator();
-			
+
 			LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width/3,width/3);
+			LinearLayout.LayoutParams lptx = new LinearLayout.LayoutParams(width/3,LayoutParams.WRAP_CONTENT);
+			LinearLayout.LayoutParams lptr = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+			lptr.setMargins(0, 0, 0, 0);
+			///
 			lp.gravity = Gravity.BOTTOM;
 			lp.weight = 1.0f;
 			lp.setMargins(0, 0, 0, 0);
+			///
+			lptx.gravity = Gravity.BOTTOM;
+			lptx.weight = 1.0f;
+			lptx.setMargins(0, 0, 0, 0);
+			///
+			mTlayout.setLayoutParams(lptr);
 			for(int j=0; j<BUTTONPAD_ROWS; j++){
 				TableRow tr = new TableRow(mTlayout.getContext());
 				for(int i=0; i<BUTTONPAD_COLS; i++){
 					LinearLayout ll = new LinearLayout(this);
 					ll.setOrientation(LinearLayout.VERTICAL);
 					ll.setGravity(Gravity.BOTTOM);
-					
 					final Category c = categoriesIterator.next();
 					File imgFile = new File(getFilesDir(), c.icono_categoria);
 					ImageButton btn = new ImageButton(this);
@@ -62,7 +72,13 @@ public class CategoriesActivity extends Activity {
 					btn.setLayoutParams(lp);
 					btn.setImageBitmap(bmp);
 					btn.setBackgroundColor(Color.TRANSPARENT);
-					btn.setScaleType( ImageView.ScaleType.FIT_CENTER );
+					btn.setScaleType( ImageView.ScaleType.FIT_XY );
+					if(i%3 != 0)
+						btn.setPadding(10, 30, 20, 0);
+					else if(i%3 != 1)
+						btn.setPadding(15, 30, 15, 0);
+					else
+						btn.setPadding(20, 30, 10, 0);
 					if(!c.nombre_categoria.equalsIgnoreCase("buscar"))
 						btn.setOnClickListener(new OnClickListener() {
 							@Override
@@ -77,13 +93,14 @@ public class CategoriesActivity extends Activity {
 								goToSearchMagnets(v, c);
 							}
 						});
-					
+
 					TextView tv = new TextView(this);
+					tv.setLayoutParams(lptx);
 					tv.setText(c.nombre_categoria);
 					tv.setTextColor(Color.WHITE);
-					tv.setGravity(Gravity.CENTER_HORIZONTAL);
+					tv.setGravity(Gravity.CENTER);
 
-		            tr.addView(ll);
+					tr.addView(ll);
 					ll.addView(btn);
 					ll.addView(tv);
 				}
@@ -102,32 +119,32 @@ public class CategoriesActivity extends Activity {
 
 	protected void goToAddMagnets(View view, Category c) {
 		Intent intent = new Intent(view.getContext(), AddMagnetActivity.class);
-	    Bundle b = new Bundle();
-	    b.putInt("id_categoria", c.id_categoria);
-	    b.putString("logo", c.icono_categoria);
-	    b.putString("nombre", c.nombre_categoria);
-	    intent.putExtras(b);
-	    this.startActivity(intent);
+		Bundle b = new Bundle();
+		b.putInt("id_categoria", c.id_categoria);
+		b.putString("logo", c.icono_categoria);
+		b.putString("nombre", c.nombre_categoria);
+		intent.putExtras(b);
+		this.startActivity(intent);
 	}
-	
+
 	protected void goToSearchMagnets(View view, Category c) {
 		Intent intent = new Intent(view.getContext(), SearchFridgeMagnetActivity.class);
-	    Bundle b = new Bundle();
-	    b.putInt("id_categoria", c.id_categoria);
-	    b.putString("logo", c.icono_categoria);
-	    b.putString("nombre", c.nombre_categoria);
-	    intent.putExtras(b);
-	    this.startActivity(intent);
+		Bundle b = new Bundle();
+		b.putInt("id_categoria", c.id_categoria);
+		b.putString("logo", c.icono_categoria);
+		b.putString("nombre", c.nombre_categoria);
+		intent.putExtras(b);
+		this.startActivity(intent);
 	}
 
 	public static List<Category> getCategoriesFromJSON (File fl) throws Exception {
-	    FileInputStream fin = new FileInputStream(fl);
-	    List<Category> ret = (new CategoriesManager()).readJsonStream(fin);
-	    //Make sure you close all streams.
-	    fin.close();        
-	    return ret;
+		FileInputStream fin = new FileInputStream(fl);
+		List<Category> ret = (new CategoriesManager()).readJsonStream(fin);
+		//Make sure you close all streams.
+		fin.close();        
+		return ret;
 	}
-	
+
 	public void onBackPressed(View view) {
 		this.finish();
 	}

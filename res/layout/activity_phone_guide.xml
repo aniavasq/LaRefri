@@ -79,7 +79,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="20dp"
                         android:layout_marginRight="20dp"
-                        android:background="@drawable/menu_button_bg"
+                        android:layout_marginTop="20dp"
+                        android:paddingBottom="20dp"
                         android:orientation="horizontal" >
 
                         <ImageView
@@ -94,7 +95,8 @@
                             style="@style/menu_button"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.5" />
+                            android:layout_weight="0.5"
+                            android:layout_gravity="center_vertical" />
                     </LinearLayout>
 
                     <View

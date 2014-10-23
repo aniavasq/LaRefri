@@ -1007,10 +1007,11 @@ containing a value of this type.
         public static final int logorefri=0x7f020064;
         public static final int menu_button_bg=0x7f020065;
         public static final int menu_button_bg_disabled=0x7f020066;
-        public static final int rounded_button=0x7f020067;
-        public static final int separator=0x7f020068;
-        public static final int skin_button=0x7f020069;
-        public static final int splash=0x7f02006a;
+        public static final int menu_label_bg=0x7f020067;
+        public static final int rounded_button=0x7f020068;
+        public static final int separator=0x7f020069;
+        public static final int skin_button=0x7f02006a;
+        public static final int splash=0x7f02006b;
     }
     public static final class id {
         public static final int action_bar=0x7f05001c;

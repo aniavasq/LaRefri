@@ -159,6 +159,7 @@ public class SearchFridgeMagnetActivity extends Activity {
 			button.setBackground(resources.getDrawable(R.drawable.menu_button_bg_disabled));
 			button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_favorite, 0);
 			button.setOnClickListener(new RemoveOnClickListener(fm, button));
+			button.setPadding(10, 0, 10, 1);
 		}
 	}
 	
@@ -184,6 +185,7 @@ public class SearchFridgeMagnetActivity extends Activity {
 			button.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
 			button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_add, 0);
 			button.setOnClickListener(new AddOnClickListener(fm, button));
+			button.setPadding(10, 0, 10, 1);
 		}
 	}
 	
@@ -274,7 +276,8 @@ public class SearchFridgeMagnetActivity extends Activity {
 				tmp_button.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
 				tmp_button.setText(fm.nombre);
 				tmp_button.setTextColor(Color.WHITE);
-				tmp_button.setGravity(Gravity.LEFT);
+				tmp_button.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+				tmp_button.setPadding(10, 0, 10, 1);
 				tmp_button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_add, 0);
 				tmp_button.setOnClickListener(new AddOnClickListener(fm, tmp_button));
 				buttons.add(tmp_button);
@@ -292,9 +295,9 @@ public class SearchFridgeMagnetActivity extends Activity {
 			tmp_title.setBackground(resources.getDrawable(R.drawable.menu_button_bg_disabled));
 			tmp_title.setText(fm.nombre);
 			tmp_title.setTextColor(Color.WHITE);
-			tmp_title.setGravity(Gravity.LEFT);
+			tmp_title.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
 			tmp_title.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_favorite, 0);
-			tmp_title.setPadding(0, 0, 5, 0);
+			tmp_title.setPadding(10, 0, 10, 1);
 			tmp_title.setOnClickListener(new RemoveOnClickListener(fm, tmp_title));
 			buttons.add(tmp_title);
 		}

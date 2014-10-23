@@ -249,11 +249,8 @@ public class AddMagnetActivity extends Activity {
 			}
 		}
 		
-		//metaRemove.removeAll(fridgeMagnets);
-		
 		ArrayList<FridgeMagnet> metaRemove = new ArrayList<FridgeMagnet>(this.myFridgeMagnets);
 		ArrayList<FridgeMagnet> myRemove = new ArrayList<FridgeMagnet>(this.myFridgeMagnets);
-		//myRemove.removeAll(metaRemove);
 		metaRemove.removeAll(fridgeMagnets);
 		myRemove.removeAll(metaRemove);
 		for(final FridgeMagnet fm: myRemove){

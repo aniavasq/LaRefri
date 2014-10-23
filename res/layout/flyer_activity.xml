@@ -71,30 +71,32 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" 
-                    android:layout_margin="0dp">
+                    android:layout_height="wrap_content"
+                    android:layout_margin="0dp" >
 
                     <RelativeLayout
                         android:id="@+id/some_relative_layout"
-                        android:layout_alignParentTop="true"
                         android:layout_width="match_parent"
                         android:layout_height="fill_parent"
+                        android:layout_alignParentTop="true"
                         android:orientation="vertical" >
 
                         <RelativeLayout
-                            android:layout_alignParentTop="true"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
                             android:layout_marginTop="85dp"
-                            android:gravity="center" >
+                            android:gravity="center"
+                            android:paddingLeft="20dp"
+                            android:paddingRight="20dp" >
 
                             <ImageView
                                 android:id="@+id/flyer_view"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
-                                android:layout_marginLeft="20dp"
-                                android:layout_marginRight="20dp" />
+                                android:adjustViewBounds="true"
+                                android:scaleType="fitXY" />
                         </RelativeLayout>
 
                         <LinearLayout
@@ -117,7 +119,7 @@
                                 android:id="@+id/magnetfridge_name"
                                 style="@style/menu_button"
                                 android:layout_width="0dp"
-                                android:layout_height="150dp"
+                                android:layout_height="85dp"
                                 android:layout_weight="0.5"
                                 android:gravity="center_vertical" />
                         </LinearLayout>
@@ -129,6 +131,7 @@
                         android:layout_alignParentBottom="true"
                         android:layout_below="@id/some_relative_layout"
                         android:layout_centerHorizontal="true"
+                        android:paddingTop="30dp"
                         android:orientation="horizontal" >
 
                         <ImageButton
@@ -137,9 +140,10 @@
                             android:layout_height="105dp"
                             android:layout_gravity="center_horizontal"
                             android:layout_margin="15dp"
+                            android:padding="30dp"
+                            android:scaleType="fitCenter"
                             android:background="@drawable/contact_button"
                             android:onClick="onPhoneGuide"
-                            android:padding="15dp"
                             android:src="@drawable/ic_action_contact" />
 
                         <ImageButton
@@ -148,9 +152,10 @@
                             android:layout_height="105dp"
                             android:layout_gravity="center_horizontal"
                             android:layout_margin="15dp"
+                            android:padding="25dp"
+                            android:scaleType="fitCenter"
                             android:background="@drawable/call_button"
                             android:onClick="onCall"
-                            android:padding="15dp"
                             android:src="@drawable/ic_action_call" />
                     </LinearLayout>
                 </RelativeLayout>

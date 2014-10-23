@@ -15,7 +15,6 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.util.JsonReader;
 import android.util.JsonToken;
-import android.util.Log;
 
 public class UpdateFridgeMagnetsListener extends RestClient {
 	private Activity master;
@@ -35,8 +34,10 @@ public class UpdateFridgeMagnetsListener extends RestClient {
 		Object result = super.doInBackground(params);
 		UpdateManager updateManager = new UpdateManager();
 		try {
-			setUpdateMessages(updateManager.readJsonStream( new ByteArrayInputStream(result.toString().getBytes())));
-			letsUpdate();
+			if(result != null){
+				setUpdateMessages(updateManager.readJsonStream( new ByteArrayInputStream(result.toString().getBytes()) ));
+				letsUpdate();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -56,7 +57,6 @@ public class UpdateFridgeMagnetsListener extends RestClient {
 			//
 			FridgeMagnet tmpFm = new FridgeMagnet(update.id_marca);
 			if(fridgeMagnets.contains(tmpFm)){
-				Log.e("UPDATING", fridgeMagnets.get(fridgeMagnets.indexOf(tmpFm)).toString());
 				HashMap<String, String> params = new HashMap<String, String>();
 				params.put("id_marca", update.id_marca.toString());
 				//construct form to HttpRequest
