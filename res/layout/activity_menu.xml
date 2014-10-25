@@ -19,7 +19,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/logorefri" />
+            android:src="@drawable/logorefri"
+            android:onClick="onHomePressed" />
 
         <ImageButton
             android:id="@+id/overflowbutton"
@@ -90,7 +91,7 @@
   					android:drawableRight="@drawable/ic_action_next_item" 
   					android:onClick="goCustomize"
   					style="@style/menu_button"/>
-		        <Button
+		        <!-- <Button
 		            android:id="@+id/btn_account"
 		            android:layout_width="match_parent"
 		            android:layout_height="wrap_content"
@@ -98,7 +99,7 @@
 		            android:text="@string/account"
   					android:drawableRight="@drawable/ic_action_next_item"
   					android:onClick="goAccountMenu"
-  					style="@style/menu_button"/>
+  					style="@style/menu_button"/>-->
 		        <Button
 		            android:id="@+id/btn_notifications"
 		            android:layout_width="match_parent"
@@ -106,6 +107,7 @@
 		            android:background="@drawable/menu_button_bg"
 		            android:text="@string/notifications"
   					android:drawableRight="@drawable/ic_action_next_item" 
+  					android:onClick="goNotifications"
   					style="@style/menu_button"/>
 	        </LinearLayout>
 

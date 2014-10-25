@@ -125,6 +125,7 @@ public class CategoriesActivity extends Activity {
 		b.putString("nombre", c.nombre_categoria);
 		intent.putExtras(b);
 		this.startActivity(intent);
+	    this.finish();
 	}
 
 	protected void goToSearchMagnets(View view, Category c) {
@@ -135,6 +136,7 @@ public class CategoriesActivity extends Activity {
 		b.putString("nombre", c.nombre_categoria);
 		intent.putExtras(b);
 		this.startActivity(intent);
+	    this.finish();
 	}
 
 	public static List<Category> getCategoriesFromJSON (File fl) throws Exception {
@@ -146,7 +148,9 @@ public class CategoriesActivity extends Activity {
 	}
 
 	public void onBackPressed(View view) {
-		this.finish();
+		Intent intent = new Intent(view.getContext(), MenuActivity.class);
+	    this.startActivity(intent);
+	    this.finish();
 	}
 
 	protected void setBackground() {
@@ -156,5 +160,11 @@ public class CategoriesActivity extends Activity {
 		int menu_bg_color = settings.getInt("menu_bg_color", Color.parseColor("#6B6560"));
 		article.setBackgroundColor(menu_bg_color);
 		head.setBackgroundColor(bg_color);
+	}
+	
+	public void onHomePressed(View view){
+		Intent intent = new Intent(view.getContext(), MainActivity.class);
+	    this.startActivity(intent);
+	    this.finish();
 	}
 }

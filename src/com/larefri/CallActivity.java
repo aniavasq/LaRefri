@@ -48,14 +48,14 @@ public class CallActivity extends Activity {
 	private String logo;
 	private String nombre;
 	private Context context;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_call);
 		this.context = this;
 		this.settings = getSharedPreferences("LaRefriPrefsFile", 0);
-		
+
 		//get extra content from previous activity
 		Bundle b = getIntent().getExtras();
 		id_marca = b.getInt("id_marca");
@@ -64,28 +64,28 @@ public class CallActivity extends Activity {
 		DisplayMetrics dm = new DisplayMetrics();
 		this.getWindow().getWindowManager().getDefaultDisplay().getMetrics(dm);
 		int width = dm.widthPixels;	
-		
+
 		ImageView image = (ImageView)findViewById(R.id.magnetfridge_logo);
 		TextView nameview = (TextView)findViewById(R.id.magnetfridge_name);
-		
+
 		//Set policy to HTTP
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-		
+		StrictMode.setThreadPolicy(policy);
+
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put("id_marca", id_marca.toString());
 		//construct form to HttpRequest
-	    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-        nameValuePairs.add(new BasicNameValuePair("id_marca", id_marca.toString()));
+		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+		nameValuePairs.add(new BasicNameValuePair("id_marca", id_marca.toString()));
 
-        try {
-        	loadStores((new StoresManager()).readJsonStream( new FileInputStream(new File(getFilesDir(), this.id_marca+"_sucursales.json")) ));
+		try {
+			loadStores((new StoresManager()).readJsonStream( new FileInputStream(new File(getFilesDir(), this.id_marca+"_sucursales.json")) ));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-        LinearLayout.LayoutParams ll = new LinearLayout.LayoutParams(width/2-20,width/2-20);
+		LinearLayout.LayoutParams ll = new LinearLayout.LayoutParams(width/2-20,width/2-20);
 		image.setLayoutParams(ll);
 		File imgFile = new File(getFilesDir(), logo);
 		Drawable d = Drawable.createFromPath(imgFile.getAbsolutePath());
@@ -98,19 +98,19 @@ public class CallActivity extends Activity {
 		super.onStart();
 		setBackground();
 	}
-	
+
 	private void loadStores(List<Store> stores){		
 		LinearLayout store_call_pane = (LinearLayout) findViewById(R.id.stores_call_buttons);
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, Gravity.LEFT);
 		Resources resources = getResources();
 		ContextThemeWrapper themeWrapper = new ContextThemeWrapper(context, R.style.menu_button);
-	
+
 		for(final Store s: stores){
 			if(s!=null && s.ciudad.equalsIgnoreCase(settings.getString("current_city", "NO_CITY"))){
 				LinearLayout phone_num_pane = new LinearLayout(themeWrapper);
 				phone_num_pane.setOrientation(LinearLayout.VERTICAL);
 				phone_num_pane.setLayoutParams(lp);
-				
+
 				TextView tmp_title = new Button(themeWrapper);
 				tmp_title.setLayoutParams(lp);
 				tmp_title.setBackground(resources.getDrawable(R.drawable.menu_label_bg));
@@ -119,7 +119,7 @@ public class CallActivity extends Activity {
 				tmp_title.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
 				tmp_title.setPadding(10, 0, 10, 1);		
 				phone_num_pane.addView(tmp_title);
-				
+
 				Button phone_num = new Button(themeWrapper);
 				phone_num.setLayoutParams(lp);
 				phone_num.setText(s.telefono);
@@ -132,11 +132,11 @@ public class CallActivity extends Activity {
 					@Override
 					public void onClick(View v) {
 						onCall(v, s.telefono);
-						
+
 					}
 				});
 				phone_num_pane.addView(phone_num);
-				
+
 				Button phone_num2 = new Button(themeWrapper);
 				if(!s.telefono2.isEmpty()){
 					phone_num.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
@@ -156,7 +156,7 @@ public class CallActivity extends Activity {
 					});
 					phone_num_pane.addView(phone_num2);
 				}
-				
+
 				if(!s.telefono3.isEmpty()){
 					phone_num2.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
 					phone_num2.setPadding(10, 0, 10, 1);
@@ -173,7 +173,7 @@ public class CallActivity extends Activity {
 						@Override
 						public void onClick(View v) {
 							onCall(v, s.telefono3);
-							
+
 						}
 					});
 					phone_num_pane.addView(phone_num3);
@@ -196,54 +196,61 @@ public class CallActivity extends Activity {
 		article.setBackgroundColor(menu_bg_color);
 		head.setBackgroundColor(bg_color);
 	}
-	
+
 	public void onBackPressed(View view) {
-		this.finish();
+		Intent intent = new Intent(view.getContext(), FlyerActivity.class);
+		Bundle b = new Bundle();
+		b.putInt("id_marca", this.id_marca);
+		b.putString("logo", this.logo);
+		b.putString("nombre", this.nombre);		
+		intent.putExtras(b);
+	    this.startActivity(intent);
+	    this.finish();
 	}
-	
+
 	public void onCall(View view, String phone){
-	    Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+phone));
-	    onCallLog(phone);
-	    startActivity(callIntent);
+		Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+phone));
+		onCallLog(phone);
+		startActivity(callIntent);
 	}
-	
+
 	public void onCallLog(String phone){
 		String android_id = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
-	    /*id_usuario id_marca*/
-	    HashMap<String, String> params = new HashMap<String, String>();
+		/*id_usuario id_marca*/
+		HashMap<String, String> params = new HashMap<String, String>();
 		params.put("id_marca[]", id_marca.toString());
 		params.put("id_usuario", android_id);
 		//construct form to HttpRequest
-	    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-        nameValuePairs.add(new BasicNameValuePair("id_marca[]", id_marca.toString()));
-        nameValuePairs.add(new BasicNameValuePair("id_usuario", (android_id == null) ? "0": android_id));
-        if (isNetworkAvailable()){
-	        try {
+		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+		nameValuePairs.add(new BasicNameValuePair("id_marca[]", id_marca.toString()));
+		nameValuePairs.add(new BasicNameValuePair("id_usuario", (android_id == null) ? "0": android_id));
+		if (isNetworkAvailable()){
+			try {
 				for(LogCall l: getLocalCallLog()){
 					params.put("id_marca[]", l.id_marca.toString());
 					nameValuePairs.add(new BasicNameValuePair("id_marca[]", l.id_marca.toString()));
 				}
 			} catch (IOException doNotCare) { /*Lost Data*/ }
-	        RestClient restClient = new RestClient();
-	        restClient.execute(StaticUrls.LOG_CALLS,params, nameValuePairs);
-        }else{
-        	try {
+			RestClient restClient = new RestClient();
+			restClient.execute(StaticUrls.LOG_CALLS,params, nameValuePairs);
+		}else{
+			try {
 				saveLocalCallLog(phone);
 			} catch (IOException doNotCare) { /*Lost Data*/ }
-        }
+		}
 	}
-	
+
 	private void saveLocalCallLog(String phone) throws IOException{
 		FileOutputStream outputStream;
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss", Locale.getDefault()); 
 		String now = df.format(new Date());
 		File file = new File(getFilesDir(), "callLog.json");
 		outputStream = new FileOutputStream(file, true);
-        outputStream.write((id_marca.toString()+","+phone+","+now+"\n").getBytes());
-        outputStream.flush(); 
-        outputStream.close();
+		outputStream.write((id_marca.toString()+","+phone+","+now+"\n").getBytes());
+		outputStream.flush(); 
+		outputStream.close();
 	}
-	
+
 	private ArrayList<LogCall> getLocalCallLog() throws IOException{
 		FileInputStream inputStream;
 		ArrayList<LogCall> logCalls = new ArrayList<LogCall>();
@@ -264,11 +271,17 @@ public class CallActivity extends Activity {
 		file.delete();
 		return logCalls;		
 	}
-	
+
 	private boolean isNetworkAvailable() {
-	    ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-	    return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+		return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+	}
+	
+	public void onHomePressed(View view){
+		Intent intent = new Intent(view.getContext(), MainActivity.class);
+	    this.startActivity(intent);
+	    this.finish();
 	}
 }
 
@@ -276,7 +289,7 @@ class LogCall{
 	Integer id_marca;
 	String phone;
 	String date_time;
-	
+
 	public LogCall(Integer id_marca, String phone, String date_time) {
 		super();
 		this.id_marca = id_marca;

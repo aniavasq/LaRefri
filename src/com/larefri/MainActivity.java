@@ -53,7 +53,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
-	
+
 	private final String PREFS_NAME = "LaRefriPrefsFile";
 	private final Integer movViewId = 20000000, delViewId = 20000005, enableViewId = 20000010;
 	private final Handler handler = new Handler();
@@ -64,6 +64,7 @@ public class MainActivity extends Activity {
 	private boolean fridgeMagnetsClickable;
 	private boolean hasScrolled;
 	private boolean fridgeMagnetsDraggable;
+	private boolean editMagnetViewShowed;
 	private List<FridgeMagnet> fridgeMagnets;
 	private ScrollView myScrollView;
 	private LocationTask locationTask;
@@ -121,9 +122,9 @@ public class MainActivity extends Activity {
 			}
 		}
 	}
-	
+
 	class FridgeMagnetOnDragListener implements OnDragListener{
-		
+
 		@Override
 		public boolean onDrag(View v, DragEvent evnt) {
 			Integer action = evnt.getAction();
@@ -133,7 +134,7 @@ public class MainActivity extends Activity {
 				v.invalidate();
 				return true;
 			case DragEvent.ACTION_DRAG_ENTERED:
-				chageOpacityFridgeMagnets(v, 0.5f);
+				chageOpacityFridgeMagnets(0.4f);
 				break;
 			case DragEvent.ACTION_DRAG_LOCATION:
 				int[] array =new int[2];
@@ -147,115 +148,108 @@ public class MainActivity extends Activity {
 			case DragEvent.ACTION_DROP:
 				view = (View) evnt.getLocalState();
 				if(view!=v){
-			        ImageButton container = (ImageButton) v;
-			        ViewGroup owner = (ViewGroup) view.getParent(), destiny = ((ViewGroup)container.getParent());
-			        owner.removeView(view);
-			        destiny.addView(view);
-			        destiny.removeView(container);
-			        owner.addView(container);
+					ImageButton container = (ImageButton) v;
+					ViewGroup owner = (ViewGroup) view.getParent(), destiny = ((ViewGroup)container.getParent());
+					owner.removeView(view);
+					destiny.addView(view);
+					destiny.removeView(container);
+					owner.addView(container);
 					v.setVisibility(View.VISIBLE);
-			        view.setVisibility(View.VISIBLE);
-                	swapFridgeMagnetsInList(view, v);
-		        }
-		        break;
-			case DragEvent.ACTION_DRAG_ENDED:
-                final boolean dropped = evnt.getResult();
-                if (dropped) {
-                	v.setAlpha(0.5f);
-                	view = (View) evnt.getLocalState();
-                	view.setAlpha(1.0f);
-                }
-                break;
-            default:
-            	break;
+					view.setVisibility(View.VISIBLE);
+					swapFridgeMagnetsInList(view, v);
+				}
+				break;
+			default:
+				break;
 			}
 			return true;
 		}
 	}
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
+
 		this.context = this;
 		this.fridgeMagnetsClickable = true;
 		this.fridgeMagnetsDraggable = false;
-		
+		this.editMagnetViewShowed = false;
+
 		FontsOverride.setDefaultFont(this, "MONOSPACE", "Roboto-Thin.ttf");
 		//Set policy to HTTP
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-        
-        //get metrics for relative size from display width multiples
+		StrictMode.setThreadPolicy(policy);
+
+		//get metrics for relative size from display width multiples
 		DisplayMetrics dm = new DisplayMetrics();
 		this.getWindow().getWindowManager().getDefaultDisplay().getMetrics(dm);
 		this.width = dm.widthPixels;
 		this.height = dm.heightPixels;
 		settings = getSharedPreferences(PREFS_NAME, 0);
 
-        //EULA
-    	AppEULA appEULA = new AppEULA(this);
-        if (settings.getBoolean(appEULA.getEulaKey(), true)) {
-        	appEULA.show();
+		//EULA
+		AppEULA appEULA = new AppEULA(this);
+		if (settings.getBoolean(appEULA.getEulaKey(), true)) {
+			appEULA.show();
 		}
-        //check first time installed
-        if (settings.getBoolean("my_first_time", true)) {
+		//check first time installed
+		if (settings.getBoolean("my_first_time", true)) {
 			copyAssets();
-		    // record the fact that the APP has been started at least once
-		    settings.edit().putBoolean("my_first_time", false).commit();
+			// record the fact that the APP has been started at least once
+			settings.edit().putBoolean("my_first_time", false).commit();
 		}
-        this.movNdel = createEditMagnetView();	
-        //ScrolView
-        this.myScrollView = (ScrollView) findViewById(R.id.the_scroll_view);
-        //Location
-        this.locationTask = new LocationTask(this.context, this);
+		this.movNdel = createEditMagnetView();	
+		//ScrolView
+		this.myScrollView = (ScrollView) findViewById(R.id.the_scroll_view);
+		//Location
+		this.locationTask = new LocationTask(this.context, this);
 	}
 
 	public void downloadImageFromServer(String url, String file) throws MalformedURLException, IOException {
 		InputStream imageInputStream=new URL(url+file).openStream();
-    	FileOutputStream imageOutputStream;
-    	imageOutputStream = openFileOutput(file, Context.MODE_PRIVATE);
-    	CopyStream(imageInputStream, imageOutputStream);
-    	imageOutputStream.close();
+		FileOutputStream imageOutputStream;
+		imageOutputStream = openFileOutput(file, Context.MODE_PRIVATE);
+		CopyStream(imageInputStream, imageOutputStream);
+		imageOutputStream.close();
 	}
-	
+
 	private void copyAssets() {
-	    AssetManager assetManager = getAssets();
-	    String[] files = null, images = null;
-	    try {
-	        files = assetManager.list("");
-	        images = assetManager.list("images");
-	    } catch (IOException doNotCare) {  }
-	    for(String filename : files) {
-	        InputStream in = null;
-	        FileOutputStream out = null;
-	        try {
-	          in = assetManager.open(filename);
-	          out = openFileOutput(filename, Context.MODE_PRIVATE);
-	          CopyStream(in, out);
-	          in.close();
-	          in = null;
-	          out.flush();
-	          out.close();
-	          out = null;
-	        } catch(IOException doNotCare) {  }       
-	    }
-	    
-	    for(String filename : images) {
-	        InputStream in = null;
-	        FileOutputStream out = null;
-	        try {
-	          in = assetManager.open(filename);
-	          out = openFileOutput(filename, Context.MODE_PRIVATE);
-	          CopyStream(in, out);
-	          in.close();
-	          in = null;
-	          out.flush();
-	          out.close();
-	          out = null;
-	        } catch(IOException doNotCare) {  }       
-	    }
+		AssetManager assetManager = getAssets();
+		String[] files = null, images = null;
+		try {
+			files = assetManager.list("");
+			images = assetManager.list("images");
+		} catch (IOException doNotCare) {  }
+		for(String filename : files) {
+			InputStream in = null;
+			FileOutputStream out = null;
+			try {
+				in = assetManager.open(filename);
+				out = openFileOutput(filename, Context.MODE_PRIVATE);
+				CopyStream(in, out);
+				in.close();
+				in = null;
+				out.flush();
+				out.close();
+				out = null;
+			} catch(IOException doNotCare) {  }       
+		}
+
+		for(String filename : images) {
+			InputStream in = null;
+			FileOutputStream out = null;
+			try {
+				in = assetManager.open(filename);
+				out = openFileOutput(filename, Context.MODE_PRIVATE);
+				CopyStream(in, out);
+				in.close();
+				in = null;
+				out.flush();
+				out.close();
+				out = null;
+			} catch(IOException doNotCare) {  }       
+		}
 	}
 
 	@Override
@@ -280,12 +274,12 @@ public class MainActivity extends Activity {
 			e.printStackTrace();
 		}
 		//Update phone guide
-        //Check Updates
-        HashMap<String, String> params = new HashMap<String, String>();
+		//Check Updates
+		HashMap<String, String> params = new HashMap<String, String>();
 		String last_update = settings.getString("last_update", "2014-10-14 18:49:50");
 		params.put("ultima_actualizacion", last_update);
-        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-        nameValuePairs.add(new BasicNameValuePair("ultima_actualizacion", last_update));
+		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+		nameValuePairs.add(new BasicNameValuePair("ultima_actualizacion", last_update));
 		(new UpdateFridgeMagnetsListener(this, fridgeMagnets)).execute(
 				StaticUrls.UPDATES,
 				params,
@@ -301,49 +295,60 @@ public class MainActivity extends Activity {
 	}
 
 	public void goToMenu(View view) {
-	    Intent intent = new Intent(view.getContext(), MenuActivity.class);
-	    this.startActivity(intent);
+		Intent intent = new Intent(view.getContext(), MenuActivity.class);
+		this.startActivity(intent);
 	}
-	
+
 	public void goToFlyer(View view, FridgeMagnet fm) {
-	    Intent intent = new Intent(view.getContext(), FlyerActivity.class);
-	    Bundle b = new Bundle();
-	    b.putInt("id_marca", fm.id_marca); //Your id
-	    b.putString("logo", fm.logo);
-	    b.putString("nombre", fm.nombre);
-		
-	    intent.putExtras(b); //Put your id to your next Intent
-	    this.startActivity(intent);
+		Intent intent = new Intent(view.getContext(), FlyerActivity.class);
+		Bundle b = new Bundle();
+		b.putInt("id_marca", fm.id_marca);
+		b.putString("logo", fm.logo);
+		b.putString("nombre", fm.nombre);		
+		intent.putExtras(b);
+		this.startActivity(intent);
+		this.finish();
 	}
-	
+
 	//For image copy from HTTP response
 	public static void CopyStream(InputStream is, FileOutputStream os)
 	{
-	    final int buffer_size=1024;
-	    try
-	    {
-	        byte[] bytes=new byte[buffer_size];
-	        for(;;)
-	        {
-	          int count=is.read(bytes, 0, buffer_size);
-	          if(count==-1)
-	              break;
-	          os.write(bytes, 0, count);
-	        }
-	    }
-	    catch(Exception ex){ }
+		final int buffer_size=1024;
+		try
+		{
+			byte[] bytes=new byte[buffer_size];
+			for(;;)
+			{
+				int count=is.read(bytes, 0, buffer_size);
+				if(count==-1)
+					break;
+				os.write(bytes, 0, count);
+			}
+		}
+		catch(Exception ex){ }
 	}
-	
+
 	public void loadFridgeMagnetsFromFile(LinearLayout left_pane_fridgemagnets, LinearLayout right_pane_fridgemagnets, LayoutParams lp) throws IOException{
 		FridgeMagnetsManager fridgeMagnetReader = new FridgeMagnetsManager();
 		this.fridgeMagnets = fridgeMagnetReader.readJsonStream( new FileInputStream(new File(getFilesDir(), "data.json")) );
 		for(final FridgeMagnet fm: fridgeMagnets){
 			OnTouchListener fridgeMagnetOnTouchListener = new FridgeMagnetOnTouchListener(fm);
-			ImageButton tmp_imageButtom = new ImageButton(this);
-			File imgFile = new File(getFilesDir(), fm.logo);
-			Drawable d = Drawable.createFromPath(imgFile.getAbsolutePath());
+			final ImageButton tmp_imageButtom = new ImageButton(this);
 			tmp_imageButtom.setLayoutParams(lp);
-			tmp_imageButtom.setImageDrawable(d);
+			///
+			Runnable imageLoader = new Runnable() {
+				@Override
+				public void run() {
+					File imgFile;
+					do{
+						imgFile = new File(getFilesDir(), fm.logo);
+						Drawable d = Drawable.createFromPath(imgFile.getAbsolutePath());
+						tmp_imageButtom.setImageDrawable(d);
+					}while(imgFile==null);
+				}
+			};
+			handler.post(imageLoader);
+			///
 			tmp_imageButtom.setScaleType( ImageView.ScaleType.FIT_CENTER );
 			tmp_imageButtom.setId(fm.id_marca);
 			tmp_imageButtom.setBackgroundColor(Color.TRANSPARENT);
@@ -369,7 +374,7 @@ public class MainActivity extends Activity {
 			}
 		}	
 	}
-	
+
 	protected void swapFridgeMagnetsInList(View view, View v) {
 		FridgeMagnet from_view = null, from_v = null;
 		for(FridgeMagnet fm: this.fridgeMagnets){
@@ -396,7 +401,7 @@ public class MainActivity extends Activity {
 		LinearLayout.LayoutParams enable_lp = new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 		enable_lp.setMargins(0, 0, 0, 0);
 		enable_lp.gravity = Gravity.TOP;
-		
+
 		RelativeLayout scrollable = (RelativeLayout) findViewById(R.id.scrollable);
 		mov.setLayoutParams(lp);
 		del.setLayoutParams(lp);
@@ -436,71 +441,83 @@ public class MainActivity extends Activity {
 		mov.setVisibility(View.INVISIBLE);
 		del.setVisibility(View.INVISIBLE);
 		//
-		
+
 		RelativeLayout enable_layout = new RelativeLayout(context);
 		enable_layout.setId(enableViewId);
 		enable_layout.setLayoutParams(enable_lp);
 		enable_layout.setBackgroundColor(Color.BLACK);
 		enable_layout.setAlpha(0.75f);
 		enable_layout.setVisibility(View.INVISIBLE);
-		
+
 		scrollable.addView(enable_layout);
 		scrollable.addView(mov);
 		scrollable.addView(del);
-		
+
 		Object[] result = new Object[3];
 		result[0] = mov;
 		result[1] = del;
 		result[2] = enable_layout;
-		
+
 		return result;
 	}
-	
+
 	protected void letsDelFridgeMagnets(final View v) {
 		FridgeMagnet fm_tmp = new FridgeMagnet();
-		
+
 		DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-		    @Override
-		    public void onClick(DialogInterface dialog, int which) {
-		        switch (which){
-		        case DialogInterface.BUTTON_POSITIVE:
-		            //Yes button clicked
-		        	for(FridgeMagnet fm: fridgeMagnets){
-		        		if(fm.id_marca == v.getId()){
-		        			fridgeMagnets.remove(fm);
-		        			try {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which){
+				case DialogInterface.BUTTON_POSITIVE:
+					//Yes button clicked
+					for(FridgeMagnet fm: fridgeMagnets){
+						if(fm.id_marca == v.getId()){
+							fridgeMagnets.remove(fm);
+							try {
 								saveFridgeMagnetsList();
-			        			onStart();
+								onStart();
 							} catch (FileNotFoundException e) {
 								e.printStackTrace();
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
-		        			break;
-		        		}
-		        	}
-		        	modifyBackButton();
-		            break;
+							break;
+						}
+					}
+					modifyBackButton();
+					break;
 
-		        case DialogInterface.BUTTON_NEGATIVE:
-		            //No button clicked
-		        	modifyBackButton();
-		            break;
-		        }
-		    }
+				case DialogInterface.BUTTON_NEGATIVE:
+				default:
+					//No button clicked
+					modifyBackButton();
+					break;
+				}
+			}
+		};
+		DialogInterface.OnCancelListener dialogCancelListener = new DialogInterface.OnCancelListener() {
+
+			@Override
+			public void onCancel(DialogInterface dialog) {
+				//On Cancel
+				modifyBackButton();
+			}
 		};
 
 		for(FridgeMagnet fm: fridgeMagnets){
 			if(fm.id_marca == v.getId()) fm_tmp = fm;
 		}
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage("¿Quiere eliminar el imantado de "+fm_tmp.nombre+"?").setPositiveButton("Yes", dialogClickListener)
-		    .setNegativeButton("No", dialogClickListener).show();
+		builder.setMessage("¿Quiere eliminar el imantado de "+fm_tmp.nombre+"?")
+		.setPositiveButton("Si", dialogClickListener)
+		.setNegativeButton("No", dialogClickListener)
+		.setOnCancelListener(dialogCancelListener)
+		.show();
 	}
 
 	protected void letsDragFridgeMagnets(View v) {
 		this.fridgeMagnetsDraggable = true;
-		chageOpacityFridgeMagnets(v, 0.5f);
+		chageOpacityFridgeMagnets(0.4f);
 		modifyOverflowButton();
 	}
 
@@ -511,7 +528,7 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				fridgeMagnetsDraggable = false;
-				chageOpacityFridgeMagnets(v, 1.0f);
+				chageOpacityFridgeMagnets(1.0f);
 				modifyBackButton();
 			}
 		});	
@@ -526,7 +543,7 @@ public class MainActivity extends Activity {
 				goToMenu(v);
 			}
 		});
-    	try {
+		try {
 			saveFridgeMagnetsList();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -536,18 +553,15 @@ public class MainActivity extends Activity {
 		hideEditMagnetView();
 	}
 
-	private void chageOpacityFridgeMagnets(View v, float opacity) {
+	private void chageOpacityFridgeMagnets(float opacity) {
 		for(final FridgeMagnet fm: this.fridgeMagnets){
 			ImageButton tmp_imageButtom = (ImageButton)findViewById(fm.id_marca);
-			if(v.getId()!=fm.id_marca){
-				tmp_imageButtom.setAlpha(opacity);
-			}else{
-				tmp_imageButtom.setAlpha(1.0f);
-			}
+			tmp_imageButtom.setAlpha(opacity);
 		}		
 	}
 
 	private void showEditMagnetView(final View view){
+		editMagnetViewShowed = true;
 		RelativeLayout mov = (RelativeLayout)findViewById(movViewId);
 		RelativeLayout del = (RelativeLayout)findViewById(delViewId);
 		RelativeLayout.LayoutParams lp = (android.widget.RelativeLayout.LayoutParams) del.getLayoutParams();
@@ -561,18 +575,18 @@ public class MainActivity extends Activity {
 		ObjectAnimator animDelY = ObjectAnimator.ofFloat(del, "y", del.getHeight(), height/2-del.getHeight());
 		animMovX.setDuration(250); animMovY.setDuration(250);
 		animDelX.setDuration(250); animDelY.setDuration(250);
-	    AnimatorSet animSetXY = new AnimatorSet();
-	    animSetXY.playTogether(animMovX, animMovY, animDelX, animDelY);
-	    animSetXY.start();
-	    //
+		AnimatorSet animSetXY = new AnimatorSet();
+		animSetXY.playTogether(animMovX, animMovY, animDelX, animDelY);
+		animSetXY.start();
+		//
 		mov.setVisibility(View.VISIBLE);
 		del.setVisibility(View.VISIBLE);
 		mov.getChildAt(0).setVisibility(View.VISIBLE);
 		del.getChildAt(0).setVisibility(View.VISIBLE);
 		enable_layout.setVisibility(View.VISIBLE);
-				
+
 		enable_layout.setOnTouchListener(new OnTouchListener() {
-			
+
 			@Override
 			public boolean onTouch(View v, MotionEvent evt) {
 				Integer action = evt.getAction() & MotionEvent.ACTION_MASK;				
@@ -582,9 +596,9 @@ public class MainActivity extends Activity {
 				return false;
 			}
 		});
-		
+
 		mov.setOnTouchListener(new OnTouchListener() {
-			
+
 			@Override
 			public boolean onTouch(View v, MotionEvent evt) {
 				Integer action = evt.getAction() & MotionEvent.ACTION_MASK;				
@@ -597,9 +611,9 @@ public class MainActivity extends Activity {
 				return false;
 			}
 		});
-		
+
 		del.setOnTouchListener(new OnTouchListener() {
-			
+
 			@Override
 			public boolean onTouch(View v, MotionEvent evt) {
 				Integer action = evt.getAction() & MotionEvent.ACTION_MASK;
@@ -633,18 +647,33 @@ public class MainActivity extends Activity {
 		enable_layout.setOnTouchListener(null);
 		this.fridgeMagnetsClickable = true;
 	}
-	
+
 	private void saveFridgeMagnetsList() throws FileNotFoundException, IOException {
 		File JsonFile = new File(getFilesDir(), "data.json");		
 		FridgeMagnetsManager fridgeMagnetWriter = new FridgeMagnetsManager();
 		fridgeMagnetWriter.writeJsonStream(new FileOutputStream(JsonFile), fridgeMagnets);
 	}
-	
+
 	protected void setBackground() {
 		RelativeLayout head = (RelativeLayout)findViewById(R.id.relativeLayout1);
 		LinearLayout article = (LinearLayout)findViewById(R.id.article);
 		int bg_color = settings.getInt("bg_color", Color.parseColor("#999089"));
 		article.setBackgroundColor(bg_color);
 		head.setBackgroundColor(bg_color);
+	}
+
+	@Override
+	public void onBackPressed() {
+		modifyBackButton();
+		if(fridgeMagnetsDraggable){
+			fridgeMagnetsDraggable = false;
+			chageOpacityFridgeMagnets(1.0f);
+		}
+		if(editMagnetViewShowed){
+			editMagnetViewShowed = false;
+			hideEditMagnetView();
+		}else{
+			super.onBackPressed();
+		}
 	}
 }

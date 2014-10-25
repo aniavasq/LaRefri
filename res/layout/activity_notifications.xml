@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.larefri.CategoriesActivity" >
+    tools:context="${relativePackage}.${activityClass}" >
 
     <RelativeLayout
         android:id="@+id/relativeLayout1"
@@ -20,9 +20,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:contentDescription="@string/desc"
-            android:src="@drawable/logorefri"
-            android:onClick="onHomePressed" />
+            android:onClick="onHomePressed"
+            android:src="@drawable/logorefri" />
 
         <ImageButton
             android:id="@+id/overflowbutton"
@@ -31,7 +30,6 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:background="@android:color/transparent"
-            android:contentDescription="@string/desc"
             android:onClick="onBackPressed"
             android:src="@drawable/ic_action_previous_item" />
     </RelativeLayout>
@@ -57,43 +55,19 @@
         </View>
 
         <RelativeLayout
+            android:id="@+id/shadow_sec"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
-            <RelativeLayout
-                android:id="@+id/shadow_sec"
-                android:layout_width="match_parent"
-                android:layout_height="23px"
-                android:background="@drawable/back_ground_with_shadow"
-                android:gravity="top" >
-            </RelativeLayout>
-
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="bottom" >
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                	android:layout_height="wrap_content"
-                	android:orientation="vertical">
-
-                    <TableLayout
-                        android:id="@+id/category_buttons"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" >
-                    </TableLayout>
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="25dp"
-                        android:background="@android:color/transparent"
-                        android:gravity="top" >
-                    </RelativeLayout>
-
-                </LinearLayout>
-            </ScrollView>
+            android:layout_height="23px"
+            android:background="@drawable/back_ground_with_shadow" >
         </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@android:color/white"
+            android:text="@string/there_is_not_notifications" />
+
     </LinearLayout>
 
 </RelativeLayout>

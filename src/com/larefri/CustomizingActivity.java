@@ -7,6 +7,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -140,6 +141,14 @@ public class CustomizingActivity extends Activity {
 	}
 
 	public void onBackPressed(View view) {
-		this.finish();
+		Intent intent = new Intent(view.getContext(), MenuActivity.class);
+	    this.startActivity(intent);
+	    this.finish();
+	}
+	
+	public void onHomePressed(View view){
+		Intent intent = new Intent(view.getContext(), MainActivity.class);
+	    this.startActivity(intent);
+	    this.finish();
 	}
 }

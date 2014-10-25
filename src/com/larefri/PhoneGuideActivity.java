@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.List;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -126,6 +127,19 @@ public class PhoneGuideActivity extends Activity {
 	}
 	
 	public void onBackPressed(View view) {
-		this.finish();
+		Intent intent = new Intent(view.getContext(), FlyerActivity.class);
+		Bundle b = new Bundle();
+		b.putInt("id_marca", this.id_marca);
+		b.putString("logo", this.logo);
+		b.putString("nombre", this.nombre);		
+		intent.putExtras(b);
+	    this.startActivity(intent);
+	    this.finish();
+	}
+	
+	public void onHomePressed(View view){
+		Intent intent = new Intent(view.getContext(), MainActivity.class);
+	    this.startActivity(intent);
+	    this.finish();
 	}
 }

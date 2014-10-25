@@ -20,7 +20,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/logorefri" />
+            android:src="@drawable/logorefri"
+        	android:onClick="onHomePressed" />
 
         <ImageButton
             android:id="@+id/overflowbutton"

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -23,35 +22,38 @@ public class MenuActivity extends Activity {
 
 	@Override
 	protected void onStart() {
-		// TODO Auto-generated method stub
 		super.onStart();
 		setBackground();
 	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.menu, menu);
-		return true;
-	}
 	
 	public void onBackPressed(View view) {
-		this.finish();
+		Intent intent = new Intent(view.getContext(), MainActivity.class);
+	    this.startActivity(intent);
+	    this.finish();
 	}
 	
 	public void goCategories(View view){
 		Intent intent = new Intent(view.getContext(), CategoriesActivity.class);
 	    this.startActivity(intent);
+	    this.finish();
 	}
 	
 	public void goAccountMenu(View view){
 		Intent intent = new Intent(view.getContext(), AccountMenuActivity.class);
 	    this.startActivity(intent);
+	    this.finish();
 	}
 	
 	public void goCustomize(View view){
 		Intent intent = new Intent(view.getContext(), CustomizingActivity.class);
 	    this.startActivity(intent);
+	    this.finish();
+	}
+	
+	public void goNotifications(View view){
+		Intent intent = new Intent(view.getContext(), NotificationsActivity.class);
+	    this.startActivity(intent);
+	    this.finish();
 	}
 
 	protected void setBackground() {
@@ -61,5 +63,11 @@ public class MenuActivity extends Activity {
 		int menu_bg_color = settings.getInt("menu_bg_color", Color.parseColor("#6B6560"));
 		article.setBackgroundColor(menu_bg_color);
 		head.setBackgroundColor(bg_color);
+	}
+	
+	public void onHomePressed(View view){
+		Intent intent = new Intent(view.getContext(), MainActivity.class);
+	    this.startActivity(intent);
+	    this.finish();
 	}
 }

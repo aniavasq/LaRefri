@@ -56,7 +56,7 @@ public class AddMagnetActivity extends Activity {
 	        this.dialog.setMessage("Actualizando Imantados");
 	        this.dialog.show();
 	        this.dialog.setCancelable(true);
-	        this.dialog.setCanceledOnTouchOutside(false);
+	        this.dialog.setCanceledOnTouchOutside(true);
 	    }
 		
 		@Override
@@ -285,7 +285,9 @@ public class AddMagnetActivity extends Activity {
 	}
 	
 	public void onBackPressed(View view) {
-		this.finish();
+		Intent intent = new Intent(view.getContext(), CategoriesActivity.class);
+	    this.startActivity(intent);
+	    this.finish();
 	}
 
 	protected void setBackground() {
@@ -300,6 +302,7 @@ public class AddMagnetActivity extends Activity {
 	public void onHomePressed(View view){
 		Intent intent = new Intent(view.getContext(), MainActivity.class);
 	    this.startActivity(intent);
+	    this.finish();
 	}
 }
 

@@ -47,7 +47,6 @@ public class FlyerActivity extends Activity {
 		List<Flyer> flyers = getFlyer(this.id_marca);
 		for (Flyer f: flyers){
 			ImageView flyer = (ImageView)findViewById(R.id.flyer_view);
-			//flyer.setLayoutParams(lp);
 			File imgFlyer = new File(getFilesDir(), f.imagen);
 			Drawable df = Drawable.createFromPath(imgFlyer.getAbsolutePath());			
 			flyer.setImageDrawable(df);
@@ -94,17 +93,18 @@ public class FlyerActivity extends Activity {
 	}
 	
 	public void onBackPressed(View view) {
-		this.finish();
+		onHomePressed(view);
 	}
 	
 	public void onCall(View view) {
 		Intent intent = new Intent(view.getContext(), CallActivity.class);
 		Bundle b = new Bundle();
-	    b.putInt("id_marca", id_marca); //Your id
+	    b.putInt("id_marca", id_marca);
 	    b.putString("logo", logo);
 	    b.putString("nombre", nombre);
-	    intent.putExtras(b); //Put your id to your next Intent
+	    intent.putExtras(b);
 	    this.startActivity(intent);
+	    this.finish();
 	}
 	
 	public void onPhoneGuide(View view) {
@@ -115,5 +115,12 @@ public class FlyerActivity extends Activity {
 	    b.putString("nombre", nombre);
 	    intent.putExtras(b); //Put your id to your next Intent
 	    this.startActivity(intent);
+	    this.finish();
+	}
+	
+	public void onHomePressed(View view){
+		Intent intent = new Intent(view.getContext(), MainActivity.class);
+	    this.startActivity(intent);
+	    this.finish();
 	}
 }

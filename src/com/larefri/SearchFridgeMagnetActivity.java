@@ -20,6 +20,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
@@ -58,7 +59,7 @@ public class SearchFridgeMagnetActivity extends Activity {
 	        this.dialog.setMessage("Actualizando Imantados");
 	        this.dialog.show();
 	        this.dialog.setCancelable(true);
-	        this.dialog.setCanceledOnTouchOutside(false);
+	        this.dialog.setCanceledOnTouchOutside(true);
 	    }
 		
 		@Override
@@ -336,7 +337,9 @@ public class SearchFridgeMagnetActivity extends Activity {
 	}
 	
 	public void onBackPressed(View view) {
-		this.finish();
+		Intent intent = new Intent(view.getContext(), CategoriesActivity.class);
+	    this.startActivity(intent);
+	    this.finish();
 	}
 
 	protected void setBackground() {
@@ -352,5 +355,11 @@ public class SearchFridgeMagnetActivity extends Activity {
 		File JsonFile = new File(getFilesDir(), "data.json");		
 		FridgeMagnetsManager fridgeMagnetWriter = new FridgeMagnetsManager();
 		fridgeMagnetWriter.writeJsonStream(new FileOutputStream(JsonFile), this.myFridgeMagnets);
+	}
+	
+	public void onHomePressed(View view){
+		Intent intent = new Intent(view.getContext(), MainActivity.class);
+	    this.startActivity(intent);
+	    this.finish();
 	}
 }

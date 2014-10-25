@@ -9,6 +9,7 @@
     <string name="customize">personalizar refri</string>
     <string name="account">cuenta</string>
     <string name="notifications">notificaciones</string>
+    <string name="there_is_not_notifications">No hay notificaciones</string>
     <string name="new_account">crear cuenta</string>
     <string name="log_in">log in</string>
     <string name="account_settings">configurar cuenta</string>
@@ -74,5 +75,6 @@ exclusion may not apply.
 \n\nThe software and accompanying documentation may not be provided by a \"Backup Service\" or any other vendor
 which does not provide an original package as composed of APP_NAME, including but not limited to all original
 distribution media, documentation, registration cards, and insertions.</string>
+    <string name="title_activity_notifications">NotificationsActivity</string>
 
 </resources>

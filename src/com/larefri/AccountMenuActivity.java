@@ -52,4 +52,10 @@ public class AccountMenuActivity extends Activity {
 		article.setBackgroundColor(menu_bg_color);
 		head.setBackgroundColor(bg_color);
 	}
+	
+	public void onHomePressed(View view){
+		Intent intent = new Intent(view.getContext(), MainActivity.class);
+	    this.startActivity(intent);
+	    this.finish();
+	}
 }

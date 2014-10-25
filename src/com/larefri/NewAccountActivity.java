@@ -1,6 +1,7 @@
 package com.larefri;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -35,5 +36,11 @@ public class NewAccountActivity extends Activity {
 		int menu_bg_color = settings.getInt("menu_bg_color", Color.parseColor("#6B6560"));
 		article.setBackgroundColor(menu_bg_color);
 		head.setBackgroundColor(bg_color);
+	}
+	
+	public void onHomePressed(View view){
+		Intent intent = new Intent(view.getContext(), MainActivity.class);
+	    this.startActivity(intent);
+	    this.finish();
 	}
 }
