@@ -283,6 +283,11 @@ public class CallActivity extends Activity {
 	    this.startActivity(intent);
 	    this.finish();
 	}
+
+	@Override
+	public void onBackPressed() {
+		this.finish();
+	}
 }
 
 class LogCall{

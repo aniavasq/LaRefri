@@ -362,4 +362,9 @@ public class SearchFridgeMagnetActivity extends Activity {
 	    this.startActivity(intent);
 	    this.finish();
 	}
+
+	@Override
+	public void onBackPressed() {
+		this.finish();
+	}
 }

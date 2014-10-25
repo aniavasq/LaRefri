@@ -123,4 +123,9 @@ public class FlyerActivity extends Activity {
 	    this.startActivity(intent);
 	    this.finish();
 	}
+
+	@Override
+	public void onBackPressed() {
+		this.finish();
+	}
 }

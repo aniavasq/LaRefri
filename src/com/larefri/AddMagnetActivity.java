@@ -304,6 +304,11 @@ public class AddMagnetActivity extends Activity {
 	    this.startActivity(intent);
 	    this.finish();
 	}
+
+	@Override
+	public void onBackPressed() {
+		this.finish();
+	}
 }
 
 class DownloadMagnetStoresRestClient extends RestClient{

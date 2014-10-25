@@ -32,6 +32,7 @@ import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.view.DragEvent;
@@ -98,12 +99,16 @@ public class MainActivity extends Activity {
 						int color = bmp.getPixel((int) evt.getX(), (int) evt.getY());
 						if (color == Color.TRANSPARENT){
 							hasScrolled = true;
+							bmp.recycle();
+							bmp=null;
 							return false;
 						}else {
 
 							ClipData data = ClipData.newPlainText("", "");
 							DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
 							v.startDrag(data, shadowBuilder, v, 0);
+							bmp.recycle();
+							bmp=null;
 							return true;
 						}
 					}catch(Exception donotcare){ }
@@ -294,9 +299,33 @@ public class MainActivity extends Activity {
 		locationTask.execute();
 	}
 
+	@Override
+	protected void onStop() {
+		LinearLayout left_pane_fridgemagnets = (LinearLayout) findViewById(R.id.left_pane_fridgemagnets);
+		LinearLayout right_pane_fridgemagnets = (LinearLayout)findViewById(R.id.right_pane_fridgemagnets);
+		for(int i =0 ; i < left_pane_fridgemagnets.getChildCount(); i++){
+			ImageButton tmp_imageButtom = (ImageButton) ((RelativeLayout)left_pane_fridgemagnets.getChildAt(i)).getChildAt(0);
+			Bitmap bmp = ((BitmapDrawable)tmp_imageButtom.getDrawable()).getBitmap();
+			if(!bmp.isRecycled()){
+				bmp.recycle();
+				bmp=null;
+			}
+		}
+		for(int i =0 ; i < right_pane_fridgemagnets.getChildCount(); i++){
+			ImageButton tmp_imageButtom = (ImageButton) ((RelativeLayout)right_pane_fridgemagnets.getChildAt(i)).getChildAt(0);
+			Bitmap bmp = ((BitmapDrawable)tmp_imageButtom.getDrawable()).getBitmap();
+			if(!bmp.isRecycled()){
+				bmp.recycle();
+				bmp=null;
+			}
+		}
+		super.onStop();
+	}
+
 	public void goToMenu(View view) {
 		Intent intent = new Intent(view.getContext(), MenuActivity.class);
 		this.startActivity(intent);
+		this.finish();
 	}
 
 	public void goToFlyer(View view, FridgeMagnet fm) {
@@ -342,9 +371,11 @@ public class MainActivity extends Activity {
 					File imgFile;
 					do{
 						imgFile = new File(getFilesDir(), fm.logo);
-						Drawable d = Drawable.createFromPath(imgFile.getAbsolutePath());
-						tmp_imageButtom.setImageDrawable(d);
-					}while(imgFile==null);
+						if(imgFile.exists()){
+							Drawable d = Drawable.createFromPath(imgFile.getAbsolutePath());
+							tmp_imageButtom.setImageDrawable(d);
+						}
+					}while(!imgFile.exists());
 				}
 			};
 			handler.post(imageLoader);
