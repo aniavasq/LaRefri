@@ -148,6 +148,7 @@ public class CustomizingActivity extends Activity {
 	
 	public void onHomePressed(View view){
 		Intent intent = new Intent(view.getContext(), MainActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 	    this.startActivity(intent);
 	    this.finish();
 	}

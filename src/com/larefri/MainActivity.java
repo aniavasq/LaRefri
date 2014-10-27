@@ -2,6 +2,7 @@ package com.larefri;
 
 //Repository git@github.com:aniavasq/LaRefri.git
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -31,7 +32,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
@@ -47,6 +52,7 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
@@ -58,6 +64,7 @@ public class MainActivity extends Activity {
 	private final String PREFS_NAME = "LaRefriPrefsFile";
 	private final Integer movViewId = 20000000, delViewId = 20000005, enableViewId = 20000010;
 	private final Handler handler = new Handler();
+	public final static Bitmap okText = textAsBitmap("OK",40,Color.WHITE);
 	private SharedPreferences settings;
 	private Integer width, height;
 	private Context context;
@@ -69,7 +76,7 @@ public class MainActivity extends Activity {
 	private List<FridgeMagnet> fridgeMagnets;
 	private ScrollView myScrollView;
 	private LocationTask locationTask;
-
+	
 	class FridgeMagnetOnTouchListener extends GestureDetector.SimpleOnGestureListener  implements OnTouchListener {
 		private FridgeMagnet fm;
 		private Float mDownX;
@@ -273,7 +280,6 @@ public class MainActivity extends Activity {
 		try {
 			loadFridgeMagnetsFromFile(left_pane_fridgemagnets, right_pane_fridgemagnets, lp);
 		} catch (IOException e) {
-			//Log.e("No file",e.getMessage());
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -324,8 +330,8 @@ public class MainActivity extends Activity {
 
 	public void goToMenu(View view) {
 		Intent intent = new Intent(view.getContext(), MenuActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 		this.startActivity(intent);
-		this.finish();
 	}
 
 	public void goToFlyer(View view, FridgeMagnet fm) {
@@ -335,8 +341,8 @@ public class MainActivity extends Activity {
 		b.putString("logo", fm.logo);
 		b.putString("nombre", fm.nombre);		
 		intent.putExtras(b);
+		intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 		this.startActivity(intent);
-		this.finish();
 	}
 
 	//For image copy from HTTP response
@@ -372,13 +378,21 @@ public class MainActivity extends Activity {
 					do{
 						imgFile = new File(getFilesDir(), fm.logo);
 						if(imgFile.exists()){
-							Drawable d = Drawable.createFromPath(imgFile.getAbsolutePath());
-							tmp_imageButtom.setImageDrawable(d);
+							try {
+								loadImageToButtom(imgFile, tmp_imageButtom);
+							} catch (FileNotFoundException e) { }
 						}
 					}while(!imgFile.exists());
 				}
 			};
-			handler.post(imageLoader);
+			File imgFile = new File(getFilesDir(), fm.logo);
+			if(imgFile.exists()){
+				try {
+					loadImageToButtom(imgFile, tmp_imageButtom);
+				} catch (FileNotFoundException e) { }
+			}else{
+				handler.post(imageLoader);
+			}
 			///
 			tmp_imageButtom.setScaleType( ImageView.ScaleType.FIT_CENTER );
 			tmp_imageButtom.setId(fm.id_marca);
@@ -403,7 +417,16 @@ public class MainActivity extends Activity {
 			}else{
 				right_pane_fridgemagnets.addView(rl);
 			}
-		}	
+		}
+	}
+
+	protected void loadImageToButtom(File imgFile, ImageButton tmp_imageButtom) throws FileNotFoundException {
+	    Bitmap bmp;
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		bmp = BitmapFactory.decodeStream(new FileInputStream(imgFile));
+		bmp.compress(Bitmap.CompressFormat.JPEG, 100, out);
+	    Drawable d = new BitmapDrawable(context.getResources(), bmp);
+		tmp_imageButtom.setImageDrawable(d);		
 	}
 
 	protected void swapFridgeMagnetsInList(View view, View v) {
@@ -456,8 +479,8 @@ public class MainActivity extends Activity {
 		delTxt.setLayoutParams(lp);
 		movTxt.setBackgroundColor(Color.TRANSPARENT);
 		delTxt.setBackgroundColor(Color.TRANSPARENT);
-		movTxt.setText("move");
-		delTxt.setText("delete");
+		movTxt.setText("mover");
+		delTxt.setText("borrar");
 		movTxt.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM);
 		delTxt.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM);
 		movTxt.setTextColor(Color.WHITE);
@@ -540,8 +563,8 @@ public class MainActivity extends Activity {
 		}
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage("¿Quiere eliminar el imantado de "+fm_tmp.nombre+"?")
-		.setPositiveButton("Si", dialogClickListener)
-		.setNegativeButton("No", dialogClickListener)
+		.setPositiveButton(R.string.positive, dialogClickListener)
+		.setNegativeButton(R.string.negative, dialogClickListener)
 		.setOnCancelListener(dialogCancelListener)
 		.show();
 	}
@@ -554,7 +577,9 @@ public class MainActivity extends Activity {
 
 	private void modifyOverflowButton() {
 		ImageButton menuButton = (ImageButton)findViewById(R.id.overflowbutton);
-		menuButton.setImageResource(R.drawable.ic_action_previous_item);
+		Drawable d = new BitmapDrawable(context.getResources(),okText);
+		menuButton.setImageDrawable(d);
+		menuButton.setScaleType(ScaleType.FIT_CENTER);
 		menuButton.setOnClickListener(new OnClickListener() {			
 			@Override
 			public void onClick(View v) {
@@ -563,6 +588,21 @@ public class MainActivity extends Activity {
 				modifyBackButton();
 			}
 		});	
+	}
+	
+	public static Bitmap textAsBitmap(String text, float textSize, int textColor) {
+	    Paint paint = new Paint();
+	    paint.setTextSize(textSize);
+	    paint.setColor(textColor);
+	    paint.setTextAlign(Paint.Align.LEFT);
+	    paint.setTypeface(Typeface.MONOSPACE);
+	    int width = (int) (paint.measureText(text) + 0.5f); // round
+	    float baseline = (int) (-paint.ascent() + 0.5f); // ascent() is negative
+	    int height = (int) (baseline + paint.descent() + 0.5f);
+	    Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+	    Canvas canvas = new Canvas(image);
+	    canvas.drawText(text, 0, baseline, paint);
+	    return image;
 	}
 
 	protected void modifyBackButton() {
@@ -622,8 +662,11 @@ public class MainActivity extends Activity {
 			public boolean onTouch(View v, MotionEvent evt) {
 				Integer action = evt.getAction() & MotionEvent.ACTION_MASK;				
 				v.performClick();
-				if(action == MotionEvent.ACTION_DOWN)
+				if(action == MotionEvent.ACTION_DOWN){
+					editMagnetViewShowed = false;
+					hideEditMagnetView();
 					return true;
+				}
 				return false;
 			}
 		});
@@ -662,7 +705,6 @@ public class MainActivity extends Activity {
 				return false;
 			}
 		});
-		modifyOverflowButton();
 		this.fridgeMagnetsClickable = false;
 	}
 

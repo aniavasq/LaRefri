@@ -27,6 +27,8 @@ import android.content.res.Resources.NotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -38,6 +40,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -237,6 +240,9 @@ public class SearchFridgeMagnetActivity extends Activity {
 		this.context = this;
 		this.settings = getSharedPreferences("LaRefriPrefsFile", 0);
 		this.search_txt = (TextView)findViewById(R.id.search_txt);
+		ImageButton back_button = (ImageButton)findViewById(R.id.overflowbutton);
+		Drawable d = new BitmapDrawable(context.getResources(),MainActivity.okText);
+		back_button.setImageDrawable(d);
 		
 		//Set policy to HTTP
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -359,6 +365,7 @@ public class SearchFridgeMagnetActivity extends Activity {
 	
 	public void onHomePressed(View view){
 		Intent intent = new Intent(view.getContext(), MainActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 	    this.startActivity(intent);
 	    this.finish();
 	}

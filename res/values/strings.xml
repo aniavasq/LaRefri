@@ -27,7 +27,9 @@
     <string name="title_activity_account_settings">AccountSettingsActivity</string>
     <string name="title_activity_customizing">personaliza tu refri</string>
     <string name="title_activity_search_fridge_magnet">SearchFridgeMagnetActivity</string>
-    <string name="accept_eula">Accept</string>
+    <string name="positive">si</string>
+    <string name="negative">no</string>
+    <string name="accept_eula">Aceptar</string>
     <string name="eula_string">COPYRIGHTS:
  
 \nCopyright 2013 APP_NAME. All Rights Reserved.
