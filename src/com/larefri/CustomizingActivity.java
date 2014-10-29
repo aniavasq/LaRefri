@@ -29,7 +29,7 @@ import android.widget.TextView;
 public class CustomizingActivity extends Activity {
 
 	private SharedPreferences settings;
-	private static Integer BUTTONPAD_COLS = 2;
+	private static Integer BUTTONPAD_COLS = 3;
 	private static Integer BUTTONPAD_ROWS = 10;
 	private Context context;
 	
@@ -51,8 +51,8 @@ public class CustomizingActivity extends Activity {
 			List<Skin> skins = getSkinsFromJSON(new File(getFilesDir(),"skins.json"));
 			Iterator<Skin> skinsIterator = skins.iterator();
 			
-			LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width/2,width/2);
-			LinearLayout.LayoutParams lptx = new LinearLayout.LayoutParams(width/2,LayoutParams.WRAP_CONTENT);
+			LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width/3,width/3);
+			LinearLayout.LayoutParams lptx = new LinearLayout.LayoutParams(width/3,LayoutParams.WRAP_CONTENT);
 			LinearLayout.LayoutParams lptr = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 			lptr.setMargins(0, 0, 0, 0);
 			///
@@ -85,8 +85,10 @@ public class CustomizingActivity extends Activity {
 						btn.setImageDrawable(d);
 						btn.setBackgroundColor(Color.TRANSPARENT);
 						btn.setScaleType( ImageView.ScaleType.FIT_CENTER );
-						if(i%2 != 0)
+						if(i%3 != 0)
 							btn.setPadding(10, 30, 20, 0);
+						else if(i%3 != 1)
+							btn.setPadding(15, 30, 15, 0);
 						else
 							btn.setPadding(20, 30, 10, 0);
 						btn.setOnClickListener(new OnClickListener() {							
@@ -106,10 +108,6 @@ public class CustomizingActivity extends Activity {
 						tv.setTextColor(Color.WHITE);
 						tv.setGravity(Gravity.CENTER);
 						tv.setPadding(0, 0, 0, 0);
-						if(i%2 == 0)
-							tv.setPadding(30, 0, 20, 0);
-						else
-							tv.setPadding(20, 0, 30, 0);
 						
 			            tr.addView(ll);
 						ll.addView(btn);

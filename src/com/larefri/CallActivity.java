@@ -105,6 +105,21 @@ public class CallActivity extends Activity {
 		Resources resources = getResources();
 		ContextThemeWrapper themeWrapper = new ContextThemeWrapper(context, R.style.menu_button);
 
+		if(stores.isEmpty() || (stores.size()==1 && stores.get(0)==null)){
+			LinearLayout phone_num_pane = new LinearLayout(themeWrapper);
+			phone_num_pane.setOrientation(LinearLayout.VERTICAL);
+			phone_num_pane.setLayoutParams(lp);
+
+			TextView tmp_title = new Button(themeWrapper);
+			tmp_title.setLayoutParams(lp);
+			tmp_title.setBackground(resources.getDrawable(R.drawable.menu_label_bg));
+			tmp_title.setText(R.string.no_fridge_magnets);
+			tmp_title.setTextColor(Color.WHITE);
+			tmp_title.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+			tmp_title.setPadding(10, 0, 10, 1);
+			phone_num_pane.addView(tmp_title);
+			store_call_pane.addView(phone_num_pane);
+		}
 		for(final Store s: stores){
 			if(s!=null && s.ciudad.equalsIgnoreCase(settings.getString("current_city", "NO_CITY"))){
 				LinearLayout phone_num_pane = new LinearLayout(themeWrapper);

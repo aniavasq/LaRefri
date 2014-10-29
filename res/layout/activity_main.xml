@@ -22,7 +22,7 @@
             android:layout_centerVertical="true"
             android:src="@drawable/logorefri" />
 
-        <ImageButton
+        <Button
             android:id="@+id/overflowbutton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
             android:layout_centerVertical="true"
             android:background="@android:color/transparent"
             android:onClick="goToMenu"
-            android:src="@drawable/ic_action_overflow" />
+            android:drawableLeft="@drawable/ic_action_overflow" />
     </RelativeLayout>
 
     <LinearLayout

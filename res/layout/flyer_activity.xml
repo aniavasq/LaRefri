@@ -142,7 +142,6 @@
                             android:layout_gravity="center_horizontal"
                             android:layout_margin="15dp"
                             android:padding="30dp"
-                            android:scaleType="fitCenter"
                             android:background="@drawable/contact_button"
                             android:onClick="onPhoneGuide"
                             android:src="@drawable/ic_action_contact" />
@@ -154,7 +153,6 @@
                             android:layout_gravity="center_horizontal"
                             android:layout_margin="15dp"
                             android:padding="25dp"
-                            android:scaleType="fitCenter"
                             android:background="@drawable/call_button"
                             android:onClick="onCall"
                             android:src="@drawable/ic_action_call" />

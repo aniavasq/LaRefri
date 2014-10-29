@@ -994,24 +994,25 @@ containing a value of this type.
         public static final int back_ground_with_shadow=0x7f020057;
         public static final int call_button=0x7f020058;
         public static final int contact_button=0x7f020059;
-        public static final int ic_action_call=0x7f02005a;
-        public static final int ic_action_contact=0x7f02005b;
-        public static final int ic_action_next_item=0x7f02005c;
-        public static final int ic_action_overflow=0x7f02005d;
-        public static final int ic_action_previous_item=0x7f02005e;
-        public static final int ic_add=0x7f02005f;
-        public static final int ic_delete=0x7f020060;
-        public static final int ic_favorite=0x7f020061;
-        public static final int ic_launcher=0x7f020062;
-        public static final int ic_move=0x7f020063;
-        public static final int logorefri=0x7f020064;
-        public static final int menu_button_bg=0x7f020065;
-        public static final int menu_button_bg_disabled=0x7f020066;
-        public static final int menu_label_bg=0x7f020067;
-        public static final int rounded_button=0x7f020068;
-        public static final int separator=0x7f020069;
-        public static final int skin_button=0x7f02006a;
-        public static final int splash=0x7f02006b;
+        public static final int ic_action_accept=0x7f02005a;
+        public static final int ic_action_call=0x7f02005b;
+        public static final int ic_action_contact=0x7f02005c;
+        public static final int ic_action_next_item=0x7f02005d;
+        public static final int ic_action_overflow=0x7f02005e;
+        public static final int ic_action_previous_item=0x7f02005f;
+        public static final int ic_add=0x7f020060;
+        public static final int ic_delete=0x7f020061;
+        public static final int ic_favorite=0x7f020062;
+        public static final int ic_launcher=0x7f020063;
+        public static final int ic_move=0x7f020064;
+        public static final int logorefri=0x7f020065;
+        public static final int menu_button_bg=0x7f020066;
+        public static final int menu_button_bg_disabled=0x7f020067;
+        public static final int menu_label_bg=0x7f020068;
+        public static final int rounded_button=0x7f020069;
+        public static final int separator=0x7f02006a;
+        public static final int skin_button=0x7f02006b;
+        public static final int splash=0x7f02006c;
     }
     public static final class id {
         public static final int action_bar=0x7f05001c;
@@ -1233,37 +1234,41 @@ containing a value of this type.
         /**  Description of a share target (both in the list of such or the default share button) in a ShareActionProvider (share UI). [CHAR LIMIT=NONE] 
          */
         public static final int abc_shareactionprovider_share_with_application=0x7f0a000b;
-        public static final int accept_eula=0x7f0a0029;
+        public static final int accept_eula=0x7f0a0028;
         public static final int account=0x7f0a0013;
         public static final int account_settings=0x7f0a0018;
         public static final int action_settings=0x7f0a000f;
         public static final int add_fridge_magnets=0x7f0a0011;
         public static final int app_name=0x7f0a000d;
         public static final int customize=0x7f0a0012;
+        public static final int delete_btn=0x7f0a002d;
+        public static final int delete_fridge_magnet=0x7f0a002b;
         public static final int desc=0x7f0a000e;
-        public static final int eula_string=0x7f0a002a;
-        public static final int hello_world=0x7f0a001b;
+        public static final int downloading_fridge_magnets=0x7f0a002a;
+        public static final int eula_string=0x7f0a002e;
         public static final int log_in=0x7f0a0017;
-        public static final int negative=0x7f0a0028;
+        public static final int move_btn=0x7f0a002c;
+        public static final int negative=0x7f0a0027;
         public static final int new_account=0x7f0a0016;
+        public static final int no_fridge_magnets=0x7f0a0029;
         public static final int notifications=0x7f0a0014;
-        public static final int positive=0x7f0a0027;
+        public static final int positive=0x7f0a0026;
         public static final int save=0x7f0a0019;
         public static final int there_is_not_notifications=0x7f0a0015;
-        public static final int title_activity_account_menu=0x7f0a0021;
-        public static final int title_activity_account_settings=0x7f0a0024;
-        public static final int title_activity_add_magnet=0x7f0a001f;
-        public static final int title_activity_call=0x7f0a001c;
-        public static final int title_activity_categories=0x7f0a001e;
-        public static final int title_activity_customizing=0x7f0a0025;
+        public static final int title_activity_account_menu=0x7f0a0020;
+        public static final int title_activity_account_settings=0x7f0a0023;
+        public static final int title_activity_add_magnet=0x7f0a001e;
+        public static final int title_activity_call=0x7f0a001b;
+        public static final int title_activity_categories=0x7f0a001d;
+        public static final int title_activity_customizing=0x7f0a0024;
         public static final int title_activity_flyer=0x7f0a001a;
-        public static final int title_activity_log_in=0x7f0a0023;
+        public static final int title_activity_log_in=0x7f0a0022;
         public static final int title_activity_menu=0x7f0a0010;
-        public static final int title_activity_new_account=0x7f0a0022;
-        public static final int title_activity_notifications=0x7f0a002b;
-        public static final int title_activity_phone_guide=0x7f0a001d;
-        public static final int title_activity_search_fridge_magnet=0x7f0a0026;
-        public static final int title_activity_splash=0x7f0a0020;
+        public static final int title_activity_new_account=0x7f0a0021;
+        public static final int title_activity_notifications=0x7f0a002f;
+        public static final int title_activity_phone_guide=0x7f0a001c;
+        public static final int title_activity_search_fridge_magnet=0x7f0a0025;
+        public static final int title_activity_splash=0x7f0a001f;
     }
     public static final class style {
         /** 
@@ -1478,29 +1483,9 @@ containing a value of this type.
         public static final int Widget_AppCompat_ProgressBar=0x7f0b000a;
         public static final int Widget_AppCompat_ProgressBar_Horizontal=0x7f0b0009;
         public static final int Widget_AppCompat_Spinner_DropDown_ActionBar=0x7f0b0022;
-        /** <item name="android:fontFamily">sans-serif-light</item>
- <item name="android:shadowColor" >#000000</item>
-	    <item name="android:shadowDx" >1</item>
-	    <item name="android:shadowDy" >1</item>
-	    <item name="android:shadowRadius" >2</item>
-         */
         public static final int big_button=0x7f0b0088;
-        /** <item name="android:fontFamily">sans-serif-light</item>
- <item name="android:shadowColor" >#000000</item>
-	    <item name="android:shadowDx" >1</item>
-	    <item name="android:shadowDy" >1</item>
-	    <item name="android:shadowRadius" >2</item>
-         */
         public static final int category_button=0x7f0b0087;
-        /** <item name="android:fontFamily">sans-serif-light</item>
- <item name="android:shadowColor" >#000000</item>
-	    <item name="android:shadowDx" >1</item>
-	    <item name="android:shadowDy" >1</item>
-	    <item name="android:shadowRadius" >2</item>
-         */
         public static final int menu_button=0x7f0b0085;
-        /**  <item name="android:fontFamily">sans-serif-light</item>
-         */
         public static final int menu_label=0x7f0b0086;
     }
     public static final class styleable {

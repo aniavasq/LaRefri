@@ -63,7 +63,7 @@ public class AppEULA {
  
                                 @Override
                                 public void onClick(
-                                        DialogInterface dialogInterface, int i) {
+                                        DialogInterface dialog, int i) {
                                     // Mark this version as read.
                                     SharedPreferences.Editor editor = prefs
                                             .edit();
@@ -71,7 +71,7 @@ public class AppEULA {
                                     editor.commit();
  
                                     // Close dialog
-                                    dialogInterface.dismiss(); 
+                                    dialog.dismiss(); 
                                     // Enable orientation changes based on
                                     // device's sensor
                                     mContext.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
@@ -89,12 +89,14 @@ public class AppEULA {
                                             .edit();
                                     editor.putBoolean(eulaKey, false);
                                     editor.commit();
-                                    mContext.finish();
+                                    mContext.finish();// Close dialog
+                                    dialog.dismiss(); 
                                     mContext.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
                                 }
  
                             });
-            builder.create().show();
+            AlertDialog alert = builder.create();
+            alert.show();
         }
     }
 

@@ -42,8 +42,6 @@ public class FlyerActivity extends Activity {
 		this.width = dm.widthPixels;		
 		
 		ImageView image = (ImageView)findViewById(R.id.magnetfridge_logo);
-		//RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams((int)(width*0.95),(int)(width*0.95));
-
 		List<Flyer> flyers = getFlyer(this.id_marca);
 		for (Flyer f: flyers){
 			ImageView flyer = (ImageView)findViewById(R.id.flyer_view);
@@ -57,7 +55,6 @@ public class FlyerActivity extends Activity {
 		File imgFile = new File(getFilesDir(), logo);
 		Drawable d = Drawable.createFromPath(imgFile.getAbsolutePath());
 		image.setImageDrawable(d);
-		//image.setImageDrawable(Drawable.createFromStream(getAssets().open(logo), null));
 		nameview.setText(nombre);
 	}
 
@@ -111,7 +108,7 @@ public class FlyerActivity extends Activity {
 	    b.putInt("id_marca", id_marca); //ID
 	    b.putString("logo", logo);
 	    b.putString("nombre", nombre);
-	    intent.putExtras(b); //Put your id to your next Intent
+	    intent.putExtras(b);
 	    this.startActivity(intent);
 	    this.finish();
 	}

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">La Refri</string>
     <string name="desc">Image</string>
     <string name="action_settings"></string>
@@ -15,7 +14,6 @@
     <string name="account_settings">configurar cuenta</string>
     <string name="save">guardar</string>
     <string name="title_activity_flyer">Flyer</string>
-    <string name="hello_world">Hello world!</string>
     <string name="title_activity_call">Call</string>
     <string name="title_activity_phone_guide">PhoneGuideActivity</string>
     <string name="title_activity_categories">CategoriesActivity</string>
@@ -30,6 +28,11 @@
     <string name="positive">si</string>
     <string name="negative">no</string>
     <string name="accept_eula">Aceptar</string>
+    <string name="no_fridge_magnets">No hay locales cerca de su ubicaci\u00F3n</string>
+    <string name="downloading_fridge_magnets">Cargando Imantados</string>
+    <string name="delete_fridge_magnet">¿Quiere eliminar el imantado de</string>
+    <string name="move_btn">mover</string>
+    <string name="delete_btn">borrar</string>
     <string name="eula_string">COPYRIGHTS:
  
 \nCopyright 2013 APP_NAME. All Rights Reserved.

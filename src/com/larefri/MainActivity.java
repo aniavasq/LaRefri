@@ -25,6 +25,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -33,9 +34,7 @@ import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -50,9 +49,9 @@ import android.view.View.OnClickListener;
 import android.view.View.OnDragListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
@@ -63,8 +62,8 @@ public class MainActivity extends Activity {
 
 	private final String PREFS_NAME = "LaRefriPrefsFile";
 	private final Integer movViewId = 20000000, delViewId = 20000005, enableViewId = 20000010;
+	private final Integer TEXT_SIZE = 22;
 	private final Handler handler = new Handler();
-	public final static Bitmap okText = textAsBitmap("OK",40,Color.WHITE);
 	private SharedPreferences settings;
 	private Integer width, height;
 	private Context context;
@@ -479,8 +478,8 @@ public class MainActivity extends Activity {
 		delTxt.setLayoutParams(lp);
 		movTxt.setBackgroundColor(Color.TRANSPARENT);
 		delTxt.setBackgroundColor(Color.TRANSPARENT);
-		movTxt.setText("mover");
-		delTxt.setText("borrar");
+		movTxt.setText(R.string.move_btn);
+		delTxt.setText(R.string.delete_btn);
 		movTxt.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM);
 		delTxt.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM);
 		movTxt.setTextColor(Color.WHITE);
@@ -562,11 +561,22 @@ public class MainActivity extends Activity {
 			if(fm.id_marca == v.getId()) fm_tmp = fm;
 		}
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage("¿Quiere eliminar el imantado de "+fm_tmp.nombre+"?")
+		builder.setMessage(getResources().getText(R.string.delete_fridge_magnet)+" "+fm_tmp.nombre+"?")
 		.setPositiveButton(R.string.positive, dialogClickListener)
 		.setNegativeButton(R.string.negative, dialogClickListener)
-		.setOnCancelListener(dialogCancelListener)
-		.show();
+		.setOnCancelListener(dialogCancelListener);
+		final AlertDialog alert = builder.create();
+		alert.setOnShowListener(new DialogInterface.OnShowListener() {
+		    @Override
+		    public void onShow(DialogInterface dialog) {
+		        Button btnPositive = alert.getButton(Dialog.BUTTON_POSITIVE);
+		        btnPositive.setTextSize(TEXT_SIZE);
+
+		        Button btnNegative = alert.getButton(Dialog.BUTTON_NEGATIVE);
+		        btnNegative.setTextSize(TEXT_SIZE);
+		    }
+		});
+		alert.show();
 	}
 
 	protected void letsDragFridgeMagnets(View v) {
@@ -576,10 +586,12 @@ public class MainActivity extends Activity {
 	}
 
 	private void modifyOverflowButton() {
-		ImageButton menuButton = (ImageButton)findViewById(R.id.overflowbutton);
-		Drawable d = new BitmapDrawable(context.getResources(),okText);
-		menuButton.setImageDrawable(d);
-		menuButton.setScaleType(ScaleType.FIT_CENTER);
+		Button menuButton = (Button)findViewById(R.id.overflowbutton);
+		menuButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_previous_item, 0, 0, 0);
+		menuButton.setText("Ok");
+		menuButton.setTextSize(TEXT_SIZE);
+		menuButton.setTextColor(Color.WHITE);
+		menuButton.setTypeface(Typeface.MONOSPACE);
 		menuButton.setOnClickListener(new OnClickListener() {			
 			@Override
 			public void onClick(View v) {
@@ -589,26 +601,12 @@ public class MainActivity extends Activity {
 			}
 		});	
 	}
-	
-	public static Bitmap textAsBitmap(String text, float textSize, int textColor) {
-	    Paint paint = new Paint();
-	    paint.setTextSize(textSize);
-	    paint.setColor(textColor);
-	    paint.setTextAlign(Paint.Align.LEFT);
-	    paint.setTypeface(Typeface.MONOSPACE);
-	    int width = (int) (paint.measureText(text) + 0.5f); // round
-	    float baseline = (int) (-paint.ascent() + 0.5f); // ascent() is negative
-	    int height = (int) (baseline + paint.descent() + 0.5f);
-	    Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-	    Canvas canvas = new Canvas(image);
-	    canvas.drawText(text, 0, baseline, paint);
-	    return image;
-	}
 
 	protected void modifyBackButton() {
-		ImageButton mbtn = ( (ImageButton)findViewById(R.id.overflowbutton) );
-		mbtn.setImageResource(R.drawable.ic_action_overflow);
-		mbtn.setOnClickListener(new OnClickListener() {			
+		Button menuButton = ( (Button)findViewById(R.id.overflowbutton) );
+		menuButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_overflow, 0, 0, 0);
+		menuButton.setText("");
+		menuButton.setOnClickListener(new OnClickListener() {			
 			@Override
 			public void onClick(View v) {
 				goToMenu(v);
@@ -616,10 +614,8 @@ public class MainActivity extends Activity {
 		});
 		try {
 			saveFridgeMagnetsList();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+		} catch (FileNotFoundException e) { 
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		hideEditMagnetView();
 	}

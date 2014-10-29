@@ -56,7 +56,7 @@ public class SearchFridgeMagnetActivity extends Activity {
 		@Override
 		protected void onPreExecute() {
 	        dialog = new ProgressDialog(context);
-	        this.dialog.setMessage("Actualizando Imantados");
+	        this.dialog.setMessage(getResources().getText(R.string.downloading_fridge_magnets));
 	        this.dialog.show();
 	        this.dialog.setCancelable(true);
 	        this.dialog.setCanceledOnTouchOutside(true);
@@ -158,7 +158,7 @@ public class SearchFridgeMagnetActivity extends Activity {
 					nameValuePairs,
 					this.fm);
 			button.setBackground(resources.getDrawable(R.drawable.menu_button_bg_disabled));
-			button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_favorite, 0);
+			button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_accept, 0);
 			button.setOnClickListener(new RemoveOnClickListener(fm, button));
 			button.setPadding(10, 0, 10, 1);
 		}
@@ -297,7 +297,7 @@ public class SearchFridgeMagnetActivity extends Activity {
 			tmp_title.setText(fm.nombre);
 			tmp_title.setTextColor(Color.WHITE);
 			tmp_title.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-			tmp_title.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_favorite, 0);
+			tmp_title.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_accept, 0);
 			tmp_title.setPadding(10, 0, 10, 1);
 			tmp_title.setOnClickListener(new RemoveOnClickListener(fm, tmp_title));
 			buttons.add(tmp_title);
