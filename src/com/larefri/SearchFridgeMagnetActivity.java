@@ -51,17 +51,17 @@ public class SearchFridgeMagnetActivity extends Activity {
 	private Context context;
 	private TextView search_txt;
 	private List<FridgeMagnet> myFridgeMagnets, loadedFridgeMagnets, queryFridgeMagnets;
-	
+
 	class ThisRestClient extends RestClient{
 		@Override
 		protected void onPreExecute() {
-	        dialog = new ProgressDialog(context);
-	        this.dialog.setMessage(getResources().getText(R.string.downloading_fridge_magnets));
-	        this.dialog.show();
-	        this.dialog.setCancelable(true);
-	        this.dialog.setCanceledOnTouchOutside(true);
-	    }
-		
+			dialog = new ProgressDialog(context);
+			this.dialog.setMessage(getResources().getText(R.string.downloading_fridge_magnets));
+			this.dialog.show();
+			this.dialog.setCancelable(true);
+			this.dialog.setCanceledOnTouchOutside(true);
+		}
+
 		@Override
 		protected Object doInBackground(Object... params) {
 			return super.doInBackground(params);
@@ -70,32 +70,34 @@ public class SearchFridgeMagnetActivity extends Activity {
 		@Override
 		protected void onPostExecute(Object result) {
 			if (dialog.isShowing()) {
-	            dialog.dismiss();
-	        }
-			InputStream is = new ByteArrayInputStream(result.toString().getBytes());
-			FridgeMagnetsManager fridgeMagnetsManager = new FridgeMagnetsManager();
-			try {
-				loadedFridgeMagnets = fridgeMagnetsManager.readJsonStream(is);
-				loadFridgeMagnetsButtons(loadedFridgeMagnets);
-			} catch (NotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}  catch (Exception e) {
-				loadedFridgeMagnets = new ArrayList<FridgeMagnet>();
+				dialog.dismiss();
 			}
-			search_txt.addTextChangedListener(new QueryInList(loadedFridgeMagnets));
-			super.onPostExecute(result);
+			if(result != null){
+				InputStream is = new ByteArrayInputStream(result.toString().getBytes());
+				FridgeMagnetsManager fridgeMagnetsManager = new FridgeMagnetsManager();
+				try {
+					loadedFridgeMagnets = fridgeMagnetsManager.readJsonStream(is);
+					loadFridgeMagnetsButtons(loadedFridgeMagnets);
+				} catch (NotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}  catch (Exception e) {
+					loadedFridgeMagnets = new ArrayList<FridgeMagnet>();
+				}
+				search_txt.addTextChangedListener(new QueryInList(loadedFridgeMagnets));
+				super.onPostExecute(result);
+			}
 		}
-		
+
 	}
-	
+
 	class DownloadMagnetStoresRestClient extends RestClient{
 		@Override
 		protected Object doInBackground(Object... params) {
 			this.setResult(super.doInBackground(params));
 			FridgeMagnet for_add = new FridgeMagnet();
-			
+
 			for_add = (FridgeMagnet) params[3];
 			InputStream is = new ByteArrayInputStream(getResult().toString().getBytes());
 			StoresManager storesManager = new StoresManager();
@@ -109,7 +111,7 @@ public class SearchFridgeMagnetActivity extends Activity {
 			return this.getResult();
 		}
 	}
-	
+
 	class DownloadFridgeMagnetLogo extends AsyncTask<String, String, Boolean>{
 		@Override
 		protected Boolean doInBackground(String... params) {
@@ -117,25 +119,25 @@ public class SearchFridgeMagnetActivity extends Activity {
 			String file = params[1];
 			try{
 				InputStream imageInputStream=new URL(url+file).openStream();
-		    	FileOutputStream imageOutputStream;
-		    	imageOutputStream = openFileOutput(file, Context.MODE_PRIVATE);
-		    	MainActivity.CopyStream(imageInputStream, imageOutputStream);
-		    	imageOutputStream.close();
-		    	return true;
+				FileOutputStream imageOutputStream;
+				imageOutputStream = openFileOutput(file, Context.MODE_PRIVATE);
+				MainActivity.CopyStream(imageInputStream, imageOutputStream);
+				imageOutputStream.close();
+				return true;
 			}catch(Exception donotCare){ }
 			return false;
 		}		
 	}
-	
+
 	class AddOnClickListener implements OnClickListener{
 		private FridgeMagnet fm;
 		private Button button;
-		
+
 		public AddOnClickListener(FridgeMagnet fm, Button button){
 			this.fm = fm;
 			this.button = button;
 		}
-		
+
 		@Override
 		public void onClick(View v) {
 			Resources resources = getResources();
@@ -163,11 +165,11 @@ public class SearchFridgeMagnetActivity extends Activity {
 			button.setPadding(10, 0, 10, 1);
 		}
 	}
-	
+
 	class RemoveOnClickListener implements OnClickListener{
 		private FridgeMagnet fm;
 		private Button button;
-		
+
 		public RemoveOnClickListener(FridgeMagnet fm, Button button){
 			this.fm = fm;
 			this.button = button;
@@ -189,15 +191,15 @@ public class SearchFridgeMagnetActivity extends Activity {
 			button.setPadding(10, 0, 10, 1);
 		}
 	}
-	
+
 	class QueryInList implements TextWatcher{
 		private List<FridgeMagnet> fridgeMagnets;
-			
+
 		public QueryInList(List<FridgeMagnet> loadedFridgeMagnets) {
 			super();
 			this.fridgeMagnets = loadedFridgeMagnets;
 		}
-		
+
 		@Override
 		public void afterTextChanged(Editable s) {	}
 
@@ -225,33 +227,33 @@ public class SearchFridgeMagnetActivity extends Activity {
 			}else{
 				tmpQueryFridgeMagnets = queryFridgeMagnets;
 			}
-			
+
 		}		
 	}
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_search_fridge_magnet);	
-		
+
 		this.context = this;
 		this.settings = getSharedPreferences("LaRefriPrefsFile", 0);
 		this.search_txt = (TextView)findViewById(R.id.search_txt);
-		
+
 		//Set policy to HTTP
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-		
+		StrictMode.setThreadPolicy(policy);
+
 		Bundle b = getIntent().getExtras();
 		id_category = b.getInt("id_category");
 		logo = b.getString("logo");
 		Log.v("id_category",id_category.toString());
-		
+
 		ImageView image = (ImageView)findViewById(R.id.magnetfridge_logo);
 		File imgFile = new File(getFilesDir(), logo);
 		Bitmap bmp = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
 		image.setImageBitmap(bmp);
-		
+
 		(new ThisRestClient()).execute(
 				StaticUrls.MAGNETS, 
 				new HashMap<String, String>(),
@@ -264,9 +266,9 @@ public class SearchFridgeMagnetActivity extends Activity {
 		Resources resources = getResources();
 		ContextThemeWrapper themeWrapper = new ContextThemeWrapper(context, R.style.menu_button);
 		ArrayList<Button> buttons = new ArrayList<Button>();
-		
+
 		ArrayList<FridgeMagnet> metaRemove = new ArrayList<FridgeMagnet>(loadedFridgeMagnets);
-		
+
 		ArrayList<FridgeMagnet> remove = new ArrayList<FridgeMagnet>(fridgeMagnets);
 		remove.removeAll(this.myFridgeMagnets);		
 		store_call_pane.removeAllViews();
@@ -284,9 +286,9 @@ public class SearchFridgeMagnetActivity extends Activity {
 				buttons.add(tmp_button);
 			}
 		}
-		
+
 		metaRemove.removeAll(fridgeMagnets);
-		
+
 		ArrayList<FridgeMagnet> myRemove = new ArrayList<FridgeMagnet>(this.myFridgeMagnets);
 		myRemove.removeAll(metaRemove);
 		myRemove.removeAll(remove);
@@ -335,11 +337,11 @@ public class SearchFridgeMagnetActivity extends Activity {
 			}			
 		}catch (Exception donotCare){ }
 	}
-	
+
 	public void onBackPressed(View view) {
 		Intent intent = new Intent(view.getContext(), CategoriesActivity.class);
-	    this.startActivity(intent);
-	    this.finish();
+		this.startActivity(intent);
+		this.finish();
 	}
 
 	protected void setBackground() {
@@ -350,18 +352,18 @@ public class SearchFridgeMagnetActivity extends Activity {
 		article.setBackgroundColor(menu_bg_color);
 		head.setBackgroundColor(bg_color);
 	}
-	
+
 	private void saveFridgeMagnetsList() throws FileNotFoundException, IOException {
 		File JsonFile = new File(getFilesDir(), "data.json");		
 		FridgeMagnetsManager fridgeMagnetWriter = new FridgeMagnetsManager();
 		fridgeMagnetWriter.writeJsonStream(new FileOutputStream(JsonFile), this.myFridgeMagnets);
 	}
-	
+
 	public void onHomePressed(View view){
 		Intent intent = new Intent(view.getContext(), MainActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-	    this.startActivity(intent);
-	    this.finish();
+		this.startActivity(intent);
+		this.finish();
 	}
 
 	@Override

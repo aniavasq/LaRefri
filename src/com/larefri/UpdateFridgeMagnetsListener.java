@@ -56,7 +56,7 @@ public class UpdateFridgeMagnetsListener extends RestClient {
 		for(UpdateMessage update: updateMessages){
 			//
 			FridgeMagnet tmpFm = new FridgeMagnet(update.id_marca);
-			if(fridgeMagnets.contains(tmpFm)){
+			if(fridgeMagnets != null && fridgeMagnets.contains(tmpFm)){
 				HashMap<String, String> params = new HashMap<String, String>();
 				params.put("id_marca", update.id_marca.toString());
 				//construct form to HttpRequest

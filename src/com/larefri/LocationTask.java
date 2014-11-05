@@ -30,7 +30,7 @@ public class LocationTask extends AsyncTask<Void, Void, List<Address>> {
 	public static final int OUT_OF_SERVICE = 0;
 	public static final int TEMPORARILY_UNAVAILABLE = 1;
 	public static final int AVAILABLE = 2;
-	
+
 
 	public LocationTask(Context context, Activity parent) {
 		super();
@@ -40,39 +40,41 @@ public class LocationTask extends AsyncTask<Void, Void, List<Address>> {
 	}
 
 	private void updateLocation(Location location){
-        this.currentLocation = location;
-        this.currentLatitude = this.currentLocation.getLatitude();
-        this.currentLongitude = this.currentLocation.getLongitude();
-    }
+		try{
+			this.currentLocation = location;
+			this.currentLatitude = this.currentLocation.getLatitude();
+			this.currentLongitude = this.currentLocation.getLongitude();
+		}catch(Exception doNotCare){ }
+	}
 
 	public List<Address> getAddresses() {
 		return this.addresses;
 	}
-	
+
 	public String getCity(){
 		return this.settings.getString("current_city", "NO_CITY");
 	}
-	
+
 	public void setCity(String current_city){
 		SharedPreferences.Editor editor = this.settings.edit();
 		editor.putString("current_city", current_city);
 		editor.commit();
 	}
-	
+
 	private void setAddresses(){
-        int tryes = 0;
+		int tryes = 0;
 		Geocoder gcd = new Geocoder(context, Locale.getDefault());
-        this.addresses = new ArrayList<Address>();
-        while(tryes<5){
+		this.addresses = new ArrayList<Address>();
+		while(tryes<5){
 			try {
 				this.addresses = gcd.getFromLocation(currentLatitude, currentLongitude,10);
 				break;
 			} catch (IOException doNotCare) { }
 			tryes++;
-        }
+		}
 		if (addresses.size() > 0){
-            this.setCity(this.addresses.get(0).getLocality().toString());
-        }
+			this.setCity(this.addresses.get(0).getLocality().toString());
+		}
 	}
 
 	public Location getCurrentLocation() {
@@ -82,7 +84,7 @@ public class LocationTask extends AsyncTask<Void, Void, List<Address>> {
 	public void setCurrentLocation(Location currentLocation) {
 		this.currentLocation = currentLocation;
 	}
-	
+
 	public Criteria initCriteria(){
 		Criteria criteria = new Criteria();
 		criteria.setAltitudeRequired(false);
@@ -104,8 +106,8 @@ public class LocationTask extends AsyncTask<Void, Void, List<Address>> {
 		this.providerFine = this.locationManager.getBestProvider(criteria, true);
 		criteria.setAccuracy(Criteria.ACCURACY_COARSE);
 		this.providerCoarse = this.locationManager.getBestProvider(criteria, true);
-        if (providerCoarse != null) {
-        	updateLocation(this.locationManager.getLastKnownLocation(providerCoarse));
+		if (providerCoarse != null) {
+			updateLocation(this.locationManager.getLastKnownLocation(providerCoarse));
 		}else if(providerFine != null){
 			updateLocation(this.locationManager.getLastKnownLocation(providerFine));
 		}else{

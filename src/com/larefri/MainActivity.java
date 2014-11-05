@@ -75,7 +75,7 @@ public class MainActivity extends Activity {
 	private List<FridgeMagnet> fridgeMagnets;
 	private ScrollView myScrollView;
 	private LocationTask locationTask;
-	
+
 	class FridgeMagnetOnTouchListener extends GestureDetector.SimpleOnGestureListener  implements OnTouchListener {
 		private FridgeMagnet fm;
 		private Float mDownX;
@@ -318,11 +318,13 @@ public class MainActivity extends Activity {
 		}
 		for(int i =0 ; i < right_pane_fridgemagnets.getChildCount(); i++){
 			ImageButton tmp_imageButtom = (ImageButton) ((RelativeLayout)right_pane_fridgemagnets.getChildAt(i)).getChildAt(0);
-			Bitmap bmp = ((BitmapDrawable)tmp_imageButtom.getDrawable()).getBitmap();
-			if(!bmp.isRecycled()){
-				bmp.recycle();
-				bmp=null;
-			}
+			try{
+				Bitmap bmp = ((BitmapDrawable)tmp_imageButtom.getDrawable()).getBitmap();
+				if(!bmp.isRecycled()){
+					bmp.recycle();
+					bmp=null;
+				}
+			}catch(Exception doNotCare){ }
 		}
 		super.onStop();
 	}
@@ -420,12 +422,14 @@ public class MainActivity extends Activity {
 	}
 
 	protected void loadImageToButtom(File imgFile, ImageButton tmp_imageButtom) throws FileNotFoundException {
-	    Bitmap bmp;
+		Bitmap bmp;
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		bmp = BitmapFactory.decodeStream(new FileInputStream(imgFile));
-		bmp.compress(Bitmap.CompressFormat.JPEG, 100, out);
-	    Drawable d = new BitmapDrawable(context.getResources(), bmp);
-		tmp_imageButtom.setImageDrawable(d);		
+		if(bmp != null){
+			bmp.compress(Bitmap.CompressFormat.JPEG, 100, out);
+			Drawable d = new BitmapDrawable(context.getResources(), bmp);
+			tmp_imageButtom.setImageDrawable(d);
+		}
 	}
 
 	protected void swapFridgeMagnetsInList(View view, View v) {
@@ -567,14 +571,14 @@ public class MainActivity extends Activity {
 		.setOnCancelListener(dialogCancelListener);
 		final AlertDialog alert = builder.create();
 		alert.setOnShowListener(new DialogInterface.OnShowListener() {
-		    @Override
-		    public void onShow(DialogInterface dialog) {
-		        Button btnPositive = alert.getButton(Dialog.BUTTON_POSITIVE);
-		        btnPositive.setTextSize(TEXT_SIZE);
+			@Override
+			public void onShow(DialogInterface dialog) {
+				Button btnPositive = alert.getButton(Dialog.BUTTON_POSITIVE);
+				btnPositive.setTextSize(TEXT_SIZE);
 
-		        Button btnNegative = alert.getButton(Dialog.BUTTON_NEGATIVE);
-		        btnNegative.setTextSize(TEXT_SIZE);
-		    }
+				Button btnNegative = alert.getButton(Dialog.BUTTON_NEGATIVE);
+				btnNegative.setTextSize(TEXT_SIZE);
+			}
 		});
 		alert.show();
 	}
