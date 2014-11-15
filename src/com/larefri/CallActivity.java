@@ -105,7 +105,7 @@ public class CallActivity extends Activity {
 		Resources resources = getResources();
 		ContextThemeWrapper themeWrapper = new ContextThemeWrapper(context, R.style.menu_button);
 
-		if(stores.isEmpty() || (stores.size()==1 && stores.get(0)==null)){
+		if(stores.isEmpty() || (stores.size()==1 && stores.get(0)==null) || settings.getString("current_city", "NO_CITY").equalsIgnoreCase("NO_CITY")){
 			LinearLayout phone_num_pane = new LinearLayout(themeWrapper);
 			phone_num_pane.setOrientation(LinearLayout.VERTICAL);
 			phone_num_pane.setLayoutParams(lp);

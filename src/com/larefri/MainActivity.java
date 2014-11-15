@@ -2,7 +2,6 @@ package com.larefri;
 
 //Repository git@github.com:aniavasq/LaRefri.git
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -36,7 +35,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.view.DragEvent;
@@ -75,6 +73,7 @@ public class MainActivity extends Activity {
 	private List<FridgeMagnet> fridgeMagnets;
 	private ScrollView myScrollView;
 	private LocationTask locationTask;
+	private BitmapLRUCache mMemoryCache;
 
 	class FridgeMagnetOnTouchListener extends GestureDetector.SimpleOnGestureListener  implements OnTouchListener {
 		private FridgeMagnet fm;
@@ -210,7 +209,12 @@ public class MainActivity extends Activity {
 			// record the fact that the APP has been started at least once
 			settings.edit().putBoolean("my_first_time", false).commit();
 		}
-		this.movNdel = createEditMagnetView();	
+		
+	    final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+	    final int cacheSize = maxMemory / 8;
+	    mMemoryCache = new BitmapLRUCache(cacheSize);
+		
+		this.movNdel = createEditMagnetView();
 		//ScrolView
 		this.myScrollView = (ScrollView) findViewById(R.id.the_scroll_view);
 		//Location
@@ -218,10 +222,13 @@ public class MainActivity extends Activity {
 	}
 
 	public void downloadImageFromServer(String url, String file) throws MalformedURLException, IOException {
-		InputStream imageInputStream=new URL(url+file).openStream();
+		InputStream imageInputStream = new URL(url+file).openStream();
 		FileOutputStream imageOutputStream;
 		imageOutputStream = openFileOutput(file, Context.MODE_PRIVATE);
-		CopyStream(imageInputStream, imageOutputStream);
+		Bitmap bmp = BitmapFactory.decodeStream(imageInputStream);
+		if(bmp != null){
+			bmp.compress(Bitmap.CompressFormat.JPEG, 100, imageOutputStream);
+		}
 		imageOutputStream.close();
 	}
 
@@ -278,11 +285,9 @@ public class MainActivity extends Activity {
 		//add default icons for the fridgeMagnets as buttons
 		try {
 			loadFridgeMagnetsFromFile(left_pane_fridgemagnets, right_pane_fridgemagnets, lp);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} 
+		catch (IOException e) { }
+		catch (Exception e) { }
 		//Update phone guide
 		//Check Updates
 		HashMap<String, String> params = new HashMap<String, String>();
@@ -302,31 +307,6 @@ public class MainActivity extends Activity {
 		locationTask.cancel(true);
 		locationTask = new LocationTask(context, this);
 		locationTask.execute();
-	}
-
-	@Override
-	protected void onStop() {
-		LinearLayout left_pane_fridgemagnets = (LinearLayout) findViewById(R.id.left_pane_fridgemagnets);
-		LinearLayout right_pane_fridgemagnets = (LinearLayout)findViewById(R.id.right_pane_fridgemagnets);
-		for(int i =0 ; i < left_pane_fridgemagnets.getChildCount(); i++){
-			ImageButton tmp_imageButtom = (ImageButton) ((RelativeLayout)left_pane_fridgemagnets.getChildAt(i)).getChildAt(0);
-			Bitmap bmp = ((BitmapDrawable)tmp_imageButtom.getDrawable()).getBitmap();
-			if(!bmp.isRecycled()){
-				bmp.recycle();
-				bmp=null;
-			}
-		}
-		for(int i =0 ; i < right_pane_fridgemagnets.getChildCount(); i++){
-			ImageButton tmp_imageButtom = (ImageButton) ((RelativeLayout)right_pane_fridgemagnets.getChildAt(i)).getChildAt(0);
-			try{
-				Bitmap bmp = ((BitmapDrawable)tmp_imageButtom.getDrawable()).getBitmap();
-				if(!bmp.isRecycled()){
-					bmp.recycle();
-					bmp=null;
-				}
-			}catch(Exception doNotCare){ }
-		}
-		super.onStop();
 	}
 
 	public void goToMenu(View view) {
@@ -421,15 +401,90 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	protected void loadImageToButtom(File imgFile, ImageButton tmp_imageButtom) throws FileNotFoundException {
-		Bitmap bmp;
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		bmp = BitmapFactory.decodeStream(new FileInputStream(imgFile));
-		if(bmp != null){
-			bmp.compress(Bitmap.CompressFormat.JPEG, 100, out);
-			Drawable d = new BitmapDrawable(context.getResources(), bmp);
-			tmp_imageButtom.setImageDrawable(d);
+	private void loadImageToButtom(File imgFile, ImageButton tmp_imageButtom) throws FileNotFoundException {
+		final String imageKey = String.valueOf(imgFile);
+
+	    Bitmap bitmap = mMemoryCache.getBitmapFromMemCache(imageKey);
+	    if (bitmap != null) {
+			loadBitmap(imgFile, tmp_imageButtom, bitmap);
+	    } else {
+	    	bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+	    	loadBitmap(imgFile, tmp_imageButtom, bitmap);
+	    	mMemoryCache.addBitmapToMemoryCache(imageKey, bitmap);
+	    }
+	}
+
+	public void loadBitmap(File imgFile, ImageButton imageButton, Bitmap bitmap) {
+		if (cancelPotentialWork(imgFile, imageButton)) {
+			final BitmapWorkerTask task = new BitmapWorkerTask(imageButton, this);
+			final BitmapWorkerTask.AsyncRecyclingDrawable asyncDrawable =  new BitmapWorkerTask.AsyncRecyclingDrawable(getResources(), bitmap, task);
+			imageButton.setImageDrawable(asyncDrawable);
+			task.execute(imgFile);
 		}
+	}
+
+	public static boolean cancelPotentialWork(File data, ImageButton imageButton) {
+		final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageButton);
+
+		if (bitmapWorkerTask != null) {
+			final File bitmapData = bitmapWorkerTask.getData();
+			// If bitmapData is not yet set or it differs from the new data
+			if (bitmapData == null || bitmapData != data) {
+				// Cancel previous task
+				bitmapWorkerTask.cancel(true);
+			} else {
+				// The same work is already in progress
+				return false;
+			}
+		}
+		// No task associated with the ImageView, or an existing task was cancelled
+		return true;
+	}
+
+	public static BitmapWorkerTask getBitmapWorkerTask(ImageButton imageButton) {
+		if (imageButton != null) {
+			final Drawable drawable = imageButton.getDrawable();
+			if (drawable instanceof BitmapWorkerTask.AsyncRecyclingDrawable) {
+				final BitmapWorkerTask.AsyncRecyclingDrawable asyncDrawable = (BitmapWorkerTask.AsyncRecyclingDrawable) drawable;
+				return asyncDrawable.getBitmapWorkerTask();
+			}
+		}
+		return null;
+	}
+
+	public Bitmap decodeSampledBitmapFromResource(File imgFile){
+		BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inJustDecodeBounds = true;
+		int reqWidth = width/2-20;
+		int reqHeight = width/2-20;		
+		// Calculate inSampleSize
+		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+		// Decode bitmap with inSampleSize set
+		options.inJustDecodeBounds = false;
+		Bitmap bmp = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), options);
+		return bmp;
+	}
+
+	public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+		// Raw height and width of image
+		final int height = options.outHeight;
+		final int width = options.outWidth;
+		int inSampleSize = 1;
+
+		if (height > reqHeight || width > reqWidth) {
+
+			final int halfHeight = height / 2;
+			final int halfWidth = width / 2;
+
+			// Calculate the largest inSampleSize value that is a power of 2 and keeps both
+			// height and width larger than the requested height and width.
+			while ((halfHeight / inSampleSize) > reqHeight
+					&& (halfWidth / inSampleSize) > reqWidth) {
+				inSampleSize *= 2;
+			}
+		}
+
+		return inSampleSize;
 	}
 
 	protected void swapFridgeMagnetsInList(View view, View v) {

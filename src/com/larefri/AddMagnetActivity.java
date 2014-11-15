@@ -88,7 +88,10 @@ public class AddMagnetActivity extends Activity {
 				InputStream imageInputStream=new URL(url+file).openStream();
 		    	FileOutputStream imageOutputStream;
 		    	imageOutputStream = openFileOutput(file, Context.MODE_PRIVATE);
-		    	MainActivity.CopyStream(imageInputStream, imageOutputStream);
+		    	Bitmap bmp = BitmapFactory.decodeStream(imageInputStream);
+				if(bmp != null){
+					bmp.compress(Bitmap.CompressFormat.JPEG, 100, imageOutputStream);
+				}
 		    	imageOutputStream.close();
 		    	return true;
 			}catch(Exception donotCare){ }

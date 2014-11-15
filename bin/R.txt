@@ -265,7 +265,7 @@ int id action_context_bar 0x7f05001d
 int id action_menu_divider 0x7f050016
 int id action_menu_presenter 0x7f050017
 int id action_mode_close_button 0x7f050024
-int id action_settings 0x7f05005e
+int id action_settings 0x7f05005f
 int id activity_chooser_view_content 0x7f050025
 int id add_fridge_magnets_buttons 0x7f050051
 int id always 0x7f05000b
@@ -276,13 +276,13 @@ int id btn_add_fridge_magnets 0x7f050042
 int id btn_customize 0x7f050043
 int id btn_notifications 0x7f050059
 int id button1 0x7f05004d
-int id call_btn 0x7f05005d
+int id call_btn 0x7f05005e
 int id category_buttons 0x7f050053
 int id checkbox 0x7f05002d
 int id city_txt 0x7f050049
 int id collapseActionView 0x7f05000d
 int id confirm_pass_txt 0x7f05004c
-int id contact_btn 0x7f05005c
+int id contact_btn 0x7f05005d
 int id default_activity_button 0x7f050028
 int id dialog 0x7f05000e
 int id disableHome 0x7f050008
@@ -310,6 +310,7 @@ int id never 0x7f050009
 int id none 0x7f050010
 int id normal 0x7f050000
 int id overflowbutton 0x7f05003e
+int id parent 0x7f05005a
 int id password_txt 0x7f05004b
 int id phone_txt 0x7f050047
 int id progress_circular 0x7f050018
@@ -327,7 +328,7 @@ int id search_go_btn 0x7f05003a
 int id search_mag_icon 0x7f050035
 int id search_plate 0x7f050036
 int id search_src_text 0x7f050037
-int id search_txt 0x7f05005a
+int id search_txt 0x7f05005b
 int id search_voice_btn 0x7f05003b
 int id separator_sec 0x7f050040
 int id set_theme_buttons 0x7f050054
@@ -336,7 +337,7 @@ int id shortcut 0x7f05002e
 int id showCustom 0x7f050007
 int id showHome 0x7f050004
 int id showTitle 0x7f050006
-int id some_relative_layout 0x7f05005b
+int id some_relative_layout 0x7f05005c
 int id split_action_bar 0x7f05001e
 int id stores_call_buttons 0x7f050052
 int id submit_area 0x7f050039

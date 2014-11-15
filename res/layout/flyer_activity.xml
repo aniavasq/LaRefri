@@ -91,7 +91,7 @@
                             android:paddingLeft="20dp"
                             android:paddingRight="20dp" >
 
-                            <ImageView
+                            <com.larefri.RecyclingImageView
                                 android:id="@+id/flyer_view"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -109,7 +109,7 @@
                             android:orientation="horizontal"
                             android:paddingTop="2dp" >
 
-                            <ImageView
+                            <com.larefri.RecyclingImageView
                                 android:id="@+id/magnetfridge_logo"
                                 android:layout_width="0dp"
                                 android:layout_height="200dp"

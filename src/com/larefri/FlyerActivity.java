@@ -10,7 +10,10 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -21,12 +24,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class FlyerActivity extends Activity {
-	
+
 	private SharedPreferences settings;
 	private Integer id_marca;
 	private String logo;
 	private String nombre;
 	private Integer width;
+	private BitmapLRUCache mMemoryCache;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,15 +44,21 @@ public class FlyerActivity extends Activity {
 		DisplayMetrics dm = new DisplayMetrics();
 		this.getWindow().getWindowManager().getDefaultDisplay().getMetrics(dm);
 		this.width = dm.widthPixels;		
-		
-		ImageView image = (ImageView)findViewById(R.id.magnetfridge_logo);
+
+		final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+	    final int cacheSize = maxMemory / 8;
+	    mMemoryCache = new BitmapLRUCache(cacheSize);
+	    
+	    RecyclingImageView image = (RecyclingImageView)findViewById(R.id.magnetfridge_logo);
 		List<Flyer> flyers = getFlyer(this.id_marca);
-		for (Flyer f: flyers){
-			ImageView flyer = (ImageView)findViewById(R.id.flyer_view);
-			File imgFlyer = new File(getFilesDir(), f.imagen);
-			Drawable df = Drawable.createFromPath(imgFlyer.getAbsolutePath());			
-			flyer.setImageDrawable(df);
-		}
+
+		try {
+			for (Flyer f: flyers){
+				ImageView flyer = (ImageView)findViewById(R.id.flyer_view);
+				File imgFlyer = new File(getFilesDir(), f.imagen);
+				loadImageToFlyer(imgFlyer, flyer);
+			}
+		} catch (FileNotFoundException e) { }
 		LinearLayout.LayoutParams ll = new LinearLayout.LayoutParams(width/2,width/2);
 		image.setLayoutParams(ll);
 		TextView nameview = (TextView)findViewById(R.id.magnetfridge_name);
@@ -58,14 +68,27 @@ public class FlyerActivity extends Activity {
 		nameview.setText(nombre);
 	}
 
+	private void loadImageToFlyer(File imgFile, ImageView imageFlyer) throws FileNotFoundException {
+		final String imageKey = String.valueOf(imgFile);
+
+		Bitmap bitmap = mMemoryCache.getBitmapFromMemCache(imageKey);
+		if (bitmap != null) {
+			imageFlyer.setImageDrawable(new BitmapDrawable(getResources(), bitmap));
+		} else {
+			bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+			imageFlyer.setImageDrawable(new BitmapDrawable(getResources(), bitmap));
+			mMemoryCache.addBitmapToMemoryCache(imageKey, bitmap);
+		}
+	}
+
 	private List<Flyer> getFlyer(Integer id_marca) {		
 		try {
 			File fl = new File(getFilesDir(),id_marca+"_flyer.json");
 			FileInputStream fin;
 			fin = new FileInputStream(fl);
-		    List<Flyer> ret = (new FlyerManager()).readJsonStream(fin);
-		    fin.close();
-		    return ret;
+			List<Flyer> ret = (new FlyerManager()).readJsonStream(fin);
+			fin.close();
+			return ret;
 		} catch (FileNotFoundException e) {
 		} catch (IOException e) {
 		}
@@ -86,38 +109,39 @@ public class FlyerActivity extends Activity {
 		article.setBackgroundColor(menu_bg_color);
 		head.setBackgroundColor(bg_color);
 	}
-	
+
 	public void onBackPressed(View view) {
 		onHomePressed(view);
 	}
-	
+
 	public void onCall(View view) {
 		Intent intent = new Intent(view.getContext(), CallActivity.class);
 		Bundle b = new Bundle();
-	    b.putInt("id_marca", id_marca);
-	    b.putString("logo", logo);
-	    b.putString("nombre", nombre);
-	    intent.putExtras(b);
-	    this.startActivity(intent);
-	    this.finish();
+		b.putInt("id_marca", id_marca);
+		b.putString("logo", logo);
+		b.putString("nombre", nombre);
+		intent.putExtras(b);
+		this.startActivity(intent);
+		this.finish();
 	}
-	
+
 	public void onPhoneGuide(View view) {
 		Intent intent = new Intent(view.getContext(), PhoneGuideActivity.class);
 		Bundle b = new Bundle();
-	    b.putInt("id_marca", id_marca); //ID
-	    b.putString("logo", logo);
-	    b.putString("nombre", nombre);
-	    intent.putExtras(b);
-	    this.startActivity(intent);
-	    this.finish();
+		b.putInt("id_marca", id_marca); //ID
+		b.putString("logo", logo);
+		b.putString("nombre", nombre);
+		intent.putExtras(b);
+		this.startActivity(intent);
+		this.finish();
 	}
-	
+
+
 	public void onHomePressed(View view){
 		Intent intent = new Intent(view.getContext(), MainActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-	    this.startActivity(intent);
-	    this.finish();
+		this.startActivity(intent);
+		this.finish();
 	}
 
 	@Override
