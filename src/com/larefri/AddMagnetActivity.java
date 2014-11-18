@@ -2,12 +2,10 @@ package com.larefri;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,27 +24,25 @@ import android.content.res.Resources.NotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class AddMagnetActivity extends Activity {
+public class AddMagnetActivity extends Activity implements AddMagnet{
 
 	private SharedPreferences settings;
 	private Integer id_category;
 	private String nombre;
 	private String logo;
 	private Context context;
-	private List<FridgeMagnet> myFridgeMagnets, loadedFridgeMagnets;
+	private List<FridgeMagnet> loadedFridgeMagnets;
 	
 	class ThisRestClient extends RestClient{
 
@@ -78,94 +74,7 @@ public class AddMagnetActivity extends Activity {
 		}
 		
 	}
-	
-	class DownloadFridgeMagnetLogo extends AsyncTask<String, String, Boolean>{
-		@Override
-		protected Boolean doInBackground(String... params) {
-			String url = params[0];
-			String file = params[1];
-			try{
-				InputStream imageInputStream=new URL(url+file).openStream();
-		    	FileOutputStream imageOutputStream;
-		    	imageOutputStream = openFileOutput(file, Context.MODE_PRIVATE);
-		    	Bitmap bmp = BitmapFactory.decodeStream(imageInputStream);
-				if(bmp != null){
-					bmp.compress(Bitmap.CompressFormat.JPEG, 100, imageOutputStream);
-				}
-		    	imageOutputStream.close();
-		    	return true;
-			}catch(Exception donotCare){ }
-			return false;
-		}		
-	}
-	
-	class AddOnClickListener implements OnClickListener{
-		private FridgeMagnet fm;
-		private Button button;
-		
-		public AddOnClickListener(FridgeMagnet fm, Button button){
-			this.fm = fm;
-			this.button = button;
-		}
-		
-		@Override
-		public void onClick(View v) {
-			Resources resources = getResources();
-			HashMap<String, String> params = new HashMap<String, String>();
-			params.put("id_marca", fm.id_marca.toString());
-			//construct form to HttpRequest
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("id_marca", fm.id_marca.toString()));
-			(new DownloadFridgeMagnetLogo()).execute(
-					StaticUrls.FRIDGE_MAGNETS, 
-					fm.logo);
-			/**/
-			try {
-				addMagnetToLocalData(this.fm);
-			} catch (FileNotFoundException e) {
-			} catch (IOException e) {
-			}
-			(new DownloadMagnetStoresRestClient((Activity)context)).execute(
-					StaticUrls.SUCURSALES_URL, 
-					params,
-					nameValuePairs,
-					this.fm);
-			(new DownloadFlyerRestClient((Activity)context)).execute(
-					StaticUrls.FLYER_PROMO, 
-					params,
-					nameValuePairs,
-					this.fm);
-			button.setBackground(resources.getDrawable(R.drawable.menu_button_bg_disabled));
-			button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_accept, 0);
-			button.setOnClickListener(new RemoveOnClickListener(fm, button));
-			button.setPadding(10, 0, 10, 1);
-		}
-	}
-	
-	class RemoveOnClickListener implements OnClickListener{
-		private FridgeMagnet fm;
-		private Button button;
-		
-		public RemoveOnClickListener(FridgeMagnet fm, Button button){
-			this.fm = fm;
-			this.button = button;
-		}
-		@Override
-		public void onClick(View v) {
-			Resources resources = getResources();
-			myFridgeMagnets.remove(fm);
-			try {
-				saveFridgeMagnetsList();
-			} catch (FileNotFoundException e) {
-			} catch (IOException e) {
-			}
-			button.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
-			button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_add, 0);
-			button.setOnClickListener(new AddOnClickListener(fm, button));
-			button.setPadding(10, 0, 10, 1);
-		}
-	}
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -203,18 +112,13 @@ public class AddMagnetActivity extends Activity {
 	@Override
 	protected void onStart() {
 		setBackground();
-		File JsonFile = new File(getFilesDir(), "data.json");
-		FridgeMagnetsManager fridgeMagnetReader = new FridgeMagnetsManager();
-		try {
-			this.myFridgeMagnets = fridgeMagnetReader.readJsonStream( new FileInputStream(JsonFile) );
-		} catch (Exception e) { }
 		super.onStart();
 	}
 	
 	public void addMagnetToLocalData(FridgeMagnet fm) throws FileNotFoundException, IOException{
 		try{
-			if(!this.myFridgeMagnets.contains(fm)){
-				this.myFridgeMagnets.add(fm);
+			if(!MainActivity.getMyFridgeMagnets().contains(fm)){
+				MainActivity.addMyFridgeMagnet(fm);
 				saveFridgeMagnetsList();
 			}
 		}catch (Exception donotCare){ }
@@ -229,7 +133,7 @@ public class AddMagnetActivity extends Activity {
 		ArrayList<Button> buttons = new ArrayList<Button>();
 		
 		ArrayList<FridgeMagnet> remove = new ArrayList<FridgeMagnet>(fridgeMagnets);
-		remove.removeAll(this.myFridgeMagnets);		
+		remove.removeAll(MainActivity.getMyFridgeMagnets());		
 		store_call_pane.removeAllViews();
 		for(final FridgeMagnet fm: remove){
 			if(fm!=null){
@@ -239,15 +143,15 @@ public class AddMagnetActivity extends Activity {
 				tmp_button.setText(fm.nombre);
 				tmp_button.setTextColor(Color.WHITE);
 				tmp_button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_add, 0);
-				tmp_button.setOnClickListener(new AddOnClickListener(fm, tmp_button));
+				tmp_button.setOnClickListener(new AddOnClickListener(fm, tmp_button, (Activity)context));
 				tmp_button.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
 				tmp_button.setPadding(10, 0, 10, 1);
 				buttons.add(tmp_button);
 			}
 		}
 		
-		ArrayList<FridgeMagnet> metaRemove = new ArrayList<FridgeMagnet>(this.myFridgeMagnets);
-		ArrayList<FridgeMagnet> myRemove = new ArrayList<FridgeMagnet>(this.myFridgeMagnets);
+		ArrayList<FridgeMagnet> metaRemove = new ArrayList<FridgeMagnet>(MainActivity.getMyFridgeMagnets());
+		ArrayList<FridgeMagnet> myRemove = new ArrayList<FridgeMagnet>(MainActivity.getMyFridgeMagnets());
 		metaRemove.removeAll(fridgeMagnets);
 		myRemove.removeAll(metaRemove);
 		for(final FridgeMagnet fm: myRemove){
@@ -260,7 +164,7 @@ public class AddMagnetActivity extends Activity {
 				tmp_title.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
 				tmp_title.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_accept, 0);
 				tmp_title.setPadding(10, 0, 10, 1);
-				tmp_title.setOnClickListener(new RemoveOnClickListener(fm, tmp_title));
+				tmp_title.setOnClickListener(new RemoveOnClickListener(fm, tmp_title, (Activity)context));
 				buttons.add(tmp_title);
 			}
 		}
@@ -275,10 +179,11 @@ public class AddMagnetActivity extends Activity {
 		}
 	}
 
-	private void saveFridgeMagnetsList() throws FileNotFoundException, IOException {
-		File JsonFile = new File(getFilesDir(), "data.json");		
+	@Override
+	public void saveFridgeMagnetsList() throws FileNotFoundException, IOException {
+		File JsonFile = new File(getFilesDir(), "data.json");
 		FridgeMagnetsManager fridgeMagnetWriter = new FridgeMagnetsManager();
-		fridgeMagnetWriter.writeJsonStream(new FileOutputStream(JsonFile), this.myFridgeMagnets);
+		fridgeMagnetWriter.writeJsonStream(new FileOutputStream(JsonFile), MainActivity.getMyFridgeMagnets());
 	}
 	
 	public void onBackPressed(View view) {
@@ -302,10 +207,14 @@ public class AddMagnetActivity extends Activity {
 	    this.startActivity(intent);
 	    this.finish();
 	}
-
+	
 	@Override
 	public void onBackPressed() {
 		this.finish();
+	}
+
+	public void myFridgeMagnetsRemove(FridgeMagnet fm) {
+		MainActivity.removeMyFridgeMagnet(fm);
 	}
 }
 

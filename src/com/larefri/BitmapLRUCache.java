@@ -15,7 +15,7 @@ public class BitmapLRUCache extends LruCache<String, Bitmap>{
 
 
 	public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
-		if (getBitmapFromMemCache(key) == null) {
+		if (getBitmapFromMemCache(key) == null && key!=null) {
 			this.put(key, bitmap);
 		}
 	}

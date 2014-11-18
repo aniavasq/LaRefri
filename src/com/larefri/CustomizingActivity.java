@@ -149,5 +149,10 @@ public class CustomizingActivity extends Activity {
 		intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 	    this.startActivity(intent);
 	    this.finish();
+	}	
+
+	@Override
+	public void onBackPressed() {
+		this.finish();
 	}
 }

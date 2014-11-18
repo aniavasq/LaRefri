@@ -12,7 +12,6 @@ import android.widget.ImageView;
 
 class BitmapWorkerTask extends AsyncTask<File, Void, Bitmap> {
     private final WeakReference<ImageButton> imageButtonReference;
-    private static MainActivity master;
     private File data;
 
     static class AsyncRecyclingDrawable extends BitmapDrawable {
@@ -94,13 +93,12 @@ class BitmapWorkerTask extends AsyncTask<File, Void, Bitmap> {
     public BitmapWorkerTask(ImageView tmp_imageButtom, MainActivity master) {
         // Use a WeakReference to ensure the ImageView can be garbage collected
     	imageButtonReference = new WeakReference<ImageButton>((ImageButton) tmp_imageButtom);
-        BitmapWorkerTask.master = master;
     }
 
     // Decode image in background.
     protected Bitmap doInBackground(File... params) {
         setData(params[0]);
-        Bitmap bitmap = master.decodeSampledBitmapFromResource(getData());
+        Bitmap bitmap = LoadFridgeMagnetsFromFileTask.decodeSampledBitmapFromResource(getData());
         return bitmap;
     }
 
@@ -114,7 +112,7 @@ class BitmapWorkerTask extends AsyncTask<File, Void, Bitmap> {
         if (imageButtonReference != null && bitmap != null) {
             final ImageButton imageButton = imageButtonReference.get();
             final BitmapWorkerTask bitmapWorkerTask =
-                    MainActivity.getBitmapWorkerTask(imageButton);
+                    LoadFridgeMagnetsFromFileTask.getBitmapWorkerTask(imageButton);
             if (this == bitmapWorkerTask && imageButton != null) {
             	imageButton.setImageBitmap(bitmap);
             }
