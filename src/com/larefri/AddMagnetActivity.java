@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import org.apache.http.NameValuePair;
@@ -29,7 +28,6 @@ import android.os.StrictMode;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -43,23 +41,23 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 	private String logo;
 	private Context context;
 	private List<FridgeMagnet> loadedFridgeMagnets;
-	
+
 	class ThisRestClient extends RestClient{
 
 		@Override
 		protected void onPreExecute() {
-	        dialog = new ProgressDialog(context);
-	        this.dialog.setMessage(getResources().getText(R.string.downloading_fridge_magnets));
-	        this.dialog.show();
-	        this.dialog.setCancelable(true);
-	        this.dialog.setCanceledOnTouchOutside(true);
-	    }
-		
+			dialog = new ProgressDialog(context);
+			this.dialog.setMessage(getResources().getText(R.string.downloading_fridge_magnets));
+			this.dialog.show();
+			this.dialog.setCancelable(true);
+			this.dialog.setCanceledOnTouchOutside(true);
+		}
+
 		@Override
 		protected void onPostExecute(Object result) {
 			if (dialog.isShowing()) {
-	            dialog.dismiss();
-	        }
+				dialog.dismiss();
+			}
 			try {
 				InputStream is = new ByteArrayInputStream(result.toString().getBytes());
 				FridgeMagnetsManager fridgeMagnetsManager = new FridgeMagnetsManager();
@@ -72,26 +70,26 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 			}
 			super.onPostExecute(result);
 		}
-		
+
 	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add_magnet);
-		
+
 		context = this;
 		settings = getSharedPreferences("LaRefriPrefsFile", 0);
-			
+
 		//Set policy to HTTP
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-		
+		StrictMode.setThreadPolicy(policy);
+
 		Bundle b = getIntent().getExtras();
 		id_category = b.getInt("id_categoria");
 		logo = b.getString("logo");
 		nombre = b.getString("nombre");
-		
+
 		ImageView image = (ImageView)findViewById(R.id.magnetfridge_logo);
 		TextView nameview = (TextView)findViewById(R.id.magnetfridge_name);
 		File imgFile = new File(getFilesDir(), logo);
@@ -114,7 +112,7 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 		setBackground();
 		super.onStart();
 	}
-	
+
 	public void addMagnetToLocalData(FridgeMagnet fm) throws FileNotFoundException, IOException{
 		try{
 			if(!MainActivity.getMyFridgeMagnets().contains(fm)){
@@ -123,21 +121,21 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 			}
 		}catch (Exception donotCare){ }
 	}
-	
+
 	public void loadFridgeMagnetsButtons(List<FridgeMagnet> fridgeMagnets) {
 		LinearLayout store_call_pane = (LinearLayout) findViewById(R.id.add_fridge_magnets_buttons);
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, Gravity.LEFT);
 		lp.setMargins(0, 0, 0, 0);
 		Resources resources = getResources();
 		ContextThemeWrapper themeWrapper = new ContextThemeWrapper(context, R.style.menu_button);
-		ArrayList<Button> buttons = new ArrayList<Button>();
-		
+		ArrayList<FridgeMagnetButton> buttons = new ArrayList<FridgeMagnetButton>();
+
 		ArrayList<FridgeMagnet> remove = new ArrayList<FridgeMagnet>(fridgeMagnets);
 		remove.removeAll(MainActivity.getMyFridgeMagnets());		
 		store_call_pane.removeAllViews();
 		for(final FridgeMagnet fm: remove){
 			if(fm!=null){
-				final Button tmp_button = new Button(themeWrapper);
+				final FridgeMagnetButton tmp_button = new FridgeMagnetButton(themeWrapper, fm);
 				tmp_button.setLayoutParams(lp);
 				tmp_button.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
 				tmp_button.setText(fm.nombre);
@@ -149,14 +147,14 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 				buttons.add(tmp_button);
 			}
 		}
-		
+
 		ArrayList<FridgeMagnet> metaRemove = new ArrayList<FridgeMagnet>(MainActivity.getMyFridgeMagnets());
 		ArrayList<FridgeMagnet> myRemove = new ArrayList<FridgeMagnet>(MainActivity.getMyFridgeMagnets());
 		metaRemove.removeAll(fridgeMagnets);
 		myRemove.removeAll(metaRemove);
 		for(final FridgeMagnet fm: myRemove){
 			if(fm!=null){
-				Button tmp_title = new Button(themeWrapper);
+				FridgeMagnetButton tmp_title = new FridgeMagnetButton(themeWrapper, fm);
 				tmp_title.setLayoutParams(lp);
 				tmp_title.setBackground(resources.getDrawable(R.drawable.menu_button_bg_disabled));
 				tmp_title.setText(fm.nombre);
@@ -168,13 +166,8 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 				buttons.add(tmp_title);
 			}
 		}
-		Collections.sort(buttons, new Comparator<Button>() {
-			@Override
-			public int compare(Button lhs, Button rhs) {				
-				return String.valueOf(lhs.getText()).compareTo(String.valueOf(rhs.getText()));
-			}
-		});
-		for(Button b:buttons){
+		Collections.sort(buttons, new FridgeMagnetButton.FridgeMagnetButtonComparator());
+		for(FridgeMagnetButton b:buttons){
 			store_call_pane.addView(b);
 		}
 	}
@@ -185,11 +178,11 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 		FridgeMagnetsManager fridgeMagnetWriter = new FridgeMagnetsManager();
 		fridgeMagnetWriter.writeJsonStream(new FileOutputStream(JsonFile), MainActivity.getMyFridgeMagnets());
 	}
-	
+
 	public void onBackPressed(View view) {
 		Intent intent = new Intent(view.getContext(), CategoriesActivity.class);
-	    this.startActivity(intent);
-	    this.finish();
+		this.startActivity(intent);
+		this.finish();
 	}
 
 	protected void setBackground() {
@@ -200,14 +193,14 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 		article.setBackgroundColor(menu_bg_color);
 		head.setBackgroundColor(bg_color);
 	}
-	
+
 	public void onHomePressed(View view){
 		Intent intent = new Intent(view.getContext(), MainActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-	    this.startActivity(intent);
-	    this.finish();
+		this.startActivity(intent);
+		this.finish();
 	}
-	
+
 	@Override
 	public void onBackPressed() {
 		this.finish();
@@ -220,7 +213,7 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 
 class DownloadMagnetStoresRestClient extends RestClient{
 	private Activity master;
-	
+
 	public DownloadMagnetStoresRestClient(Activity master) {
 		super();
 		this.master = master;
@@ -230,7 +223,7 @@ class DownloadMagnetStoresRestClient extends RestClient{
 	protected Object doInBackground(Object... params) {
 		this.setResult(super.doInBackground(params));
 		FridgeMagnet for_add = new FridgeMagnet();
-		
+
 		for_add = (FridgeMagnet) params[3];
 		InputStream is = new ByteArrayInputStream(getResult().toString().getBytes());
 		StoresManager storesManager = new StoresManager();

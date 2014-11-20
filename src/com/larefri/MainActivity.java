@@ -36,7 +36,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.DragEvent;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -339,14 +338,10 @@ public class MainActivity extends Activity {
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width/2, width/2);
 		((ViewGroup)left_pane_fridgemagnets).removeAllViews();
 		((ViewGroup)right_pane_fridgemagnets).removeAllViews();
+		left_pane_fridgemagnets.setPadding(2, 0, 0, 0);
+		right_pane_fridgemagnets.setPadding(0, 0, 2, 0);
 		lp.setMargins(0, 0, 0, 0);
 		lp.gravity = Gravity.BOTTOM;
-		List<DownloadFridgeMagnetLogoTask> downloadTasks = getDownloadFMLogoTasks();
-		if(downloadTasks!=null){
-			for(DownloadFridgeMagnetLogoTask dfml: downloadTasks){
-				Log.e("TASKS IN QUEUE", dfml.getStatus().toString());
-			}
-		}
 		(new LoadFridgeMagnetsFromFileTask(this, left_pane_fridgemagnets, right_pane_fridgemagnets, lp)).execute();
 		//Update phone guide
 		//Check Updates

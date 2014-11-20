@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,7 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.LinearLayout.LayoutParams;
 
 public class LoadFridgeMagnetsFromFileTask extends
-		AsyncTask<Void, Void, Void> {
+AsyncTask<Void, Void, Void> {
 	private MainActivity master;
 	private static MainActivity reference;
 	private LinearLayout left_pane_fridgemagnets;
@@ -48,16 +47,23 @@ public class LoadFridgeMagnetsFromFileTask extends
 	@Override
 	protected Void doInBackground(Void... arg) {	
 		try {
-			FridgeMagnetsManager fridgeMagnetReader = new FridgeMagnetsManager();
-			MainActivity.setMyFridgeMagnets(fridgeMagnetReader.readJsonStream( new FileInputStream(new File(master.getFilesDir(), "data.json")) ));
-		} 
+			Log.e("TASK STARTED","doInBackground");
+			while(true){
+				if(MainActivity.getDownloadFMLogoTasks().isEmpty()){
+					FridgeMagnetsManager fridgeMagnetReader = new FridgeMagnetsManager();
+					MainActivity.setMyFridgeMagnets(fridgeMagnetReader.readJsonStream( new FileInputStream(new File(master.getFilesDir(), "data.json")) ));
+					Log.e("TASK FINISH","doInBackground");
+					return null;
+				}
+			}
+		}
 		catch (IOException e) {
 			Log.e("LOADING FM", e.getMessage(), e); }
 		catch (Exception e) {
 			Log.e("LOADING FM", e.getMessage(), e); }
 		return null;
 	}
-	
+
 	@Override
 	protected void onPostExecute(Void result) {
 		left_pane_fridgemagnets.removeAllViews();
@@ -71,14 +77,14 @@ public class LoadFridgeMagnetsFromFileTask extends
 			OnTouchListener fridgeMagnetOnTouchListener = master.new FridgeMagnetOnTouchListener(fm);
 			final ImageButton tmp_imageButtom = new ImageButton((Context)master);
 			tmp_imageButtom.setLayoutParams(lp);
-			
+			tmp_imageButtom.setPadding(0, 0, 0, 0);
 			File imgFile = new File(master.getFilesDir(), fm.logo);
 			if(imgFile.exists()){
 				try {
 					loadImageToButtom(imgFile, tmp_imageButtom);
 				} catch (FileNotFoundException e) { }
 			}
-			
+
 			///
 			tmp_imageButtom.setScaleType( ImageView.ScaleType.FIT_CENTER );
 			tmp_imageButtom.setId(fm.id_marca);
@@ -105,18 +111,18 @@ public class LoadFridgeMagnetsFromFileTask extends
 			}
 		}
 	}
-	
+
 	private void loadImageToButtom(File imgFile, ImageButton tmp_imageButtom) throws FileNotFoundException {
 		final String imageKey = String.valueOf(imgFile);
 
-	    Bitmap bitmap = master.mMemoryCache.getBitmapFromMemCache(imageKey);
-	    if (bitmap != null) {
+		Bitmap bitmap = master.mMemoryCache.getBitmapFromMemCache(imageKey);
+		if (bitmap != null) {
 			loadBitmap(imgFile, tmp_imageButtom, bitmap);
-	    } else {
-	    	bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-	    	loadBitmap(imgFile, tmp_imageButtom, bitmap);
-	    	master.mMemoryCache.addBitmapToMemoryCache(imageKey, bitmap);
-	    }
+		} else {
+			bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+			loadBitmap(imgFile, tmp_imageButtom, bitmap);
+			master.mMemoryCache.addBitmapToMemoryCache(imageKey, bitmap);
+		}
 	}
 
 	public void loadBitmap(File imgFile, ImageButton imageButton, Bitmap bitmap) {

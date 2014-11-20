@@ -8,10 +8,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import org.apache.http.NameValuePair;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -34,7 +34,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -185,7 +184,7 @@ public class SearchFridgeMagnetActivity extends Activity implements AddMagnet{
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, Gravity.LEFT);
 		Resources resources = getResources();
 		ContextThemeWrapper themeWrapper = new ContextThemeWrapper(context, R.style.menu_button);
-		ArrayList<Button> buttons = new ArrayList<Button>();
+		ArrayList<FridgeMagnetButton> buttons = new ArrayList<FridgeMagnetButton>();
 
 		ArrayList<FridgeMagnet> metaRemove = new ArrayList<FridgeMagnet>(loadedFridgeMagnets);
 
@@ -194,7 +193,7 @@ public class SearchFridgeMagnetActivity extends Activity implements AddMagnet{
 		store_call_pane.removeAllViews();
 		for(final FridgeMagnet fm: remove){
 			if(fm.nombre!=null){
-				final Button tmp_button = new Button(themeWrapper);
+				final FridgeMagnetButton tmp_button = new FridgeMagnetButton(themeWrapper, fm);
 				tmp_button.setLayoutParams(lp);
 				tmp_button.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
 				tmp_button.setText(fm.nombre);
@@ -213,7 +212,7 @@ public class SearchFridgeMagnetActivity extends Activity implements AddMagnet{
 		myRemove.removeAll(metaRemove);
 		myRemove.removeAll(remove);
 		for(final FridgeMagnet fm: myRemove){
-			Button tmp_title = new Button(themeWrapper);
+			FridgeMagnetButton tmp_title = new FridgeMagnetButton(themeWrapper, fm);
 			tmp_title.setLayoutParams(lp);
 			tmp_title.setBackground(resources.getDrawable(R.drawable.menu_button_bg_disabled));
 			tmp_title.setText(fm.nombre);
@@ -224,13 +223,8 @@ public class SearchFridgeMagnetActivity extends Activity implements AddMagnet{
 			tmp_title.setOnClickListener(new RemoveOnClickListener(fm, tmp_title, (Activity)context));
 			buttons.add(tmp_title);
 		}
-		Collections.sort(buttons, new Comparator<Button>() {
-			@Override
-			public int compare(Button lhs, Button rhs) {				
-				return String.valueOf(lhs.getText()).compareTo(String.valueOf(rhs.getText()));
-			}
-		});
-		for(Button b:buttons){
+		Collections.sort(buttons, new FridgeMagnetButton.FridgeMagnetButtonComparator());
+		for(FridgeMagnetButton b:buttons){
 			store_call_pane.addView(b);
 		}
 	}
