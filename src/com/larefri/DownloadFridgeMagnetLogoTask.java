@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.net.URL;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 
 class DownloadFridgeMagnetLogoTask extends AsyncTask<String, String, Boolean>{
@@ -24,10 +26,10 @@ class DownloadFridgeMagnetLogoTask extends AsyncTask<String, String, Boolean>{
 	    	FileOutputStream imageOutputStream;
 	    	imageOutputStream = context.openFileOutput(file, Context.MODE_PRIVATE);
 	    	MainActivity.CopyStream(imageInputStream, imageOutputStream);
-	    	/*Bitmap bmp = BitmapFactory.decodeStream(imageInputStream);
+	    	Bitmap bmp = BitmapFactory.decodeStream(imageInputStream);
 			if(bmp != null){
-				bmp.compress(Bitmap.CompressFormat.JPEG, 100, imageOutputStream);
-			}*/
+				bmp.compress(Bitmap.CompressFormat.PNG, 75, imageOutputStream);
+			}
 	    	imageOutputStream.close();
 	    	return true;
 		}catch(Exception donotCare){ }

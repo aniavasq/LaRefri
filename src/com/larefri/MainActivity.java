@@ -36,6 +36,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -185,6 +186,7 @@ public class MainActivity extends Activity {
 	}
 	
 	public static void removeDownloadFMLogoTasks(DownloadFridgeMagnetLogoTask downloadFMLogoTask) {
+		Log.e("REMOVED FM",""+downloadFMLogoTask);
 		downloadFMLogoTasks.remove(downloadFMLogoTask);
 	}
 
@@ -596,7 +598,7 @@ public class MainActivity extends Activity {
 	private void chageOpacityFridgeMagnets(float opacity) {
 		for(final FridgeMagnet fm: getMyFridgeMagnets()){
 			ImageButton tmp_imageButtom = (ImageButton)findViewById(fm.id_marca);
-			tmp_imageButtom.setAlpha(opacity);
+			if(tmp_imageButtom!=null) tmp_imageButtom.setAlpha(opacity);
 		}		
 	}
 

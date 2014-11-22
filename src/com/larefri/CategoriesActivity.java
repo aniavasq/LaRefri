@@ -5,12 +5,20 @@ import java.io.FileInputStream;
 import java.util.Iterator;
 import java.util.List;
 
+import com.larvalabs.svgandroid.SVG;
+import com.larvalabs.svgandroid.SVGParser;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Picture;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.PictureDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -68,11 +76,40 @@ public class CategoriesActivity extends Activity {
 					final Category c = categoriesIterator.next();
 					File imgFile = new File(getFilesDir(), c.icono_categoria);
 					ImageButton btn = new ImageButton(this);
+					
+					if(c.nombre_categoria.equalsIgnoreCase("hamburguesas")){
+						SVG svg = SVGParser.getSVGFromInputStream(new FileInputStream(imgFile));
+						Picture test = svg.getPicture();
+
+						//Redraw the picture to a new size
+						Bitmap bitmap = Bitmap.createBitmap(width/3-30, width/3-30, Bitmap.Config.ARGB_8888);
+
+						Canvas canvas = new Canvas(bitmap);
+
+						Picture resizePicture = new Picture();
+
+						canvas = resizePicture.beginRecording(width/3-30, width/3-30);
+
+						canvas.drawPicture(test, new Rect(0,0,width/3-30, width/3-30));
+
+						resizePicture.endRecording();
+
+						//get a drawable from resizePicture
+						Drawable vectorDrawing = new PictureDrawable(resizePicture);
+						
+						btn.setLayoutParams(lp);
+						btn.setImageDrawable(vectorDrawing);
+						btn.setBackgroundColor(Color.TRANSPARENT);
+						btn.setScaleType( ImageView.ScaleType.FIT_XY );
+						btn.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+					}else{
+					
 					Bitmap bmp = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
 					btn.setLayoutParams(lp);
 					btn.setImageBitmap(bmp);
 					btn.setBackgroundColor(Color.TRANSPARENT);
 					btn.setScaleType( ImageView.ScaleType.FIT_XY );
+					}
 					if(i%3 != 0)
 						btn.setPadding(10, 30, 20, 0);
 					else if(i%3 != 1)

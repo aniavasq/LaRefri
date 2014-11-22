@@ -141,7 +141,7 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 				tmp_button.setText(fm.nombre);
 				tmp_button.setTextColor(Color.WHITE);
 				tmp_button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_add, 0);
-				tmp_button.setOnClickListener(new AddOnClickListener(fm, tmp_button, (Activity)context));
+				tmp_button.setOnClickListener(new AddOnClickListener(tmp_button, (Activity)context));
 				tmp_button.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
 				tmp_button.setPadding(10, 0, 10, 1);
 				buttons.add(tmp_button);
@@ -162,7 +162,7 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 				tmp_title.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
 				tmp_title.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_accept, 0);
 				tmp_title.setPadding(10, 0, 10, 1);
-				tmp_title.setOnClickListener(new RemoveOnClickListener(fm, tmp_title, (Activity)context));
+				tmp_title.setOnClickListener(new RemoveOnClickListener(tmp_title, (Activity)context, null));
 				buttons.add(tmp_title);
 			}
 		}

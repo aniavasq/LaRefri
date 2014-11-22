@@ -48,7 +48,9 @@ AsyncTask<Void, Void, Void> {
 	protected Void doInBackground(Void... arg) {	
 		try {
 			Log.e("TASK STARTED","doInBackground");
+			
 			while(true){
+				//Log.e("BUSSY",MainActivity.getDownloadFMLogoTasks().toString());
 				if(MainActivity.getDownloadFMLogoTasks().isEmpty()){
 					FridgeMagnetsManager fridgeMagnetReader = new FridgeMagnetsManager();
 					MainActivity.setMyFridgeMagnets(fridgeMagnetReader.readJsonStream( new FileInputStream(new File(master.getFilesDir(), "data.json")) ));
