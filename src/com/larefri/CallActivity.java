@@ -99,7 +99,7 @@ public class CallActivity extends Activity {
 		setBackground();
 	}
 
-	private void loadStores(List<Store> stores){		
+	private void loadStores(List<StoreFM> stores){		
 		LinearLayout store_call_pane = (LinearLayout) findViewById(R.id.stores_call_buttons);
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, Gravity.LEFT);
 		Resources resources = getResources();
@@ -120,7 +120,7 @@ public class CallActivity extends Activity {
 			phone_num_pane.addView(tmp_title);
 			store_call_pane.addView(phone_num_pane);
 		}
-		for(final Store s: stores){
+		for(final StoreFM s: stores){
 			if(s!=null && s.ciudad.equalsIgnoreCase(settings.getString("current_city", "NO_CITY"))){
 				LinearLayout phone_num_pane = new LinearLayout(themeWrapper);
 				phone_num_pane.setOrientation(LinearLayout.VERTICAL);

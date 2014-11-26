@@ -1,6 +1,6 @@
 package com.larefri;
 
-public class Store {
+public class StoreFM {
 	/*
     {
 	id_local: "2",

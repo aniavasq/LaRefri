@@ -12,7 +12,7 @@ import android.util.JsonToken;
 public class CategoriesManager implements RefriJsonReader {
 
 	@Override
-	public List<Category> readJsonStream(InputStream in) throws IOException {
+	public List<CategoryFM> readJsonStream(InputStream in) throws IOException {
 		JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
 		try {
 			return readMessagesArray(reader);
@@ -21,8 +21,8 @@ public class CategoriesManager implements RefriJsonReader {
 		 }
 	  }
 
-	public List<Category> readMessagesArray(JsonReader reader) throws IOException {
-		List<Category> messages = new ArrayList<Category>();
+	public List<CategoryFM> readMessagesArray(JsonReader reader) throws IOException {
+		List<CategoryFM> messages = new ArrayList<CategoryFM>();
 
 		if (reader.peek() != JsonToken.BEGIN_ARRAY) {
 			return messages;
@@ -36,8 +36,8 @@ public class CategoriesManager implements RefriJsonReader {
 		return messages;
 	}
 
-	public Category readCategory(JsonReader reader) throws IOException {
-		Category category = new Category();
+	public CategoryFM readCategory(JsonReader reader) throws IOException {
+		CategoryFM category = new CategoryFM();
 		
 		reader.beginObject();
 		while (reader.hasNext()) {

@@ -73,7 +73,7 @@ public class PhoneGuideActivity extends Activity {
 		}
 	}
 
-	private void loadStores(List<Store> stores){		
+	private void loadStores(List<StoreFM> stores){		
 		LinearLayout store_call_pane = (LinearLayout) findViewById(R.id.stores_call_buttons);
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, Gravity.LEFT);
 		Resources resources = getResources();
@@ -95,7 +95,7 @@ public class PhoneGuideActivity extends Activity {
 			store_call_pane.addView(phone_num_pane);
 		}
 		if(settings.getString("current_city", "NO_CITY").equalsIgnoreCase("NO_CITY")){
-			for(final Store s: stores){
+			for(final StoreFM s: stores){
 				LinearLayout phone_num_pane = new LinearLayout(themeWrapper);
 				phone_num_pane.setOrientation(LinearLayout.VERTICAL);
 				phone_num_pane.setLayoutParams(lp);
@@ -162,7 +162,7 @@ public class PhoneGuideActivity extends Activity {
 				}
 			}
 		}
-		for(final Store s: stores){
+		for(final StoreFM s: stores){
 			if(s!=null && s.ciudad.equalsIgnoreCase(settings.getString("current_city", "NO_CITY"))){
 				LinearLayout phone_num_pane = new LinearLayout(themeWrapper);
 				phone_num_pane.setOrientation(LinearLayout.VERTICAL);

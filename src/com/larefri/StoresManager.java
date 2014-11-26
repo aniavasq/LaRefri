@@ -13,7 +13,7 @@ import android.util.JsonToken;
 import android.util.JsonWriter;
 
 public class StoresManager implements RefriJsonReader, RefriJsonWriter {
-	public List<Store> readJsonStream(InputStream in) throws IOException {
+	public List<StoreFM> readJsonStream(InputStream in) throws IOException {
 		JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
 		try {
 			return readMessagesArray(reader);
@@ -22,8 +22,8 @@ public class StoresManager implements RefriJsonReader, RefriJsonWriter {
 		}
 	}
 
-	public List<Store> readMessagesArray(JsonReader reader) throws IOException, IllegalStateException {
-		List<Store> messages = new ArrayList<Store>();
+	public List<StoreFM> readMessagesArray(JsonReader reader) throws IOException, IllegalStateException {
+		List<StoreFM> messages = new ArrayList<StoreFM>();
 
 		if (reader.peek() != JsonToken.BEGIN_ARRAY) {
 			return messages;
@@ -37,8 +37,8 @@ public class StoresManager implements RefriJsonReader, RefriJsonWriter {
 		return messages;
 	}
 	
-	public Store readStore(JsonReader reader) throws IOException {
-		Store store = new Store();
+	public StoreFM readStore(JsonReader reader) throws IOException {
+		StoreFM store = new StoreFM();
 		
 		reader.beginObject();
 		while (reader.hasNext()) {
@@ -79,7 +79,7 @@ public class StoresManager implements RefriJsonReader, RefriJsonWriter {
 		writer.beginArray();
 	     for (Object s : objectsList) {
 	    	 if(s!=null)
-	    		 writeStores(writer, (Store)s);
+	    		 writeStores(writer, (StoreFM)s);
 	     }
 	     writer.endArray();	
 	}
@@ -94,7 +94,7 @@ public class StoresManager implements RefriJsonReader, RefriJsonWriter {
 		writer.close();
 	}
 	
-	private void writeStores(JsonWriter writer, Store s) throws IOException{
+	private void writeStores(JsonWriter writer, StoreFM s) throws IOException{
 		writer.beginObject();
 		writer.name("id_marca").value(s.id_marca.toString());
 		writer.name("id_local").value(s.id_marcas_sucursal.toString());

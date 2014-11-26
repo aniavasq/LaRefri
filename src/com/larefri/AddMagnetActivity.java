@@ -13,6 +13,11 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -25,6 +30,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.View;
@@ -41,6 +47,7 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 	private String logo;
 	private Context context;
 	private List<FridgeMagnet> loadedFridgeMagnets;
+	final ArrayList<Store> fridgeMagnets = new ArrayList<Store>();
 
 	class ThisRestClient extends RestClient{
 
@@ -55,6 +62,8 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 
 		@Override
 		protected void onPostExecute(Object result) {
+
+
 			if (dialog.isShowing()) {
 				dialog.dismiss();
 			}
@@ -71,6 +80,7 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 			super.onPostExecute(result);
 		}
 
+
 	}
 
 	@Override
@@ -80,6 +90,16 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 
 		context = this;
 		settings = getSharedPreferences("LaRefriPrefsFile", 0);
+
+		/***************************************************
+		 * Parse support*/
+		ParseConnector.getInstance(this);
+		/***************************************************/
+		/**********************************************
+		 * Parse support
+		 * */
+		getParseFridgeMagnets();
+		/**********************************************/
 
 		//Set policy to HTTP
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -124,7 +144,7 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 
 	public void loadFridgeMagnetsButtons(List<FridgeMagnet> fridgeMagnets) {
 		LinearLayout store_call_pane = (LinearLayout) findViewById(R.id.add_fridge_magnets_buttons);
-		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, Gravity.LEFT);
+		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, Gravity.START);
 		lp.setMargins(0, 0, 0, 0);
 		Resources resources = getResources();
 		ContextThemeWrapper themeWrapper = new ContextThemeWrapper(context, R.style.menu_button);
@@ -142,7 +162,7 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 				tmp_button.setTextColor(Color.WHITE);
 				tmp_button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_add, 0);
 				tmp_button.setOnClickListener(new AddOnClickListener(tmp_button, (Activity)context));
-				tmp_button.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+				tmp_button.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
 				tmp_button.setPadding(10, 0, 10, 1);
 				buttons.add(tmp_button);
 			}
@@ -159,7 +179,7 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 				tmp_title.setBackground(resources.getDrawable(R.drawable.menu_button_bg_disabled));
 				tmp_title.setText(fm.nombre);
 				tmp_title.setTextColor(Color.WHITE);
-				tmp_title.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+				tmp_title.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
 				tmp_title.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_accept, 0);
 				tmp_title.setPadding(10, 0, 10, 1);
 				tmp_title.setOnClickListener(new RemoveOnClickListener(tmp_title, (Activity)context, null));
@@ -209,6 +229,29 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 	public void myFridgeMagnetsRemove(FridgeMagnet fm) {
 		MainActivity.removeMyFridgeMagnet(fm);
 	}
+
+	/**********************************************
+	 * Parse support
+	 * */
+	private void getParseFridgeMagnets(){
+
+		ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Store");
+		query.findInBackground(new FindCallback<ParseObject>() {
+			public void done(List<ParseObject> result, ParseException e) {
+				if (e == null) {
+
+					for(ParseObject fm: result){
+						Store s = new Store(fm);
+						fridgeMagnets.add(s);
+					}
+					Log.e("FRIDGEMAGNETS",fridgeMagnets.toString());
+				} else {
+					Log.e("ERROR",e.getMessage(),e);
+				}
+			}
+		});
+	}
+	/**********************************************/
 }
 
 class DownloadMagnetStoresRestClient extends RestClient{
@@ -228,7 +271,7 @@ class DownloadMagnetStoresRestClient extends RestClient{
 		InputStream is = new ByteArrayInputStream(getResult().toString().getBytes());
 		StoresManager storesManager = new StoresManager();
 		try {			
-			List<Store> stores = storesManager.readJsonStream(is);
+			List<StoreFM> stores = storesManager.readJsonStream(is);
 			File JsonFile = new File(master.getFilesDir(), for_add.id_marca+"_sucursales.json");
 			storesManager.writeJsonStream(new FileOutputStream(JsonFile), stores);
 		} catch (IOException e) {

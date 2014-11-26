@@ -50,8 +50,8 @@ public class CategoriesActivity extends Activity {
 
 		TableLayout mTlayout = (TableLayout) findViewById(R.id.category_buttons);
 		try {
-			List<Category> categories = getCategoriesFromJSON(new File(getFilesDir(),"categories.json"));
-			Iterator<Category> categoriesIterator = categories.iterator();
+			List<CategoryFM> categories = getCategoriesFromJSON(new File(getFilesDir(),"categories.json"));
+			Iterator<CategoryFM> categoriesIterator = categories.iterator();
 
 			LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width/3,width/3);
 			LinearLayout.LayoutParams lptx = new LinearLayout.LayoutParams(width/3,LayoutParams.WRAP_CONTENT);
@@ -73,7 +73,7 @@ public class CategoriesActivity extends Activity {
 					LinearLayout ll = new LinearLayout(this);
 					ll.setOrientation(LinearLayout.VERTICAL);
 					ll.setGravity(Gravity.BOTTOM);
-					final Category c = categoriesIterator.next();
+					final CategoryFM c = categoriesIterator.next();
 					File imgFile = new File(getFilesDir(), c.icono_categoria);
 					ImageButton btn = new ImageButton(this);
 					
@@ -154,7 +154,7 @@ public class CategoriesActivity extends Activity {
 		setBackground();
 	}
 
-	protected void goToAddMagnets(View view, Category c) {
+	protected void goToAddMagnets(View view, CategoryFM c) {
 		Intent intent = new Intent(view.getContext(), AddMagnetActivity.class);
 		Bundle b = new Bundle();
 		b.putInt("id_categoria", c.id_categoria);
@@ -165,7 +165,7 @@ public class CategoriesActivity extends Activity {
 	    this.finish();
 	}
 
-	protected void goToSearchMagnets(View view, Category c) {
+	protected void goToSearchMagnets(View view, CategoryFM c) {
 		Intent intent = new Intent(view.getContext(), SearchFridgeMagnetActivity.class);
 		Bundle b = new Bundle();
 		b.putInt("id_categoria", c.id_categoria);
@@ -176,9 +176,9 @@ public class CategoriesActivity extends Activity {
 	    this.finish();
 	}
 
-	public static List<Category> getCategoriesFromJSON (File fl) throws Exception {
+	public static List<CategoryFM> getCategoriesFromJSON (File fl) throws Exception {
 		FileInputStream fin = new FileInputStream(fl);
-		List<Category> ret = (new CategoriesManager()).readJsonStream(fin);
+		List<CategoryFM> ret = (new CategoriesManager()).readJsonStream(fin);
 		//Make sure you close all streams.
 		fin.close();        
 		return ret;

@@ -96,7 +96,7 @@ public class SearchFridgeMagnetActivity extends Activity implements AddMagnet{
 			InputStream is = new ByteArrayInputStream(getResult().toString().getBytes());
 			StoresManager storesManager = new StoresManager();
 			try {			
-				List<Store> stores = storesManager.readJsonStream(is);
+				List<StoreFM> stores = storesManager.readJsonStream(is);
 				File JsonFile = new File(getFilesDir(), for_add.id_marca+"_sucursales.json");
 				storesManager.writeJsonStream(new FileOutputStream(JsonFile), stores);
 			} catch (IOException e) {
