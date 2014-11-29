@@ -20,13 +20,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -151,6 +150,9 @@ public class SearchFridgeMagnetActivity extends Activity implements AddMagnet{
 		setContentView(R.layout.activity_search_fridge_magnet);	
 
 		this.context = this;
+		DisplayMetrics dm = new DisplayMetrics();
+		this.getWindow().getWindowManager().getDefaultDisplay().getMetrics(dm);
+		int width = dm.widthPixels;
 		this.settings = getSharedPreferences("LaRefriPrefsFile", 0);
 		this.search_txt = (TextView)findViewById(R.id.search_txt);
 
@@ -164,9 +166,9 @@ public class SearchFridgeMagnetActivity extends Activity implements AddMagnet{
 
 		ImageView image = (ImageView)findViewById(R.id.magnetfridge_logo);
 		File imgFile = new File(getFilesDir(), logo);
-		Bitmap bmp = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-		image.setImageBitmap(bmp);
-		
+		try {
+			AddMagnetActivity.setImageSVGDrawable(image, imgFile, width/3-40, width/3-40);
+		} catch (Exception e) { e.printStackTrace(); }		
 
 		setupUI(findViewById(R.id.parent));
 		
@@ -178,7 +180,7 @@ public class SearchFridgeMagnetActivity extends Activity implements AddMagnet{
 
 	public void loadFridgeMagnetsButtons(List<FridgeMagnet> fridgeMagnets) {
 		LinearLayout store_call_pane = (LinearLayout) findViewById(R.id.add_fridge_magnets_buttons);
-		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, Gravity.LEFT);
+		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, Gravity.START);
 		Resources resources = getResources();
 		ContextThemeWrapper themeWrapper = new ContextThemeWrapper(context, R.style.menu_button);
 		ArrayList<FridgeMagnetButton> buttons = new ArrayList<FridgeMagnetButton>();
@@ -195,7 +197,7 @@ public class SearchFridgeMagnetActivity extends Activity implements AddMagnet{
 				tmp_button.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
 				tmp_button.setText(fm.nombre);
 				tmp_button.setTextColor(Color.WHITE);
-				tmp_button.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+				tmp_button.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
 				tmp_button.setPadding(10, 0, 10, 1);
 				tmp_button.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_add, 0);
 				tmp_button.setOnClickListener(new AddOnClickListener(tmp_button, (Activity)context));
@@ -214,7 +216,7 @@ public class SearchFridgeMagnetActivity extends Activity implements AddMagnet{
 			tmp_title.setBackground(resources.getDrawable(R.drawable.menu_button_bg_disabled));
 			tmp_title.setText(fm.nombre);
 			tmp_title.setTextColor(Color.WHITE);
-			tmp_title.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+			tmp_title.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
 			tmp_title.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_accept, 0);
 			tmp_title.setPadding(10, 0, 10, 1);
 			tmp_title.setOnClickListener(new RemoveOnClickListener(tmp_title, (Activity)context, null));

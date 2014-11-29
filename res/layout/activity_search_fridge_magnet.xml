@@ -89,7 +89,7 @@
                         <ImageView
                             android:id="@+id/magnetfridge_logo"
                             android:layout_width="0dp"
-                            android:layout_height="100dp"
+                            android:layout_height="wrap_content"
                             android:layout_weight="0.3"
                             android:paddingRight="15dp"
                             android:paddingBottom="15dp"

@@ -21,8 +21,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/logorefri"
-            android:onClick="onHomePressed" />
+            android:onClick="onHomePressed"
+            android:src="@drawable/logorefri" />
 
         <ImageButton
             android:id="@+id/overflowbutton"
@@ -103,9 +103,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="5dp"
-                            android:layout_marginRight="5dp"
-                            android:layout_marginTop="5dp"
+                            android:layout_margin="5dp"
                             android:orientation="horizontal"
                             android:paddingTop="2dp" >
 
@@ -127,34 +125,35 @@
                     </RelativeLayout>
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
                         android:layout_alignParentBottom="true"
                         android:layout_below="@id/some_relative_layout"
                         android:layout_centerHorizontal="true"
-                        android:paddingTop="30dp"
-                        android:orientation="horizontal" >
+                        android:orientation="horizontal"
+                        android:paddingTop="0dp" 
+                        android:layout_marginTop="25dp" >
 
                         <ImageButton
                             android:id="@+id/contact_btn"
-                            android:layout_width="105dp"
-                            android:layout_height="105dp"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
                             android:layout_gravity="center_horizontal"
-                            android:layout_margin="15dp"
-                            android:padding="30dp"
-                            android:background="@drawable/contact_button"
+                            android:layout_weight="0.5"
+                            android:background="#46aee1"
                             android:onClick="onPhoneGuide"
+                            android:padding="0dp"
                             android:src="@drawable/ic_action_contact" />
 
                         <ImageButton
                             android:id="@+id/call_btn"
-                            android:layout_width="105dp"
-                            android:layout_height="105dp"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
                             android:layout_gravity="center_horizontal"
-                            android:layout_margin="15dp"
-                            android:padding="25dp"
-                            android:background="@drawable/call_button"
+                            android:layout_weight="0.5"
+                            android:background="#3F9DD1"
                             android:onClick="onCall"
+                            android:padding="0dp"
                             android:src="@drawable/ic_action_call" />
                     </LinearLayout>
                 </RelativeLayout>

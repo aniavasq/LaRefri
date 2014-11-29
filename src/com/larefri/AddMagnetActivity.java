@@ -2,6 +2,7 @@ package com.larefri;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,6 +14,9 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
+import com.larvalabs.svgandroid.SVG;
+import com.larvalabs.svgandroid.SVGParseException;
+import com.larvalabs.svgandroid.SVGParser;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -26,10 +30,15 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Picture;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.PictureDrawable;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
@@ -89,6 +98,9 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 		setContentView(R.layout.activity_add_magnet);
 
 		context = this;
+		DisplayMetrics dm = new DisplayMetrics();
+		this.getWindow().getWindowManager().getDefaultDisplay().getMetrics(dm);
+		int width = dm.widthPixels;
 		settings = getSharedPreferences("LaRefriPrefsFile", 0);
 
 		/***************************************************
@@ -113,8 +125,9 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 		ImageView image = (ImageView)findViewById(R.id.magnetfridge_logo);
 		TextView nameview = (TextView)findViewById(R.id.magnetfridge_name);
 		File imgFile = new File(getFilesDir(), logo);
-		Bitmap bmp = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-		image.setImageBitmap(bmp);
+		try {
+			setImageSVGDrawable(image, imgFile, width/3-40, width/3-40);
+		} catch (Exception e) { e.printStackTrace(); }
 		nameview.setText(nombre);
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put("id_categoria", id_category.toString());
@@ -228,6 +241,32 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 
 	public void myFridgeMagnetsRemove(FridgeMagnet fm) {
 		MainActivity.removeMyFridgeMagnet(fm);
+	}
+	
+	public static void setImageSVGDrawable(ImageView imageview, File imgFile, int width, int height) throws SVGParseException, FileNotFoundException{
+		SVG svg = SVGParser.getSVGFromInputStream(new FileInputStream(imgFile));
+		Picture test = svg.getPicture();
+
+		//Redraw the picture to a new size
+		Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+		Canvas canvas = new Canvas(bitmap);
+
+		Picture resizePicture = new Picture();
+
+		canvas = resizePicture.beginRecording(width, height);
+
+		canvas.drawPicture(test, new Rect(0,0, width, height));
+
+		resizePicture.endRecording();
+
+		//get a drawable from resizePicture
+		Drawable vectorDrawing = new PictureDrawable(resizePicture);
+		
+		imageview.setImageDrawable(vectorDrawing);
+		imageview.setBackgroundColor(Color.TRANSPARENT);
+		imageview.setScaleType( ImageView.ScaleType.FIT_XY );
+		imageview.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 	}
 
 	/**********************************************
