@@ -72,7 +72,6 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 		@Override
 		protected void onPostExecute(Object result) {
 
-
 			if (dialog.isShowing()) {
 				dialog.dismiss();
 			}
@@ -282,8 +281,9 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 					for(ParseObject fm: result){
 						Store s = new Store(fm);
 						fridgeMagnets.add(s);
+						s.setLocales();
+						Log.e("IMAGE FM", ""+s.getName());
 					}
-					Log.e("FRIDGEMAGNETS",fridgeMagnets.toString());
 				} else {
 					Log.e("ERROR",e.getMessage(),e);
 				}
