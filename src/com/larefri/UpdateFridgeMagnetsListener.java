@@ -5,11 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -53,9 +49,9 @@ public class UpdateFridgeMagnetsListener extends RestClient {
 	}
 
 	public void letsUpdate(){
-		for(UpdateMessage update: updateMessages){
+//		*for(UpdateMessage update: updateMessages){
 			//
-			FridgeMagnet tmpFm = new FridgeMagnet(update.id_marca);
+			/*FridgeMagnet tmpFm = new FridgeMagnet(update.id_marca);
 			if(fridgeMagnets != null && fridgeMagnets.contains(tmpFm)){
 				HashMap<String, String> params = new HashMap<String, String>();
 				params.put("id_marca", update.id_marca.toString());
@@ -80,8 +76,8 @@ public class UpdateFridgeMagnetsListener extends RestClient {
 				default:
 					break;
 				}
-			}
-		}
+			}*/
+		//}
 	}
 }
 

@@ -3,19 +3,18 @@ package com.larefri;
 //Repository git@github.com:aniavasq/LaRefri.git
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.List;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -35,6 +34,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.DragEvent;
@@ -70,19 +70,18 @@ public class MainActivity extends Activity {
 	private boolean hasScrolled;
 	private boolean fridgeMagnetsDraggable;
 	private boolean editMagnetViewShowed;
-	private static List<FridgeMagnet> myFridgeMagnets;
+	private static List<Store> myFridgeMagnets;
 	private ScrollView myScrollView;
 	private LocationTask locationTask;
 	public BitmapLRUCache mMemoryCache;
-	private static List<DownloadFridgeMagnetLogoTask> downloadFMLogoTasks = new ArrayList<DownloadFridgeMagnetLogoTask>();
 
 	class FridgeMagnetOnTouchListener extends GestureDetector.SimpleOnGestureListener  implements OnTouchListener {
-		private FridgeMagnet fm;
+		private Store fm;
 		private Float mDownX;
 		private Float mDownY;
 		private final Float SCROLL_THRESHOLD = 10.0f;
 
-		public FridgeMagnetOnTouchListener(FridgeMagnet fm) {
+		public FridgeMagnetOnTouchListener(Store fm) {
 			this.fm = fm;
 		}
 
@@ -175,42 +174,24 @@ public class MainActivity extends Activity {
 			}
 			return true;
 		}
-	}	
-
-	public static List<DownloadFridgeMagnetLogoTask> getDownloadFMLogoTasks() {
-		return downloadFMLogoTasks;
-	}
-	
-	public static void addDownloadFMLogoTasks(DownloadFridgeMagnetLogoTask downloadFMLogoTask) {
-		downloadFMLogoTasks.add(downloadFMLogoTask);
-	}
-	
-	public static void removeDownloadFMLogoTasks(DownloadFridgeMagnetLogoTask downloadFMLogoTask) {
-		Log.e("REMOVED FM",""+downloadFMLogoTask);
-		downloadFMLogoTasks.remove(downloadFMLogoTask);
 	}
 
-	public static List<FridgeMagnet> getMyFridgeMagnets() {
-		if(myFridgeMagnets==null){
-			try {
-				FridgeMagnetsManager fridgeMagnetReader = new FridgeMagnetsManager();
-				MainActivity.setMyFridgeMagnets(fridgeMagnetReader.readJsonStream( new FileInputStream(new File(((Activity)reference).getFilesDir(), "data.json")) ));
-			} 
-			catch (IOException e) { }
-			catch (Exception e) { }
-		}
+	public static List<Store> getMyFridgeMagnets() {
 		return myFridgeMagnets;
 	}
 
-	public static void setMyFridgeMagnets(List<FridgeMagnet> myFridgeMagnets) {
+	public static void setMyFridgeMagnets(List<Store> myFridgeMagnets) {
 		MainActivity.myFridgeMagnets = myFridgeMagnets;
 	}
 
-	public static void removeMyFridgeMagnet(FridgeMagnet fm){
+	public static void removeMyFridgeMagnet(Store fm){
 		MainActivity.myFridgeMagnets.remove(fm);
+		fm.removeFromLocalDataStore();
+		Log.e("FM", fm.toString());
+		Log.e("REMOVED", myFridgeMagnets.toString());
 	}
 	
-	public static void addMyFridgeMagnet(FridgeMagnet fm){
+	public static void addMyFridgeMagnet(Store fm){
 		MainActivity.myFridgeMagnets.add(fm);
 	}
 	
@@ -245,7 +226,7 @@ public class MainActivity extends Activity {
 		this.fridgeMagnetsClickable = true;
 		this.setFridgeMagnetsDraggable(false);
 		this.editMagnetViewShowed = false;
-
+		
 		FontsOverride.setDefaultFont(this, "MONOSPACE", "Roboto-Thin.ttf");
 		//Set policy to HTTP
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -279,17 +260,6 @@ public class MainActivity extends Activity {
 		this.myScrollView = (ScrollView) findViewById(R.id.the_scroll_view);
 		//Location
 		this.locationTask = new LocationTask(this.context, this);
-	}
-
-	public void downloadImageFromServer(String url, String file) throws MalformedURLException, IOException {
-		InputStream imageInputStream = new URL(url+file).openStream();
-		FileOutputStream imageOutputStream;
-		imageOutputStream = openFileOutput(file, Context.MODE_PRIVATE);
-		Bitmap bmp = BitmapFactory.decodeStream(imageInputStream);
-		if(bmp != null){
-			bmp.compress(Bitmap.CompressFormat.JPEG, 100, imageOutputStream);
-		}
-		imageOutputStream.close();
 	}
 
 	private void copyAssets() {
@@ -335,6 +305,61 @@ public class MainActivity extends Activity {
 		super.onStart();
 		setBackground();
 		//add fridgeMagnets from local data
+		//(new LoadFridgeMagnetsFromFileTask(this, left_pane_fridgemagnets, right_pane_fridgemagnets, lp)).execute();
+		/***************************************************
+		 * Parse support*/
+		myFridgeMagnets = new ArrayList<Store>();
+		
+		ParseConnector.getInstance(this);
+		
+		getParseFridgeMagnets();
+		/**********************************************/
+		//Update phone guide
+		//Check Updates
+		/*HashMap<String, String> params = new HashMap<String, String>();
+		String last_update = settings.getString("last_update", "2014-10-14 18:49:50");
+		params.put("ultima_actualizacion", last_update);
+		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+		nameValuePairs.add(new BasicNameValuePair("ultima_actualizacion", last_update));
+		(new UpdateFridgeMagnetsListener(this, getMyFridgeMagnets())).execute(
+				StaticUrls.UPDATES,
+				params,
+				nameValuePairs);*/
+	}
+	
+	/**********************************************
+	 * Parse support
+	 * */
+	private void getParseFridgeMagnets(){
+
+		ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Store");
+		query.fromLocalDatastore();
+		query.findInBackground(new FindCallback<ParseObject>() {
+			public void done(List<ParseObject> result, ParseException e) {
+				if (e == null) {
+					Store s;
+					for(ParseObject fm: result){
+						s = new Store(fm, context);
+						Log.e("FM INDEX", ""+s.getIndex()+" "+s.getName());
+						myFridgeMagnets.add(s);
+					}
+					Collections.sort(myFridgeMagnets, new Comparator<Store>() {
+
+						@Override
+						public int compare(Store lhs, Store rhs) {
+							Integer i = lhs.getIndex(), j = rhs.getIndex();
+							return i.compareTo(j);
+						}
+					});
+					loadFridgeMagnetsButtons(myFridgeMagnets);
+				} else {
+					Log.e("ERROR",e.getMessage(),e);
+				}
+			}
+		});
+	}
+	
+	protected void loadFridgeMagnetsButtons(List<Store> myFridgeMagnets) {
 		LinearLayout left_pane_fridgemagnets = (LinearLayout) findViewById(R.id.left_pane_fridgemagnets);
 		LinearLayout right_pane_fridgemagnets = (LinearLayout)findViewById(R.id.right_pane_fridgemagnets);
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width/2, width/2);
@@ -344,19 +369,47 @@ public class MainActivity extends Activity {
 		right_pane_fridgemagnets.setPadding(0, 0, 2, 0);
 		lp.setMargins(0, 0, 0, 0);
 		lp.gravity = Gravity.BOTTOM;
-		(new LoadFridgeMagnetsFromFileTask(this, left_pane_fridgemagnets, right_pane_fridgemagnets, lp)).execute();
-		//Update phone guide
-		//Check Updates
-		HashMap<String, String> params = new HashMap<String, String>();
-		String last_update = settings.getString("last_update", "2014-10-14 18:49:50");
-		params.put("ultima_actualizacion", last_update);
-		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-		nameValuePairs.add(new BasicNameValuePair("ultima_actualizacion", last_update));
-		(new UpdateFridgeMagnetsListener(this, getMyFridgeMagnets())).execute(
-				StaticUrls.UPDATES,
-				params,
-				nameValuePairs);
+		
+		for(final Store fm: myFridgeMagnets){
+			OnTouchListener fridgeMagnetOnTouchListener = new FridgeMagnetOnTouchListener(fm);
+			final ImageButton tmp_imageButtom = new ImageButton(context);
+			tmp_imageButtom.setLayoutParams(lp);
+			tmp_imageButtom.setPadding(0, 0, 0, 0);
+			File imgFile = new File(getFilesDir(), fm.getLogo());
+			if(imgFile.exists()){
+				try {
+					loadImageToButtom(imgFile, tmp_imageButtom);
+				} catch (FileNotFoundException e) { }
+			}
+
+			///
+			tmp_imageButtom.setScaleType( ImageView.ScaleType.FIT_CENTER );
+			tmp_imageButtom.setId(fm.getIndex());
+			tmp_imageButtom.setBackgroundColor(Color.TRANSPARENT);
+			tmp_imageButtom.setDrawingCacheEnabled(true);
+			tmp_imageButtom.setOnDragListener(new FridgeMagnetOnDragListener());
+			tmp_imageButtom.setOnTouchListener(fridgeMagnetOnTouchListener);
+			tmp_imageButtom.setOnLongClickListener(new View.OnLongClickListener() {				
+				@Override
+				public boolean onLongClick(View v) {
+					if(!isFridgeMagnetsDraggable() && !isHasScrolled()){
+						showEditMagnetView(v);
+					}
+					return true;
+				}
+			});
+			RelativeLayout rl = new RelativeLayout(context);
+			rl.setLayoutParams(lp);
+			rl.addView(tmp_imageButtom);
+			if(MainActivity.getMyFridgeMagnets().indexOf(fm)%2 == 0){
+				left_pane_fridgemagnets.addView(rl);
+			}else{
+				right_pane_fridgemagnets.addView(rl);
+			}
+		}
 	}
+
+	/**********************************************/
 
 	@Override
 	protected void onResume() {
@@ -372,12 +425,12 @@ public class MainActivity extends Activity {
 		this.startActivity(intent);
 	}
 
-	public void goToFlyer(View view, FridgeMagnet fm) {
+	public void goToFlyer(View view, Store fm) {
 		Intent intent = new Intent(view.getContext(), FlyerActivity.class);
 		Bundle b = new Bundle();
-		b.putInt("id_marca", fm.id_marca);
-		b.putString("logo", fm.logo);
-		b.putString("nombre", fm.nombre);		
+		b.putInt("id_marca", fm.getIndex());
+		b.putString("logo", fm.getLogo());
+		b.putString("nombre", fm.getName());		
 		intent.putExtras(b);
 		intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 		this.startActivity(intent);
@@ -402,20 +455,28 @@ public class MainActivity extends Activity {
 	}
 
 	protected void swapFridgeMagnetsInList(View view, View v) {
-		FridgeMagnet from_view = null, from_v = null;
-		for(FridgeMagnet fm:getMyFridgeMagnets()){
-			if(fm.id_marca == view.getId()){
+		Log.e("LENGHT MyFM BEFORE", ""+getMyFridgeMagnets().size());
+		Store from_view = null, from_v = null;
+		for(Store fm:getMyFridgeMagnets()){
+			if(fm.getIndex() == view.getId()){
 				from_view = fm;
-			}else if(fm.id_marca == v.getId()){
+			}else if(fm.getIndex() == v.getId()){
 				from_v = fm;
 			}
 		}
 		if(from_v!=null && from_view!=null){
-			List<FridgeMagnet> myFridgeMagnets = getMyFridgeMagnets();
+			List<Store> myFridgeMagnets = getMyFridgeMagnets();
 			int i = myFridgeMagnets.indexOf(from_v), j = myFridgeMagnets.indexOf(from_view);
 			Collections.swap(myFridgeMagnets, i, j);
+			
+			for(int k=0; k<myFridgeMagnets.size(); k++){
+				Store tmp = myFridgeMagnets.get(k);
+				tmp.setIndex(k);
+				myFridgeMagnets.set(k, tmp);
+			}
 			setMyFridgeMagnets(myFridgeMagnets);
 		}
+		Log.e("LENGHT MyFM AFTER", ""+getMyFridgeMagnets().size());
 	}
 
 	private Object[] createEditMagnetView(){
@@ -490,7 +551,7 @@ public class MainActivity extends Activity {
 	}
 
 	protected void letsDelFridgeMagnets(final View v) {
-		FridgeMagnet fm_tmp = new FridgeMagnet();
+		Store fm_tmp = new Store();
 
 		DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 			@Override
@@ -498,8 +559,8 @@ public class MainActivity extends Activity {
 				switch (which){
 				case DialogInterface.BUTTON_POSITIVE:
 					//Yes button clicked
-					for(FridgeMagnet fm: getMyFridgeMagnets()){
-						if(fm.id_marca == v.getId()){
+					for(Store fm: getMyFridgeMagnets()){
+						if(fm.getIndex() == v.getId()){
 							removeMyFridgeMagnet(fm);
 							try {
 								saveFridgeMagnetsList();
@@ -532,11 +593,11 @@ public class MainActivity extends Activity {
 			}
 		};
 
-		for(FridgeMagnet fm: getMyFridgeMagnets()){
-			if(fm.id_marca == v.getId()) fm_tmp = fm;
+		for(Store fm: getMyFridgeMagnets()){
+			if(fm.getIndex() == v.getId()) fm_tmp = fm;
 		}
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(getResources().getText(R.string.delete_fridge_magnet)+" "+fm_tmp.nombre+"?")
+		builder.setMessage(getResources().getText(R.string.delete_fridge_magnet)+" "+fm_tmp.getName()+"?")
 		.setPositiveButton(R.string.positive, dialogClickListener)
 		.setNegativeButton(R.string.negative, dialogClickListener)
 		.setOnCancelListener(dialogCancelListener);
@@ -596,8 +657,8 @@ public class MainActivity extends Activity {
 	}
 
 	private void chageOpacityFridgeMagnets(float opacity) {
-		for(final FridgeMagnet fm: getMyFridgeMagnets()){
-			ImageButton tmp_imageButtom = (ImageButton)findViewById(fm.id_marca);
+		for(final Store fm: getMyFridgeMagnets()){
+			ImageButton tmp_imageButtom = (ImageButton)findViewById(fm.getIndex());
 			if(tmp_imageButtom!=null) tmp_imageButtom.setAlpha(opacity);
 		}		
 	}
@@ -693,9 +754,15 @@ public class MainActivity extends Activity {
 	}
 
 	private void saveFridgeMagnetsList() throws FileNotFoundException, IOException {
-		File JsonFile = new File(getFilesDir(), "data.json");		
+		/*File JsonFile = new File(getFilesDir(), "data.json");		
 		FridgeMagnetsManager fridgeMagnetWriter = new FridgeMagnetsManager();
-		fridgeMagnetWriter.writeJsonStream(new FileOutputStream(JsonFile), getMyFridgeMagnets());
+		fridgeMagnetWriter.writeJsonStream(new FileOutputStream(JsonFile), getMyFridgeMagnets());*/
+		/*********************************************************
+		 * Parse support*/
+		for(Store fm: myFridgeMagnets){
+			fm.saveToLocalDataStore();
+		}
+		/*********************************************************/
 	}
 
 	protected void setBackground() {
@@ -719,5 +786,91 @@ public class MainActivity extends Activity {
 		}else{
 			super.onBackPressed();
 		}
+	}
+	
+	public void loadImageToButtom(File imgFile, ImageButton tmp_imageButtom) throws FileNotFoundException {
+		final String imageKey = String.valueOf(imgFile);
+
+		Bitmap bitmap = mMemoryCache.getBitmapFromMemCache(imageKey);
+		if (bitmap != null) {
+			loadBitmap(imgFile, tmp_imageButtom, bitmap);
+		} else {
+			bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+			loadBitmap(imgFile, tmp_imageButtom, bitmap);
+			mMemoryCache.addBitmapToMemoryCache(imageKey, bitmap);
+		}
+	}
+
+	public void loadBitmap(File imgFile, ImageButton imageButton, Bitmap bitmap) {
+		if (cancelPotentialWork(imgFile, imageButton)) {
+			final BitmapWorkerTask task = new BitmapWorkerTask(imageButton, this);
+			final BitmapWorkerTask.AsyncRecyclingDrawable asyncDrawable =  new BitmapWorkerTask.AsyncRecyclingDrawable(getResources(), bitmap, task);
+			imageButton.setImageDrawable(asyncDrawable);
+			task.execute(imgFile);
+		}
+	}
+
+	public static boolean cancelPotentialWork(File data, ImageButton imageButton) {
+		final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageButton);
+
+		if (bitmapWorkerTask != null) {
+			final File bitmapData = bitmapWorkerTask.getData();
+			// If bitmapData is not yet set or it differs from the new data
+			if (bitmapData == null || bitmapData != data) {
+				// Cancel previous task
+				bitmapWorkerTask.cancel(true);
+			} else {
+				// The same work is already in progress
+				return false;
+			}
+		}
+		// No task associated with the ImageView, or an existing task was cancelled
+		return true;
+	}
+
+	public static BitmapWorkerTask getBitmapWorkerTask(ImageButton imageButton) {
+		if (imageButton != null) {
+			final Drawable drawable = imageButton.getDrawable();
+			if (drawable instanceof BitmapWorkerTask.AsyncRecyclingDrawable) {
+				final BitmapWorkerTask.AsyncRecyclingDrawable asyncDrawable = (BitmapWorkerTask.AsyncRecyclingDrawable) drawable;
+				return asyncDrawable.getBitmapWorkerTask();
+			}
+		}
+		return null;
+	}
+
+	public static Bitmap decodeSampledBitmapFromResource(File imgFile){
+		BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inJustDecodeBounds = true;
+		int reqWidth = reference.getWidth()/2-20;
+		int reqHeight =reference.getWidth()/2-20;		
+		// Calculate inSampleSize
+		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+		// Decode bitmap with inSampleSize set
+		options.inJustDecodeBounds = false;
+		Bitmap bmp = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), options);
+		return bmp;
+	}
+
+	public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+		// Raw height and width of image
+		final int height = options.outHeight;
+		final int width = options.outWidth;
+		int inSampleSize = 1;
+
+		if (height > reqHeight || width > reqWidth) {
+
+			final int halfHeight = height / 2;
+			final int halfWidth = width / 2;
+
+			// Calculate the largest inSampleSize value that is a power of 2 and keeps both
+			// height and width larger than the requested height and width.
+			while ((halfHeight / inSampleSize) > reqHeight
+					&& (halfWidth / inSampleSize) > reqWidth) {
+				inSampleSize *= 2;
+			}
+		}
+
+		return inSampleSize;
 	}
 }

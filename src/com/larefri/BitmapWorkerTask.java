@@ -98,7 +98,7 @@ class BitmapWorkerTask extends AsyncTask<File, Void, Bitmap> {
     // Decode image in background.
     protected Bitmap doInBackground(File... params) {
         setData(params[0]);
-        Bitmap bitmap = LoadFridgeMagnetsFromFileTask.decodeSampledBitmapFromResource(getData());
+        Bitmap bitmap = MainActivity.decodeSampledBitmapFromResource(getData());
         return bitmap;
     }
 
@@ -112,7 +112,7 @@ class BitmapWorkerTask extends AsyncTask<File, Void, Bitmap> {
         if (imageButtonReference != null && bitmap != null) {
             final ImageButton imageButton = imageButtonReference.get();
             final BitmapWorkerTask bitmapWorkerTask =
-                    LoadFridgeMagnetsFromFileTask.getBitmapWorkerTask(imageButton);
+                    MainActivity.getBitmapWorkerTask(imageButton);
             if (this == bitmapWorkerTask && imageButton != null) {
             	imageButton.setImageBitmap(bitmap);
             }

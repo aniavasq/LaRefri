@@ -14,6 +14,7 @@ public class ParseConnector {
 	
     private ParseConnector(Activity master){
     	ParseConnector.master = master;
+    	Parse.enableLocalDatastore(ParseConnector.master);
 		Parse.initialize(ParseConnector.master, APP_ID, CLIENT_KEY);
     }
  

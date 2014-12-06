@@ -1,12 +1,16 @@
 package com.larefri;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import com.larefri.AddMagnet.Indexer;
 import com.parse.FindCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
@@ -14,6 +18,7 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import android.content.Context;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.widget.Button;
@@ -76,18 +81,25 @@ class Store{
 	private Category category;
 	private Integer priority;
 	private ParseFile image;
-	private InputStream imageInputStream;
-	private ArrayList<Locale> locales;
+	private byte[] imageInputStream;
+	private List<Locale> locales;
+	private String logo;
+	private Integer index;
+	private ParseObject parseObject;
+	private Context context;
 
-	public Store() { }
+	public Store(){ }
 
-	public Store(ParseObject parseObject){
+	public Store(ParseObject parseObject, Context context){
 		this.id = parseObject.getObjectId();
 		this.name = parseObject.getString("name");
 		this.category = new Category(parseObject.getParseObject("category"));
 		this.priority = parseObject.getInt("priority");
 		this.image = parseObject.getParseFile("image");
 		this.locales = new ArrayList<Locale>();
+		this.parseObject = parseObject;
+		this.context = context;
+		this.logo = this.name+".png";
 	}
 
 	public String getName(){
@@ -102,22 +114,40 @@ class Store{
 		return this.priority;
 	}
 
-	public void setImageInputStream(){
-		image.getDataInBackground(new GetDataCallback() {
+	public void downloadImage(){
+		File imgFile = new File(context.getFilesDir(), this.getLogo());
+		if(!imgFile.exists()){
+			image.getDataInBackground(new GetDataCallback() {
 
-			@Override
-			public void done(byte[] data, ParseException e) {
-				if (e == null) {
-					imageInputStream = new ByteArrayInputStream(data);
-					//download image
-				}else{
-					Log.e("ERROR", e+"", e);
+				@Override
+				public void done(byte[] data, ParseException e) {
+					if (e == null) {
+						imageInputStream = data;
+						//download image
+						logo = getName()+".png";
+
+						FileOutputStream out = null;
+						InputStream in = new ByteArrayInputStream(imageInputStream);
+						try {
+							out = context.openFileOutput(logo, Context.MODE_PRIVATE);
+							MainActivity.CopyStream(in, out);
+							out.flush();
+							out.close();
+							out = null;
+						} catch(IOException doNotCare) { 
+							Log.e("ERROR", "Error writing files"+logo);
+						}
+
+						Log.e("FILE", image.getName());
+					}else{
+						Log.e("ERROR", e+"", e);
+					}
 				}
-			}
-		});
+			});
+		}
 	}
-	
-	public InputStream getImageInputStream() {
+
+	public byte[] getImageInputStream() {
 		return imageInputStream;
 	}
 
@@ -130,26 +160,62 @@ class Store{
 		return id;
 	}
 
-	public ArrayList<Locale> getLocales() {
+	public List<Locale> getLocales() {
 		return locales;
 	}
 
-	public void setLocales() {
+	public void downloadLocales() {
 		ParseQuery<ParseObject> innerQuery = new ParseQuery<ParseObject>("Store");
 		innerQuery.whereEqualTo("objectId",this.getId());
-		
+
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Locale");
 		query.whereMatchesQuery("store", innerQuery);
 		query.findInBackground(new FindCallback<ParseObject>() {
-		    public void done(List<ParseObject> result, ParseException e) {
-		        if (e == null) {
-		            for (ParseObject parseObject: result){
-		            	locales.add(new Locale(parseObject));
-		            	Log.e("LOCALE",(new Locale(parseObject)).toString());
-		            }
-		        }
-		    }
+			public void done(List<ParseObject> result, ParseException e) {
+				if (e == null) {
+					for (ParseObject parseObject: result){
+						Locale locale = new Locale(parseObject);
+						locales.add(locale);
+						//Log.e("LOCALE", locale.toString());
+						parseObject.pinInBackground();
+					}
+				}
+			}
 		});
+	}
+
+	public String getLogo(){
+		return this.logo;
+	}
+
+	public Integer getIndex() {
+		if(index==null){
+			try{
+				setIndex(this.parseObject.getInt("index"));
+				return index;
+			}catch (Exception e) {
+				return -1;
+			}
+		}else{
+			return index;
+		}
+	}
+
+	public void setIndex(Integer index) {
+		this.index = index;
+		this.parseObject.put("index", this.index);
+	}
+
+	public void saveToLocalDataStore(){
+		if(getIndex()<0) setIndex(Indexer.nextIndex());
+		this.parseObject.pinInBackground();
+		this.downloadImage();
+		this.downloadLocales();
+	}
+
+	public void removeFromLocalDataStore(){
+		Indexer.removeIndex();
+		this.parseObject.unpinInBackground();
 	}
 }
 
@@ -159,29 +225,39 @@ class Locale{
 	private String name;
 	private List<String> phones;
 	private String country, region, city, address;
-	private String service;
+	private 
+	String service;
 	private Integer state;
-	
+
 	public Locale() {	}
-	
+
 	public Locale(ParseObject parseObject) {
 		this.id = parseObject.getObjectId();
 		this.updatedAt = parseObject.getDate("updatedAt");
 		this.name = parseObject.getString("name");
-		this.phones = parseObject.getList("phones");
 		this.country = parseObject.getString("country");
 		this.region = parseObject.getString("region");
 		this.city = parseObject.getString("city");
 		this.address = parseObject.getString("address");
 		this.service = parseObject.getString("service");
 		this.state = parseObject.getInt("state");
+		this.phones = new ArrayList<String>();
+		setPhones(parseObject);
 	}
 
 	public Date getUpdatedAt() {
 		return updatedAt;
-	}
+	}	
 	public List<String> getPhones() {
-		return phones;
+		List<String> result = new ArrayList<String>();
+		for(String phone: phones){
+			result.add(phone);
+		}
+		return result;
+	}
+	public void setPhones(ParseObject parseObject){
+		List<String> tmp_phones = parseObject.getList("phones");
+		phones = tmp_phones != null? tmp_phones : new ArrayList<String>();
 	}
 	public String getId() {
 		return id;
@@ -212,31 +288,43 @@ class Locale{
 		return this.phones.toString();
 	}
 }
+
+class PhoneNumber{
+	String number;
+
+	public String getNumber() {
+		return number;
+	}
+
+	public void setNumber(String number) {
+		this.number = number;
+	}
+}
 /**********************************************************************/
 
 class FridgeMagnetButton extends Button{
-	private FridgeMagnet fm;
+	private Store fm;
 
 	static class FridgeMagnetButtonComparator implements Comparator<FridgeMagnetButton>{
 		@Override
 		public int compare(FridgeMagnetButton lhs, FridgeMagnetButton rhs) {
 			int result;
-			Integer lhs_top = lhs.getFm().imantado_busqueda_top, rhs_top = rhs.getFm().imantado_busqueda_top;
+			Integer lhs_top = lhs.getFm().getPriority(), rhs_top = rhs.getFm().getPriority();
 
 			result = lhs_top.compareTo(rhs_top);
 			if(result!=0) return -1*result;
 
-			result = lhs.getFm().nombre.compareTo(rhs.getFm().nombre);
+			result = lhs.getFm().getName().compareTo(rhs.getFm().getName());
 			return result;
 		}
 	}
 
-	public FridgeMagnetButton(ContextThemeWrapper themeWrapper, FridgeMagnet fm){
+	public FridgeMagnetButton(ContextThemeWrapper themeWrapper, Store fm){
 		super(themeWrapper);
 		this.fm = fm;
 	}
 
-	public FridgeMagnet getFm() {
+	public Store getFm() {
 		return fm;
 	}
 }

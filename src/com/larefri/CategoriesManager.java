@@ -43,7 +43,7 @@ public class CategoriesManager implements RefriJsonReader {
 		while (reader.hasNext()) {
 			String name = reader.nextName();
 			if(name.equalsIgnoreCase("id_categoria")){
-				category.id_categoria = reader.nextInt();
+				category.id_categoria = reader.nextString();
 			}else if(name.equalsIgnoreCase("nombre_categoria")){
 				category.nombre_categoria = reader.nextString();
 			}else if(name.equalsIgnoreCase("icono_categoria")){

@@ -38,6 +38,6 @@ class DownloadFridgeMagnetLogoTask extends AsyncTask<String, String, Boolean>{
 
 	@Override
 	protected void onPostExecute(Boolean result) {
-		MainActivity.removeDownloadFMLogoTasks(this);
+		//MainActivity.removeDownloadFMLogoTasks(this);
 	}
 }

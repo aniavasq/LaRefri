@@ -129,7 +129,7 @@ public class CategoriesActivity extends Activity {
 	protected void goToAddMagnets(View view, CategoryFM c) {
 		Intent intent = new Intent(view.getContext(), AddMagnetActivity.class);
 		Bundle b = new Bundle();
-		b.putInt("id_categoria", c.id_categoria);
+		b.putString("id_categoria", c.id_categoria);
 		b.putString("logo", c.icono_categoria);
 		b.putString("nombre", c.nombre_categoria);
 		intent.putExtras(b);
@@ -140,7 +140,7 @@ public class CategoriesActivity extends Activity {
 	protected void goToSearchMagnets(View view, CategoryFM c) {
 		Intent intent = new Intent(view.getContext(), SearchFridgeMagnetActivity.class);
 		Bundle b = new Bundle();
-		b.putInt("id_categoria", c.id_categoria);
+		b.putString("id_categoria", c.id_categoria);
 		b.putString("logo", c.icono_categoria);
 		b.putString("nombre", c.nombre_categoria);
 		intent.putExtras(b);
@@ -189,15 +189,10 @@ public class CategoriesActivity extends Activity {
 
 		//Redraw the picture to a new size
 		Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-
 		Canvas canvas = new Canvas(bitmap);
-
 		Picture resizePicture = new Picture();
-
 		canvas = resizePicture.beginRecording(width, height);
-
 		canvas.drawPicture(test, new Rect(0,0, width, height));
-
 		resizePicture.endRecording();
 
 		//get a drawable from resizePicture
