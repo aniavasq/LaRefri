@@ -16,12 +16,12 @@ public class UpdateFridgeMagnetsListener extends RestClient {
 	private Activity master;
 	private SharedPreferences settings;
 	private List<UpdateMessage> updateMessages;
-	private List<FridgeMagnet> fridgeMagnets;
+	//private List<FridgeMagnet> fridgeMagnets;
 
 	public UpdateFridgeMagnetsListener(Activity master, List<FridgeMagnet> fridgeMagnets) {
 		super();
 		this.master = master;
-		this.fridgeMagnets = fridgeMagnets;
+		//this.fridgeMagnets = fridgeMagnets;
 		settings = this.master.getSharedPreferences("LaRefriPrefsFile", 0);
 	}
 

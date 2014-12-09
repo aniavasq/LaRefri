@@ -176,22 +176,27 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	public static List<Store> getMyFridgeMagnets() {
-		return myFridgeMagnets;
+	public synchronized static List<Store> getMyFridgeMagnets() {
+		if (myFridgeMagnets!=null)
+			return myFridgeMagnets;
+		else{
+			myFridgeMagnets = new ArrayList<Store>();
+			return myFridgeMagnets;
+		}			
 	}
 
-	public static void setMyFridgeMagnets(List<Store> myFridgeMagnets) {
+	public synchronized static void setMyFridgeMagnets(List<Store> myFridgeMagnets) {
 		MainActivity.myFridgeMagnets = myFridgeMagnets;
 	}
 
-	public static void removeMyFridgeMagnet(Store fm){
-		MainActivity.myFridgeMagnets.remove(fm);
+	public synchronized static void removeMyFridgeMagnet(Store fm){
+		myFridgeMagnets.remove(fm);
 		fm.removeFromLocalDataStore();
-		Log.e("FM", fm.toString());
-		Log.e("REMOVED", myFridgeMagnets.toString());
+		Log.e("FM REMOVED", fm.toString());
+		Log.e("AFTER REMOVED", myFridgeMagnets.toString());
 	}
 	
-	public static void addMyFridgeMagnet(Store fm){
+	public synchronized static void addMyFridgeMagnet(Store fm){
 		MainActivity.myFridgeMagnets.add(fm);
 	}
 	
@@ -260,6 +265,15 @@ public class MainActivity extends Activity {
 		this.myScrollView = (ScrollView) findViewById(R.id.the_scroll_view);
 		//Location
 		this.locationTask = new LocationTask(this.context, this);
+
+
+		/***************************************************
+		 * Parse support*/
+		
+		ParseConnector.getInstance(this);
+		
+		getParseFridgeMagnets();
+		/**********************************************/
 	}
 
 	private void copyAssets() {
@@ -305,26 +319,9 @@ public class MainActivity extends Activity {
 		super.onStart();
 		setBackground();
 		//add fridgeMagnets from local data
-		//(new LoadFridgeMagnetsFromFileTask(this, left_pane_fridgemagnets, right_pane_fridgemagnets, lp)).execute();
-		/***************************************************
-		 * Parse support*/
-		myFridgeMagnets = new ArrayList<Store>();
-		
-		ParseConnector.getInstance(this);
-		
-		getParseFridgeMagnets();
-		/**********************************************/
+		loadFridgeMagnetsButtons(getMyFridgeMagnets());
 		//Update phone guide
 		//Check Updates
-		/*HashMap<String, String> params = new HashMap<String, String>();
-		String last_update = settings.getString("last_update", "2014-10-14 18:49:50");
-		params.put("ultima_actualizacion", last_update);
-		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-		nameValuePairs.add(new BasicNameValuePair("ultima_actualizacion", last_update));
-		(new UpdateFridgeMagnetsListener(this, getMyFridgeMagnets())).execute(
-				StaticUrls.UPDATES,
-				params,
-				nameValuePairs);*/
 	}
 	
 	/**********************************************
@@ -336,14 +333,17 @@ public class MainActivity extends Activity {
 		query.fromLocalDatastore();
 		query.findInBackground(new FindCallback<ParseObject>() {
 			public void done(List<ParseObject> result, ParseException e) {
+				List<Store> tmp_fridgemagnets  = new ArrayList<Store>();
 				if (e == null) {
 					Store s;
 					for(ParseObject fm: result){
 						s = new Store(fm, context);
 						Log.e("FM INDEX", ""+s.getIndex()+" "+s.getName());
-						myFridgeMagnets.add(s);
+						tmp_fridgemagnets.add(s);
 					}
-					Collections.sort(myFridgeMagnets, new Comparator<Store>() {
+					if(tmp_fridgemagnets!=getMyFridgeMagnets())
+						setMyFridgeMagnets(tmp_fridgemagnets);
+					Collections.sort(getMyFridgeMagnets(), new Comparator<Store>() {
 
 						@Override
 						public int compare(Store lhs, Store rhs) {
@@ -351,7 +351,7 @@ public class MainActivity extends Activity {
 							return i.compareTo(j);
 						}
 					});
-					loadFridgeMagnetsButtons(myFridgeMagnets);
+					loadFridgeMagnetsButtons(getMyFridgeMagnets());
 				} else {
 					Log.e("ERROR",e.getMessage(),e);
 				}
@@ -370,7 +370,7 @@ public class MainActivity extends Activity {
 		lp.setMargins(0, 0, 0, 0);
 		lp.gravity = Gravity.BOTTOM;
 		
-		for(final Store fm: myFridgeMagnets){
+		for(final Store fm: getMyFridgeMagnets()){
 			OnTouchListener fridgeMagnetOnTouchListener = new FridgeMagnetOnTouchListener(fm);
 			final ImageButton tmp_imageButtom = new ImageButton(context);
 			tmp_imageButtom.setLayoutParams(lp);
@@ -428,7 +428,7 @@ public class MainActivity extends Activity {
 	public void goToFlyer(View view, Store fm) {
 		Intent intent = new Intent(view.getContext(), FlyerActivity.class);
 		Bundle b = new Bundle();
-		b.putInt("id_marca", fm.getIndex());
+		b.putString("id_marca", fm.getId());
 		b.putString("logo", fm.getLogo());
 		b.putString("nombre", fm.getName());		
 		intent.putExtras(b);
@@ -562,14 +562,7 @@ public class MainActivity extends Activity {
 					for(Store fm: getMyFridgeMagnets()){
 						if(fm.getIndex() == v.getId()){
 							removeMyFridgeMagnet(fm);
-							try {
-								saveFridgeMagnetsList();
-								onStart();
-							} catch (FileNotFoundException e) {
-								e.printStackTrace();
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
+							loadFridgeMagnetsButtons(getMyFridgeMagnets());
 							break;
 						}
 					}
@@ -648,11 +641,7 @@ public class MainActivity extends Activity {
 				goToMenu(v);
 			}
 		});
-		try {
-			saveFridgeMagnetsList();
-		} catch (FileNotFoundException e) { 
-		} catch (IOException e) {
-		}
+		//saveFridgeMagnetsList();
 		hideEditMagnetView();
 	}
 
@@ -751,18 +740,6 @@ public class MainActivity extends Activity {
 		enable_layout.setVisibility(View.INVISIBLE);
 		enable_layout.setOnTouchListener(null);
 		this.fridgeMagnetsClickable = true;
-	}
-
-	private void saveFridgeMagnetsList() throws FileNotFoundException, IOException {
-		/*File JsonFile = new File(getFilesDir(), "data.json");		
-		FridgeMagnetsManager fridgeMagnetWriter = new FridgeMagnetsManager();
-		fridgeMagnetWriter.writeJsonStream(new FileOutputStream(JsonFile), getMyFridgeMagnets());*/
-		/*********************************************************
-		 * Parse support*/
-		for(Store fm: myFridgeMagnets){
-			fm.saveToLocalDataStore();
-		}
-		/*********************************************************/
 	}
 
 	protected void setBackground() {

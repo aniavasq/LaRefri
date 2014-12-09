@@ -1,31 +1,31 @@
 package com.larefri;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import org.apache.http.NameValuePair;
+
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.content.res.Resources.NotFoundException;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -111,6 +111,12 @@ public class SearchFridgeMagnetActivity extends Activity implements AddMagnet{
 		} catch (Exception e) { e.printStackTrace(); }		
 
 		setupUI(findViewById(R.id.parent));
+		
+		/**********************************************************
+		 * Parse support*/
+		loadedFridgeMagnets = new ArrayList<Store>();
+		getParseFridgeMagnets();
+		/***********************************************************/
 	}
 
 	public void loadFridgeMagnetsButtons(List<Store> tmpQueryFridgeMagnets) {
@@ -140,27 +146,27 @@ public class SearchFridgeMagnetActivity extends Activity implements AddMagnet{
 			}
 		}
 
-		/*metaRemove.removeAll(tmpQueryFridgeMagnets);
+		metaRemove.removeAll(tmpQueryFridgeMagnets);
 
-		ArrayList<FridgeMagnet> myRemove = new ArrayList<FridgeMagnet>(MainActivity.getMyFridgeMagnets());
+		List<Store> myRemove = MainActivity.getMyFridgeMagnets();
 		myRemove.removeAll(metaRemove);
 		myRemove.removeAll(remove);
-		for(final FridgeMagnet fm: myRemove){
+		for(final Store fm: myRemove){
 			FridgeMagnetButton tmp_title = new FridgeMagnetButton(themeWrapper, fm);
 			tmp_title.setLayoutParams(lp);
 			tmp_title.setBackground(resources.getDrawable(R.drawable.menu_button_bg_disabled));
-			tmp_title.setText(fm.nombre);
+			tmp_title.setText(fm.getName());
 			tmp_title.setTextColor(Color.WHITE);
 			tmp_title.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
 			tmp_title.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_accept, 0);
 			tmp_title.setPadding(10, 0, 10, 1);
-			tmp_title.setOnClickListener(new RemoveOnClickListener(tmp_title, (Activity)context, null));
+			tmp_title.setOnClickListener(new RemoveOnClickListener(tmp_title, (Activity)context));
 			buttons.add(tmp_title);
 		}
 		Collections.sort(buttons, new FridgeMagnetButton.FridgeMagnetButtonComparator());
 		for(FridgeMagnetButton b:buttons){
 			store_call_pane.addView(b);
-		}*/
+		}
 	}
 
 	@Override
@@ -169,11 +175,10 @@ public class SearchFridgeMagnetActivity extends Activity implements AddMagnet{
 		super.onStart();
 	}
 
-	public void addMagnetToLocalData(Store fm) throws FileNotFoundException, IOException{
+	public void addMagnetToLocalData(Store fm){
 		try{
 			if(!MainActivity.getMyFridgeMagnets().contains(fm)){
 				MainActivity.addMyFridgeMagnet(fm);
-				saveFridgeMagnetsList();
 			}
 		}catch (Exception donotCare){ }
 	}
@@ -212,7 +217,7 @@ public class SearchFridgeMagnetActivity extends Activity implements AddMagnet{
 	}
 
 	public void myFridgeMagnetsRemove(Store fm) {
-		//MainActivity.removeMyFridgeMagnet(fm);
+		MainActivity.removeMyFridgeMagnet(fm);
 	}
 	
 	public static void hideSoftKeyboard(Activity activity) {
@@ -221,30 +226,48 @@ public class SearchFridgeMagnetActivity extends Activity implements AddMagnet{
 	}
 	
 	public void setupUI(View view) {
-
 	    //Set up touch listener for non-text box views to hide keyboard.
 	    if(!(view instanceof TextView)) {
-
 	        view.setOnTouchListener(new View.OnTouchListener() {
-
 	            public boolean onTouch(View v, MotionEvent event) {
 	            	v.performClick();
 	                hideSoftKeyboard(SearchFridgeMagnetActivity.this);
 	                return false;
 	            }
-
 	        });
 	    }
 
 	    //If a layout container, iterate over children and seed recursion.
 	    if (view instanceof ViewGroup) {
-
 	        for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
-
 	            View innerView = ((ViewGroup) view).getChildAt(i);
-
 	            setupUI(innerView);
 	        }
 	    }
 	}
+
+
+	/**********************************************
+	 * Parse support
+	 * */
+	private void getParseFridgeMagnets(){
+
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("Store");
+		query.findInBackground(new FindCallback<ParseObject>() {
+			public void done(List<ParseObject> result, ParseException e) {
+				if (e == null) {
+					Store s;
+					for(ParseObject fm: result){
+						s = new Store(fm, context);
+						loadedFridgeMagnets.add(s);
+					}
+					loadFridgeMagnetsButtons(loadedFridgeMagnets);
+					search_txt.addTextChangedListener(new QueryInList(loadedFridgeMagnets));
+				} else {
+					Log.e("ERROR",e.getMessage(),e);
+				}
+			}
+		});
+	}
+	/**********************************************/
 }

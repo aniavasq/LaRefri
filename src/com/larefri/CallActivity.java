@@ -3,7 +3,6 @@ package com.larefri;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,6 +15,11 @@ import java.util.Locale;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import android.app.Activity;
 import android.content.Context;
@@ -44,7 +48,7 @@ import android.widget.TextView;
 
 public class CallActivity extends Activity {
 	private SharedPreferences settings;
-	private Integer id_marca;
+	private String id_marca;
 	private String logo;
 	private String nombre;
 	private Context context;
@@ -58,7 +62,7 @@ public class CallActivity extends Activity {
 
 		//get extra content from previous activity
 		Bundle b = getIntent().getExtras();
-		id_marca = b.getInt("id_marca");
+		id_marca = b.getString("id_marca");
 		logo = b.getString("logo");
 		nombre = b.getString("nombre");
 		DisplayMetrics dm = new DisplayMetrics();
@@ -72,19 +76,27 @@ public class CallActivity extends Activity {
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 		StrictMode.setThreadPolicy(policy);
 
-		HashMap<String, String> params = new HashMap<String, String>();
+		/*HashMap<String, String> params = new HashMap<String, String>();
 		params.put("id_marca", id_marca.toString());
 		//construct form to HttpRequest
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 		nameValuePairs.add(new BasicNameValuePair("id_marca", id_marca.toString()));
 
-		try {
+		/*try {
 			loadStores((new StoresManager()).readJsonStream( new FileInputStream(new File(getFilesDir(), this.id_marca+"_sucursales.json")) ));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
+		/***************************************************
+		 * Parse support*/
+
+		ParseConnector.getInstance(this);
+
+		loadLocales();
+		/**********************************************/
+
 		LinearLayout.LayoutParams ll = new LinearLayout.LayoutParams(width/2-20,width/2-20);
 		image.setLayoutParams(ll);
 		File imgFile = new File(getFilesDir(), logo);
@@ -99,9 +111,9 @@ public class CallActivity extends Activity {
 		setBackground();
 	}
 
-	private void loadStores(List<StoreFM> stores){		
+	private void loadStores(List<Local> stores){		
 		LinearLayout store_call_pane = (LinearLayout) findViewById(R.id.stores_call_buttons);
-		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, Gravity.LEFT);
+		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, Gravity.START);
 		Resources resources = getResources();
 		ContextThemeWrapper themeWrapper = new ContextThemeWrapper(context, R.style.menu_button);
 
@@ -115,44 +127,47 @@ public class CallActivity extends Activity {
 			tmp_title.setBackground(resources.getDrawable(R.drawable.menu_label_bg));
 			tmp_title.setText(R.string.no_fridge_magnets);
 			tmp_title.setTextColor(Color.WHITE);
-			tmp_title.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+			tmp_title.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
 			tmp_title.setPadding(10, 0, 10, 1);
 			phone_num_pane.addView(tmp_title);
 			store_call_pane.addView(phone_num_pane);
 		}
-		for(final StoreFM s: stores){
-			if(s!=null && s.ciudad.equalsIgnoreCase(settings.getString("current_city", "NO_CITY"))){
-				LinearLayout phone_num_pane = new LinearLayout(themeWrapper);
-				phone_num_pane.setOrientation(LinearLayout.VERTICAL);
-				phone_num_pane.setLayoutParams(lp);
+		for(final Local s: stores){
+			//if(s!=null && s.ciudad.equalsIgnoreCase(settings.getString("current_city", "NO_CITY"))){
+			LinearLayout phone_num_pane = new LinearLayout(themeWrapper);
+			phone_num_pane.setOrientation(LinearLayout.VERTICAL);
+			phone_num_pane.setLayoutParams(lp);
 
-				TextView tmp_title = new Button(themeWrapper);
-				tmp_title.setLayoutParams(lp);
-				tmp_title.setBackground(resources.getDrawable(R.drawable.menu_label_bg));
-				tmp_title.setText(s.nombre);
-				tmp_title.setTextColor(Color.WHITE);
-				tmp_title.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-				tmp_title.setPadding(10, 0, 10, 1);		
-				phone_num_pane.addView(tmp_title);
+			TextView tmp_title = new Button(themeWrapper);
+			tmp_title.setLayoutParams(lp);
+			tmp_title.setBackground(resources.getDrawable(R.drawable.menu_label_bg));
+			tmp_title.setText(s.getName());
+			tmp_title.setTextColor(Color.WHITE);
+			tmp_title.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
+			tmp_title.setPadding(10, 0, 10, 1);		
+			phone_num_pane.addView(tmp_title);
 
+			for(final String phone: s.getPhones()){
 				Button phone_num = new Button(themeWrapper);
 				phone_num.setLayoutParams(lp);
-				phone_num.setText(s.telefono);
+				phone_num.setText(phone);
 				phone_num.setTextColor(Color.WHITE);
 				phone_num.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_call, 0);
 				phone_num.setBackgroundColor(Color.TRANSPARENT);
-				phone_num.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+				phone_num.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
 				phone_num.setPadding(10, 0, 10, 1);		
 				phone_num.setOnClickListener(new OnClickListener() {							
 					@Override
 					public void onClick(View v) {
-						onCall(v, s.telefono);
+						onCall(v, phone);
 
 					}
 				});
+				if (s.getPhones().indexOf(phone)!= (s.getPhones().size()-1)) phone_num.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
 				phone_num_pane.addView(phone_num);
+			}
 
-				Button phone_num2 = new Button(themeWrapper);
+			/*Button phone_num2 = new Button(themeWrapper);
 				if(!s.telefono2.isEmpty()){
 					phone_num.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
 					phone_num.setPadding(10, 0, 10, 1);
@@ -192,14 +207,14 @@ public class CallActivity extends Activity {
 						}
 					});
 					phone_num_pane.addView(phone_num3);
-				}
-				LinearLayout ll = new LinearLayout(this);
-				LinearLayout.LayoutParams trlp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 20);
-				ll.setLayoutParams(trlp);
-				ll.setBackgroundColor(Color.TRANSPARENT);
-				phone_num_pane.addView(ll);
-				store_call_pane.addView(phone_num_pane);
-			}
+				}*/
+			LinearLayout ll = new LinearLayout(this);
+			LinearLayout.LayoutParams trlp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 20);
+			ll.setLayoutParams(trlp);
+			ll.setBackgroundColor(Color.TRANSPARENT);
+			phone_num_pane.addView(ll);
+			store_call_pane.addView(phone_num_pane);
+			//}
 		}
 	}
 
@@ -215,12 +230,12 @@ public class CallActivity extends Activity {
 	public void onBackPressed(View view) {
 		Intent intent = new Intent(view.getContext(), FlyerActivity.class);
 		Bundle b = new Bundle();
-		b.putInt("id_marca", this.id_marca);
+		b.putString("id_marca", this.id_marca);
 		b.putString("logo", this.logo);
 		b.putString("nombre", this.nombre);		
 		intent.putExtras(b);
-	    this.startActivity(intent);
-	    this.finish();
+		this.startActivity(intent);
+		this.finish();
 	}
 
 	public void onCall(View view, String phone){
@@ -292,17 +307,39 @@ public class CallActivity extends Activity {
 		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 		return activeNetworkInfo != null && activeNetworkInfo.isConnected();
 	}
-	
+
 	public void onHomePressed(View view){
 		Intent intent = new Intent(view.getContext(), MainActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-	    this.startActivity(intent);
-	    this.finish();
+		this.startActivity(intent);
+		this.finish();
 	}
 
 	@Override
 	public void onBackPressed() {
 		this.finish();
+	}
+	
+	private void loadLocales() {
+		ParseQuery<ParseObject> innerQuery = new ParseQuery<ParseObject>("Store");
+		innerQuery.fromLocalDatastore();
+		innerQuery.whereEqualTo("objectId",this.id_marca);
+
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("Locale");
+		query.fromLocalDatastore();
+		query.whereMatchesQuery("store", innerQuery);
+		query.findInBackground(new FindCallback<ParseObject>() {
+			public void done(List<ParseObject> result, ParseException e) {
+				if (e == null) {
+					List<Local> locales = new ArrayList<Local>();
+					for (ParseObject parseObject: result){
+						Local locale = new Local(parseObject);
+						locales.add(locale);
+					}
+					loadStores(locales);
+				}
+			}
+		});
 	}
 }
 

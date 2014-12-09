@@ -140,7 +140,6 @@ public class CategoriesActivity extends Activity {
 	protected void goToSearchMagnets(View view, CategoryFM c) {
 		Intent intent = new Intent(view.getContext(), SearchFridgeMagnetActivity.class);
 		Bundle b = new Bundle();
-		b.putString("id_categoria", c.id_categoria);
 		b.putString("logo", c.icono_categoria);
 		b.putString("nombre", c.nombre_categoria);
 		intent.putExtras(b);

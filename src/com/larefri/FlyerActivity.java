@@ -26,7 +26,7 @@ import android.widget.TextView;
 public class FlyerActivity extends Activity {
 
 	private SharedPreferences settings;
-	private Integer id_marca;
+	private String id_marca;
 	private String logo;
 	private String nombre;
 	private Integer width;
@@ -37,7 +37,7 @@ public class FlyerActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.flyer_activity);
 		Bundle b = getIntent().getExtras();
-		this.id_marca = b.getInt("id_marca");
+		this.id_marca = b.getString("id_marca");
 		this.logo = b.getString("logo");
 		this.nombre = b.getString("nombre");		
 		this.settings = getSharedPreferences("LaRefriPrefsFile", 0);
@@ -81,7 +81,7 @@ public class FlyerActivity extends Activity {
 		}
 	}
 
-	private List<Flyer> getFlyer(Integer id_marca) {		
+	private List<Flyer> getFlyer(String id_marca) {		
 		try {
 			File fl = new File(getFilesDir(),id_marca+"_flyer.json");
 			FileInputStream fin;
@@ -117,7 +117,7 @@ public class FlyerActivity extends Activity {
 	public void onCall(View view) {
 		Intent intent = new Intent(view.getContext(), CallActivity.class);
 		Bundle b = new Bundle();
-		b.putInt("id_marca", id_marca);
+		b.putString("id_marca", id_marca);
 		b.putString("logo", logo);
 		b.putString("nombre", nombre);
 		intent.putExtras(b);
@@ -128,7 +128,7 @@ public class FlyerActivity extends Activity {
 	public void onPhoneGuide(View view) {
 		Intent intent = new Intent(view.getContext(), PhoneGuideActivity.class);
 		Bundle b = new Bundle();
-		b.putInt("id_marca", id_marca); //ID
+		b.putString("id_marca", id_marca); //ID
 		b.putString("logo", logo);
 		b.putString("nombre", nombre);
 		intent.putExtras(b);

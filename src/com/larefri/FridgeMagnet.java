@@ -10,7 +10,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import com.larefri.AddMagnet.Indexer;
 import com.parse.FindCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
@@ -82,7 +81,7 @@ class Store{
 	private Integer priority;
 	private ParseFile image;
 	private byte[] imageInputStream;
-	private List<Locale> locales;
+	private List<Local> locales;
 	private String logo;
 	private Integer index;
 	private ParseObject parseObject;
@@ -96,7 +95,7 @@ class Store{
 		this.category = new Category(parseObject.getParseObject("category"));
 		this.priority = parseObject.getInt("priority");
 		this.image = parseObject.getParseFile("image");
-		this.locales = new ArrayList<Locale>();
+		this.locales = new ArrayList<Local>();
 		this.parseObject = parseObject;
 		this.context = context;
 		this.logo = this.name+".png";
@@ -160,7 +159,7 @@ class Store{
 		return id;
 	}
 
-	public List<Locale> getLocales() {
+	public List<Local> getLocales() {
 		return locales;
 	}
 
@@ -174,9 +173,8 @@ class Store{
 			public void done(List<ParseObject> result, ParseException e) {
 				if (e == null) {
 					for (ParseObject parseObject: result){
-						Locale locale = new Locale(parseObject);
+						Local locale = new Local(parseObject);
 						locales.add(locale);
-						//Log.e("LOCALE", locale.toString());
 						parseObject.pinInBackground();
 					}
 				}
@@ -207,31 +205,34 @@ class Store{
 	}
 
 	public void saveToLocalDataStore(){
-		if(getIndex()<0) setIndex(Indexer.nextIndex());
+		if(getIndex()==-1 || getIndex()==0) setIndex(this.id.hashCode());
+		Log.e("INDEX", ""+getIndex() );
 		this.parseObject.pinInBackground();
 		this.downloadImage();
 		this.downloadLocales();
 	}
 
 	public void removeFromLocalDataStore(){
-		Indexer.removeIndex();
 		this.parseObject.unpinInBackground();
+	}
+	@Override
+	public boolean equals(Object o) {
+		return this.getId().equals(((Store)o).getId());
 	}
 }
 
-class Locale{
+class Local{
 	private String id;
 	private Date updatedAt;
 	private String name;
 	private List<String> phones;
 	private String country, region, city, address;
-	private 
-	String service;
+	private String service;
 	private Integer state;
 
-	public Locale() {	}
+	public Local() {	}
 
-	public Locale(ParseObject parseObject) {
+	public Local(ParseObject parseObject) {
 		this.id = parseObject.getObjectId();
 		this.updatedAt = parseObject.getDate("updatedAt");
 		this.name = parseObject.getString("name");

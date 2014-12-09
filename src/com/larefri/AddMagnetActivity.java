@@ -3,8 +3,6 @@ package com.larefri;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -59,13 +57,6 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 		this.getWindow().getWindowManager().getDefaultDisplay().getMetrics(dm);
 		int width = dm.widthPixels;
 		settings = getSharedPreferences("LaRefriPrefsFile", 0);
-
-		/***************************************************
-		 * Parse support*/
-		ParseConnector.getInstance(this);
-		
-		getParseFridgeMagnets();
-		/**********************************************/
 		
 		//Set policy to HTTP
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -83,6 +74,13 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 			setImageSVGDrawable(image, imgFile, width/3-40, width/3-40);
 		} catch (Exception e) { e.printStackTrace(); }
 		nameview.setText(nombre);
+
+		/***************************************************
+		 * Parse support*/
+		ParseConnector.getInstance(this);
+		
+		getParseFridgeMagnets();
+		/**********************************************/
 	}
 
 	@Override
@@ -91,11 +89,10 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 		super.onStart();
 	}
 
-	public void addMagnetToLocalData(Store fm) throws FileNotFoundException, IOException{
+	public void addMagnetToLocalData(Store fm){
 		try{
 			if(!MainActivity.getMyFridgeMagnets().contains(fm)){
 				MainActivity.addMyFridgeMagnet(fm);
-				saveFridgeMagnetsList();
 			}
 		}catch (Exception donotCare){ }
 	}
@@ -148,13 +145,6 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 		for(FridgeMagnetButton b:buttons){
 			store_call_pane.addView(b);
 		}
-	}
-
-	@Override
-	public void saveFridgeMagnetsList() throws FileNotFoundException, IOException {
-		File JsonFile = new File(getFilesDir(), "data.json");
-		FridgeMagnetsManager fridgeMagnetWriter = new FridgeMagnetsManager();
-		fridgeMagnetWriter.writeJsonStream(new FileOutputStream(JsonFile), MainActivity.getMyFridgeMagnets());
 	}
 
 	public void onBackPressed(View view) {
@@ -214,7 +204,11 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 	 * */
 	private void getParseFridgeMagnets(){
 
-		ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Store");
+		ParseQuery<ParseObject> innerQuery = new ParseQuery<ParseObject>("Category");
+		innerQuery.whereEqualTo("objectId", this.id_category);
+
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("Store");
+		query.whereMatchesQuery("category", innerQuery);
 		query.findInBackground(new FindCallback<ParseObject>() {
 			public void done(List<ParseObject> result, ParseException e) {
 				if (e == null) {
