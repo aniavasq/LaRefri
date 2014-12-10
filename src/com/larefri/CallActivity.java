@@ -16,6 +16,10 @@ import java.util.Locale;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -75,23 +79,9 @@ public class CallActivity extends Activity {
 		//Set policy to HTTP
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 		StrictMode.setThreadPolicy(policy);
-
-		/*HashMap<String, String> params = new HashMap<String, String>();
-		params.put("id_marca", id_marca.toString());
-		//construct form to HttpRequest
-		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-		nameValuePairs.add(new BasicNameValuePair("id_marca", id_marca.toString()));
-
-		/*try {
-			loadStores((new StoresManager()).readJsonStream( new FileInputStream(new File(getFilesDir(), this.id_marca+"_sucursales.json")) ));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
+		
 		/***************************************************
 		 * Parse support*/
-
 		ParseConnector.getInstance(this);
 
 		loadLocales();
@@ -111,7 +101,7 @@ public class CallActivity extends Activity {
 		setBackground();
 	}
 
-	private void loadStores(List<Local> stores){		
+	private void loadStores(List<Local> stores){
 		LinearLayout store_call_pane = (LinearLayout) findViewById(R.id.stores_call_buttons);
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, Gravity.START);
 		Resources resources = getResources();
@@ -150,7 +140,15 @@ public class CallActivity extends Activity {
 			for(final String phone: s.getPhones()){
 				Button phone_num = new Button(themeWrapper);
 				phone_num.setLayoutParams(lp);
-				phone_num.setText(phone);
+				
+				try {
+					PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+					PhoneNumber internationalPhoneNumber = phoneUtil.parse(phone, Locale.getDefault().getCountry());
+					String internationalFormatPhoneNumber = phoneUtil.format(internationalPhoneNumber, PhoneNumberFormat.NATIONAL);
+					phone_num.setText(internationalFormatPhoneNumber);
+				} catch (NumberParseException e) {
+					phone_num.setText(phone);
+				}
 				phone_num.setTextColor(Color.WHITE);
 				phone_num.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_call, 0);
 				phone_num.setBackgroundColor(Color.TRANSPARENT);
@@ -163,51 +161,13 @@ public class CallActivity extends Activity {
 
 					}
 				});
-				if (s.getPhones().indexOf(phone)!= (s.getPhones().size()-1)) phone_num.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
+				if (s.getPhones().indexOf(phone)!= (s.getPhones().size()-1))
+					phone_num.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
+				if (s.getPhones().indexOf(phone)==0)
+					phone_num.setPadding(10, 0, 10, 1);
 				phone_num_pane.addView(phone_num);
 			}
-
-			/*Button phone_num2 = new Button(themeWrapper);
-				if(!s.telefono2.isEmpty()){
-					phone_num.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
-					phone_num.setPadding(10, 0, 10, 1);
-					phone_num2.setLayoutParams(lp);
-					phone_num2.setText(s.telefono2);
-					phone_num2.setTextColor(Color.WHITE);
-					phone_num2.setBackgroundColor(Color.TRANSPARENT);
-					phone_num2.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_call, 0);
-					phone_num2.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-					phone_num2.setPadding(10, 0, 10, 1);
-					phone_num2.setOnClickListener(new OnClickListener() {							
-						@Override
-						public void onClick(View v) {
-							onCall(v, s.telefono2);							
-						}
-					});
-					phone_num_pane.addView(phone_num2);
-				}
-
-				if(!s.telefono3.isEmpty()){
-					phone_num2.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
-					phone_num2.setPadding(10, 0, 10, 1);
-					Button phone_num3 = new Button(themeWrapper);
-					phone_num3.setLayoutParams(lp);
-					phone_num3.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
-					phone_num3.setText(s.telefono3);
-					phone_num3.setTextColor(Color.WHITE);
-					phone_num3.setBackgroundColor(Color.TRANSPARENT);
-					phone_num3.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_call, 0);
-					phone_num3.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-					phone_num3.setPadding(10, 0, 10, 1);
-					phone_num3.setOnClickListener(new OnClickListener() {							
-						@Override
-						public void onClick(View v) {
-							onCall(v, s.telefono3);
-
-						}
-					});
-					phone_num_pane.addView(phone_num3);
-				}*/
+			
 			LinearLayout ll = new LinearLayout(this);
 			LinearLayout.LayoutParams trlp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 20);
 			ll.setLayoutParams(trlp);

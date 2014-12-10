@@ -1,13 +1,15 @@
 package com.larefri;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -17,6 +19,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -31,6 +34,7 @@ public class FlyerActivity extends Activity {
 	private String nombre;
 	private Integer width;
 	private BitmapLRUCache mMemoryCache;
+	private Context context;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,56 +47,45 @@ public class FlyerActivity extends Activity {
 		this.settings = getSharedPreferences("LaRefriPrefsFile", 0);
 		DisplayMetrics dm = new DisplayMetrics();
 		this.getWindow().getWindowManager().getDefaultDisplay().getMetrics(dm);
-		this.width = dm.widthPixels;		
+		this.width = dm.widthPixels;
+		this.context = this;
 
 		final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
 	    final int cacheSize = maxMemory / 8;
 	    mMemoryCache = new BitmapLRUCache(cacheSize);
 	    
-	    RecyclingImageView image = (RecyclingImageView)findViewById(R.id.magnetfridge_logo);
-		List<Flyer> flyers = getFlyer(this.id_marca);
+	    RecyclingImageView logo_image = (RecyclingImageView)findViewById(R.id.magnetfridge_logo);
+		/*List<Promotion> flyers = getFlyer(this.id_marca);
 
 		try {
-			for (Flyer f: flyers){
+			for (Promotion f: flyers){
 				ImageView flyer = (ImageView)findViewById(R.id.flyer_view);
 				File imgFlyer = new File(getFilesDir(), f.imagen);
 				loadImageToFlyer(imgFlyer, flyer);
 			}
-		} catch (FileNotFoundException e) { }
+		} catch (FileNotFoundException e) { }*/
 		LinearLayout.LayoutParams ll = new LinearLayout.LayoutParams(width/2,width/2);
-		image.setLayoutParams(ll);
+		logo_image.setLayoutParams(ll);
 		TextView nameview = (TextView)findViewById(R.id.magnetfridge_name);
 		File imgFile = new File(getFilesDir(), logo);
 		Drawable d = Drawable.createFromPath(imgFile.getAbsolutePath());
-		image.setImageDrawable(d);
+		logo_image.setImageDrawable(d);
 		nameview.setText(nombre);
+	    loadPromotions();
 	}
 
-	private void loadImageToFlyer(File imgFile, ImageView imageFlyer) throws FileNotFoundException {
+	private void loadImageToFlyer(File imgFile){
 		final String imageKey = String.valueOf(imgFile);
 
 		Bitmap bitmap = mMemoryCache.getBitmapFromMemCache(imageKey);
+		ImageView flyer = (ImageView)findViewById(R.id.flyer_view);
 		if (bitmap != null) {
-			imageFlyer.setImageDrawable(new BitmapDrawable(getResources(), bitmap));
+			flyer.setImageDrawable(new BitmapDrawable(getResources(), bitmap));
 		} else {
 			bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-			imageFlyer.setImageDrawable(new BitmapDrawable(getResources(), bitmap));
+			flyer.setImageDrawable(new BitmapDrawable(getResources(), bitmap));
 			mMemoryCache.addBitmapToMemoryCache(imageKey, bitmap);
 		}
-	}
-
-	private List<Flyer> getFlyer(String id_marca) {		
-		try {
-			File fl = new File(getFilesDir(),id_marca+"_flyer.json");
-			FileInputStream fin;
-			fin = new FileInputStream(fl);
-			List<Flyer> ret = (new FlyerManager()).readJsonStream(fin);
-			fin.close();
-			return ret;
-		} catch (FileNotFoundException e) {
-		} catch (IOException e) {
-		}
-		return new ArrayList<Flyer>();
 	}
 
 	@Override
@@ -147,5 +140,36 @@ public class FlyerActivity extends Activity {
 	@Override
 	public void onBackPressed() {
 		this.finish();
+	}
+	
+	private void loadPromotions() {
+		ParseQuery<ParseObject> innerQuery = new ParseQuery<ParseObject>("Store");
+		innerQuery.fromLocalDatastore();
+		innerQuery.whereEqualTo("objectId",this.id_marca);
+
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("Promotion");
+		query.fromLocalDatastore();
+		query.whereMatchesQuery("store", innerQuery);
+		query.findInBackground(new FindCallback<ParseObject>() {
+			public void done(List<ParseObject> result, ParseException e) {
+				if (e == null) {
+					//List<Promotion> promotions = new ArrayList<Promotion>();
+					for (ParseObject parseObject: result){
+						Promotion promotion = new Promotion(parseObject, context);
+						
+						File imgFile = new File(getFilesDir(), promotion.getName());
+						Log.e("FLYER", imgFile.toString());
+						if(imgFile.exists()){
+							//try {
+								loadImageToFlyer(imgFile);
+								return;
+							//} catch (FileNotFoundException ioe) { }
+						}else{
+							Log.e("FLYER", "File does not exist");
+						}
+					}
+				}
+			}
+		});
 	}
 }

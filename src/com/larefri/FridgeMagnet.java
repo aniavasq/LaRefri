@@ -82,6 +82,7 @@ class Store{
 	private ParseFile image;
 	private byte[] imageInputStream;
 	private List<Local> locales;
+	private List<Promotion> promotions;
 	private String logo;
 	private Integer index;
 	private ParseObject parseObject;
@@ -96,6 +97,7 @@ class Store{
 		this.priority = parseObject.getInt("priority");
 		this.image = parseObject.getParseFile("image");
 		this.locales = new ArrayList<Local>();
+		this.promotions = new ArrayList<Promotion>();
 		this.parseObject = parseObject;
 		this.context = context;
 		this.logo = this.name+".png";
@@ -181,6 +183,37 @@ class Store{
 			}
 		});
 	}
+	
+	public List<Promotion> getPromotions() {
+		return promotions;
+	}
+
+	public void downloadPromotions() {
+		Date today = new Date();
+		ParseQuery<ParseObject> innerQuery = new ParseQuery<ParseObject>("Store");
+		innerQuery.whereEqualTo("objectId",this.getId());
+
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("Promotion");
+		query.whereMatchesQuery("store", innerQuery);
+		query.whereGreaterThan("endDate", today);
+		query.whereLessThan("startDate", today);
+		Log.e("TODAY", today.toString());
+		query.findInBackground(new FindCallback<ParseObject>() {
+			public void done(List<ParseObject> result, ParseException e) {
+				if (e == null) {
+					for (ParseObject parseObject: result){
+						Promotion promotion = new Promotion(parseObject, context);
+						promotion.downloadImage();
+						promotions.add(promotion);
+						parseObject.pinInBackground();
+						Log.e("PROMOTION DOWNLOADED", promotion.getId());
+					}
+				}else{
+					Log.e("ERROR", e.getMessage(), e);
+				}
+			}
+		});
+	}
 
 	public String getLogo(){
 		return this.logo;
@@ -210,6 +243,7 @@ class Store{
 		this.parseObject.pinInBackground();
 		this.downloadImage();
 		this.downloadLocales();
+		this.downloadPromotions();
 	}
 
 	public void removeFromLocalDataStore(){
@@ -220,7 +254,7 @@ class Store{
 		return this.getId().equals(((Store)o).getId());
 	}
 }
-
+/************************************************************************/
 class Local{
 	private String id;
 	private Date updatedAt;
@@ -229,6 +263,7 @@ class Local{
 	private String country, region, city, address;
 	private String service;
 	private Integer state;
+	private ParseObject parseReference;
 
 	public Local() {	}
 
@@ -242,6 +277,7 @@ class Local{
 		this.address = parseObject.getString("address");
 		this.service = parseObject.getString("service");
 		this.state = parseObject.getInt("state");
+		this.parseReference = parseObject;
 		this.phones = new ArrayList<String>();
 		setPhones(parseObject);
 	}
@@ -284,6 +320,10 @@ class Local{
 	public Integer getState() {
 		return state;
 	}
+	public ParseObject getParseReference() {
+		return parseReference;
+	}
+
 	@Override
 	public String toString() {
 		return this.phones.toString();
@@ -299,6 +339,111 @@ class PhoneNumber{
 
 	public void setNumber(String number) {
 		this.number = number;
+	}
+}
+/**********************************************************************/
+class Promotion{
+	private String id;
+	private ParseFile image;
+	private byte[] imageInputStream;
+	private String description;
+	private Date startDate;
+	private Date endDate;
+	private String country;
+	private Date imageDate;
+	private Context context;
+	private ParseObject parseReference;
+	
+	public Promotion() { }
+
+	public Promotion(ParseObject parseObject, Context context) {
+		this.id = parseObject.getObjectId();
+		this.image = parseObject.getParseFile("image");
+		this.description = parseObject.getString("description");
+		this.startDate = parseObject.getDate("startDate");
+		this.endDate = parseObject.getDate("endDate");
+		this.country = parseObject.getString("country");
+		this.imageDate = parseObject.getDate("imageDate");
+		this.parseReference = parseObject;
+		this.context = context;
+	}
+
+	public byte[] getImageInputStream() {
+		return imageInputStream;
+	}
+
+	public void setImageInputStream(byte[] imageInputStream) {
+		this.imageInputStream = imageInputStream;
+	}
+	
+	public void downloadImage(){
+		File imgFile = new File(context.getFilesDir(), this.getName());
+		if(!imgFile.exists()){
+			image.getDataInBackground(new GetDataCallback() {
+
+				@Override
+				public void done(byte[] data, ParseException e) {
+					if (e == null) {
+						imageInputStream = data;
+						//download image
+						String name = getName();
+
+						FileOutputStream out = null;
+						InputStream in = new ByteArrayInputStream(imageInputStream);
+						try {
+							out = context.openFileOutput(name, Context.MODE_PRIVATE);
+							MainActivity.CopyStream(in, out);
+							out.flush();
+							out.close();
+							out = null;
+						} catch(IOException doNotCare) {	}
+
+					}else{
+						Log.e("ERROR", e+"", e);
+					}
+				}
+			});
+		}
+	}
+
+	public Date getImageDate() {
+		return imageDate;
+	}
+
+	public void setImageDate(Date imageDate) {
+		this.imageDate = imageDate;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public ParseFile getImage() {
+		return image;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public String getName() {
+		return getId()+".png";
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public ParseObject getParseReference() {
+		return parseReference;
 	}
 }
 /**********************************************************************/
