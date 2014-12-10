@@ -57,7 +57,7 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
-	private final String PREFS_NAME = "LaRefriPrefsFile";
+	public static final String PREFS_NAME = "LaRefriPrefsFile";
 	private final Integer movViewId = 20000000, delViewId = 20000005, enableViewId = 20000010;
 	private final Integer TEXT_SIZE = 22;
 	private final Handler handler = new Handler();

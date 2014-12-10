@@ -79,7 +79,7 @@ public class CallActivity extends Activity {
 		//Set policy to HTTP
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 		StrictMode.setThreadPolicy(policy);
-		
+
 		/***************************************************
 		 * Parse support*/
 		ParseConnector.getInstance(this);
@@ -107,7 +107,7 @@ public class CallActivity extends Activity {
 		Resources resources = getResources();
 		ContextThemeWrapper themeWrapper = new ContextThemeWrapper(context, R.style.menu_button);
 
-		if(stores.isEmpty() || (stores.size()==1 && stores.get(0)==null) || settings.getString("current_city", "NO_CITY").equalsIgnoreCase("NO_CITY")){
+		if(stores.isEmpty() || (stores.size()==1 && stores.get(0)==null) || LocationTask.getCity().equalsIgnoreCase("NO_CITY")){
 			LinearLayout phone_num_pane = new LinearLayout(themeWrapper);
 			phone_num_pane.setOrientation(LinearLayout.VERTICAL);
 			phone_num_pane.setLayoutParams(lp);
@@ -123,58 +123,58 @@ public class CallActivity extends Activity {
 			store_call_pane.addView(phone_num_pane);
 		}
 		for(final Local s: stores){
-			//if(s!=null && s.ciudad.equalsIgnoreCase(settings.getString("current_city", "NO_CITY"))){
-			LinearLayout phone_num_pane = new LinearLayout(themeWrapper);
-			phone_num_pane.setOrientation(LinearLayout.VERTICAL);
-			phone_num_pane.setLayoutParams(lp);
+			if(s!=null && s.getCity().equalsIgnoreCase(LocationTask.getCity()) && s.getRegion().equalsIgnoreCase(LocationTask.getRegion())){
+				LinearLayout phone_num_pane = new LinearLayout(themeWrapper);
+				phone_num_pane.setOrientation(LinearLayout.VERTICAL);
+				phone_num_pane.setLayoutParams(lp);
 
-			TextView tmp_title = new Button(themeWrapper);
-			tmp_title.setLayoutParams(lp);
-			tmp_title.setBackground(resources.getDrawable(R.drawable.menu_label_bg));
-			tmp_title.setText(s.getName());
-			tmp_title.setTextColor(Color.WHITE);
-			tmp_title.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
-			tmp_title.setPadding(10, 0, 10, 1);		
-			phone_num_pane.addView(tmp_title);
+				TextView tmp_title = new Button(themeWrapper);
+				tmp_title.setLayoutParams(lp);
+				tmp_title.setBackground(resources.getDrawable(R.drawable.menu_label_bg));
+				tmp_title.setText(s.getName());
+				tmp_title.setTextColor(Color.WHITE);
+				tmp_title.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
+				tmp_title.setPadding(10, 0, 10, 1);		
+				phone_num_pane.addView(tmp_title);
 
-			for(final String phone: s.getPhones()){
-				Button phone_num = new Button(themeWrapper);
-				phone_num.setLayoutParams(lp);
-				
-				try {
-					PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
-					PhoneNumber internationalPhoneNumber = phoneUtil.parse(phone, Locale.getDefault().getCountry());
-					String internationalFormatPhoneNumber = phoneUtil.format(internationalPhoneNumber, PhoneNumberFormat.NATIONAL);
-					phone_num.setText(internationalFormatPhoneNumber);
-				} catch (NumberParseException e) {
-					phone_num.setText(phone);
-				}
-				phone_num.setTextColor(Color.WHITE);
-				phone_num.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_call, 0);
-				phone_num.setBackgroundColor(Color.TRANSPARENT);
-				phone_num.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
-				phone_num.setPadding(10, 0, 10, 1);		
-				phone_num.setOnClickListener(new OnClickListener() {							
-					@Override
-					public void onClick(View v) {
-						onCall(v, phone);
+				for(final String phone: s.getPhones()){
+					Button phone_num = new Button(themeWrapper);
+					phone_num.setLayoutParams(lp);
 
+					try {
+						PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+						PhoneNumber internationalPhoneNumber = phoneUtil.parse(phone, Locale.getDefault().getCountry());
+						String internationalFormatPhoneNumber = phoneUtil.format(internationalPhoneNumber, PhoneNumberFormat.NATIONAL);
+						phone_num.setText(internationalFormatPhoneNumber);
+					} catch (NumberParseException e) {
+						phone_num.setText(phone);
 					}
-				});
-				if (s.getPhones().indexOf(phone)!= (s.getPhones().size()-1))
-					phone_num.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
-				if (s.getPhones().indexOf(phone)==0)
-					phone_num.setPadding(10, 0, 10, 1);
-				phone_num_pane.addView(phone_num);
+					phone_num.setTextColor(Color.WHITE);
+					phone_num.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_call, 0);
+					phone_num.setBackgroundColor(Color.TRANSPARENT);
+					phone_num.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
+					phone_num.setPadding(10, 0, 10, 1);		
+					phone_num.setOnClickListener(new OnClickListener() {							
+						@Override
+						public void onClick(View v) {
+							onCall(v, phone);
+
+						}
+					});
+					if (s.getPhones().indexOf(phone)!= (s.getPhones().size()-1))
+						phone_num.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
+					if (s.getPhones().indexOf(phone)==0)
+						phone_num.setPadding(10, 0, 10, 1);
+					phone_num_pane.addView(phone_num);
+				}
+
+				LinearLayout ll = new LinearLayout(this);
+				LinearLayout.LayoutParams trlp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 20);
+				ll.setLayoutParams(trlp);
+				ll.setBackgroundColor(Color.TRANSPARENT);
+				phone_num_pane.addView(ll);
+				store_call_pane.addView(phone_num_pane);
 			}
-			
-			LinearLayout ll = new LinearLayout(this);
-			LinearLayout.LayoutParams trlp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 20);
-			ll.setLayoutParams(trlp);
-			ll.setBackgroundColor(Color.TRANSPARENT);
-			phone_num_pane.addView(ll);
-			store_call_pane.addView(phone_num_pane);
-			//}
 		}
 	}
 
@@ -200,13 +200,15 @@ public class CallActivity extends Activity {
 
 	public void onCall(View view, String phone){
 		Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+phone));
+		Log.e("USER_ID", "User ID: "+NewAccountActivity.getUserId(this));
 		onCallLog(phone);
 		startActivity(callIntent);
 	}
 
 	public void onCallLog(String phone){
-		String android_id = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
-		/*id_usuario id_marca*/
+		//String android_id = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
+		
+		/*id_usuario id_marca
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put("id_marca[]", id_marca.toString());
 		params.put("id_usuario", android_id);
@@ -220,14 +222,14 @@ public class CallActivity extends Activity {
 					params.put("id_marca[]", l.id_marca.toString());
 					nameValuePairs.add(new BasicNameValuePair("id_marca[]", l.id_marca.toString()));
 				}
-			} catch (IOException doNotCare) { /*Lost Data*/ }
+			} catch (IOException doNotCare) { /*Lost Data}
 			RestClient restClient = new RestClient();
 			restClient.execute(StaticUrls.LOG_CALLS,params, nameValuePairs);
 		}else{
 			try {
 				saveLocalCallLog(phone);
-			} catch (IOException doNotCare) { /*Lost Data*/ }
-		}
+			} catch (IOException doNotCare) { /*Lost Data }
+		}*/
 	}
 
 	private void saveLocalCallLog(String phone) throws IOException{
@@ -254,7 +256,7 @@ public class CallActivity extends Activity {
 			line = reader.readLine();
 			try{
 				String[] tmp = line.split(",");
-				logCalls.add(new LogCall(Integer.parseInt(tmp[0]) , tmp[1], tmp[2]));
+				//logCalls.add(new LogCall(Integer.parseInt(tmp[0]) , tmp[1], tmp[2]));
 			}catch(Exception doNotCare){ /*Lost Data*/ }
 		}
 		inputStream.close();
@@ -279,7 +281,7 @@ public class CallActivity extends Activity {
 	public void onBackPressed() {
 		this.finish();
 	}
-	
+
 	private void loadLocales() {
 		ParseQuery<ParseObject> innerQuery = new ParseQuery<ParseObject>("Store");
 		innerQuery.fromLocalDatastore();
@@ -304,14 +306,43 @@ public class CallActivity extends Activity {
 }
 
 class LogCall{
-	Integer id_marca;
-	String phone;
-	String date_time;
-
-	public LogCall(Integer id_marca, String phone, String date_time) {
-		super();
-		this.id_marca = id_marca;
-		this.phone = phone;
-		this.date_time = date_time;
-	}	
+	private ParseObject parseObject;
+	private ParseObject locale;
+	private ParseObject caller;
+	private Date createdAt;
+	
+	public LogCall(ParseObject parseObject, ParseObject locale,
+			ParseObject caller, Date createdAt) {
+		setParseObject(parseObject);
+		setCaller(caller);
+		setLocale(locale);
+		setCreatedAt(createdAt);
+	}
+	public ParseObject getLocale() {
+		return locale;
+	}
+	public void setLocale(ParseObject locale) {
+		this.locale = locale;
+		this.parseObject.put("locale", locale);
+	}
+	public ParseObject getCaller() {
+		return caller;
+	}
+	public void setCaller(ParseObject caller) {
+		this.caller = caller;
+		this.parseObject.put("caller", caller);
+	}
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+		this.parseObject.put("createdAt", createdAt);
+	}
+	public ParseObject getParseObject() {
+		return parseObject;
+	}
+	public void setParseObject(ParseObject parseObject) {
+		this.parseObject = parseObject;
+	}
 }

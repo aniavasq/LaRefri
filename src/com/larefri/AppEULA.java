@@ -75,6 +75,8 @@ public class AppEULA {
                                     // Enable orientation changes based on
                                     // device's sensor
                                     mContext.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+                                    //Create User
+                                    NewAccountActivity.initUser(mContext);
                                 }
                             })
                     .setNegativeButton(android.R.string.cancel,

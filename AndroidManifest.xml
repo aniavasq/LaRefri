@@ -37,59 +37,73 @@
         <activity
             android:name=".MenuActivity"
             android:label="@string/title_activity_menu"
-            android:launchMode="singleTop" >
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".FlyerActivity"
-            android:label="@string/title_activity_flyer" >
+            android:label="@string/title_activity_flyer"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".CallActivity"
-            android:label="@string/title_activity_call" >
+            android:label="@string/title_activity_call"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".PhoneGuideActivity"
-            android:label="@string/title_activity_phone_guide" >
+            android:label="@string/title_activity_phone_guide"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".CategoriesActivity"
-            android:label="@string/title_activity_categories" >
+            android:label="@string/title_activity_categories"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".AddMagnetActivity"
-            android:label="@string/title_activity_add_magnet" >
+            android:label="@string/title_activity_add_magnet"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".AccountMenuActivity"
-            android:label="@string/title_activity_account_menu" >
+            android:label="@string/title_activity_account_menu"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".NewAccountActivity"
-            android:label="@string/title_activity_new_account" >
+            android:label="@string/title_activity_new_account"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".LogInActivity"
-            android:label="@string/title_activity_log_in" >
+            android:label="@string/title_activity_log_in"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".AccountSettingsActivity"
-            android:label="@string/title_activity_account_settings" >
+            android:label="@string/title_activity_account_settings"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".CustomizingActivity"
-            android:label="@string/title_activity_customizing" >
+            android:label="@string/title_activity_customizing"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".SearchFridgeMagnetActivity"
-            android:label="@string/title_activity_search_fridge_magnet" >
+            android:label="@string/title_activity_search_fridge_magnet"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".NotificationsActivity"
-            android:label="@string/title_activity_notifications" >
+            android:label="@string/title_activity_notifications"
+            android:screenOrientation="portrait" >
         </activity>
     </application>
 

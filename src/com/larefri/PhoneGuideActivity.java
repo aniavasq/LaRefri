@@ -103,7 +103,7 @@ public class PhoneGuideActivity extends Activity {
 			phone_num_pane.addView(tmp_title);
 			store_call_pane.addView(phone_num_pane);
 		}
-		if(settings.getString("current_city", "NO_CITY").equalsIgnoreCase("NO_CITY")){
+		if(LocationTask.getCity().equalsIgnoreCase("NO_CITY")){
 			for(final Local s: stores){
 				LinearLayout phone_num_pane = new LinearLayout(themeWrapper);
 				phone_num_pane.setOrientation(LinearLayout.VERTICAL);
@@ -147,7 +147,7 @@ public class PhoneGuideActivity extends Activity {
 						phone_num.setText(phone);
 					}
 					phone_num.setTextColor(Color.WHITE);
-					phone_num.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_call, 0);
+					//phone_num.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_call, 0);
 					phone_num.setBackgroundColor(Color.TRANSPARENT);
 					phone_num.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
 					phone_num.setPadding(10, 0, 10, 1);
@@ -157,46 +157,10 @@ public class PhoneGuideActivity extends Activity {
 						phone_num.setPadding(10, 0, 10, 1);
 					phone_num_pane.addView(phone_num);
 				}
-				
-				/*TextView phone_num = new Button(themeWrapper);
-				phone_num.setLayoutParams(lp);
-				phone_num.setText(s.telefono);
-				phone_num.setTextColor(Color.WHITE);
-				phone_num.setBackgroundColor(Color.TRANSPARENT);
-				phone_num.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-				phone_num.setPadding(10, 0, 10, 1);		
-				phone_num_pane.addView(phone_num);
-
-				TextView phone_num2 = new Button(themeWrapper);
-				if(!s.telefono2.isEmpty()){
-					phone_num.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
-					phone_num.setPadding(10, 0, 10, 1);
-					phone_num2.setLayoutParams(lp);
-					phone_num2.setText(s.telefono2);
-					phone_num2.setTextColor(Color.WHITE);
-					phone_num2.setBackgroundColor(Color.TRANSPARENT);
-					phone_num2.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-					phone_num2.setPadding(10, 0, 10, 1);
-					phone_num_pane.addView(phone_num2);
-				}
-
-				if(!s.telefono3.isEmpty()){
-					phone_num2.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
-					phone_num2.setPadding(10, 0, 10, 1);
-					TextView phone_num3 = new Button(themeWrapper);
-					phone_num3.setLayoutParams(lp);
-					phone_num3.setBackground(resources.getDrawable(R.drawable.menu_button_bg));
-					phone_num3.setText(s.telefono3);
-					phone_num3.setTextColor(Color.WHITE);
-					phone_num3.setBackgroundColor(Color.TRANSPARENT);
-					phone_num3.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-					phone_num3.setPadding(10, 0, 10, 1);
-					phone_num_pane.addView(phone_num3);
-				}*/
 			}
 		}
 		for(final Local s: stores){
-			//if(s!=null && s.ciudad.equalsIgnoreCase(settings.getString("current_city", "NO_CITY"))){
+			if(s!=null && s.getCity().equalsIgnoreCase(LocationTask.getCity()) && s.getRegion().equalsIgnoreCase(LocationTask.getRegion())){
 				LinearLayout phone_num_pane = new LinearLayout(themeWrapper);
 				phone_num_pane.setOrientation(LinearLayout.VERTICAL);
 				phone_num_pane.setLayoutParams(lp);
@@ -213,7 +177,7 @@ public class PhoneGuideActivity extends Activity {
 
 				TextView phone_dir = new TextView(themeWrapper);
 				phone_dir.setLayoutParams(lp);
-				phone_dir.setText(s.getAddress());
+				phone_dir.setText(s.getAddress().trim());
 				phone_dir.setTextColor(Color.WHITE);
 				phone_dir.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
 				phone_dir.setPadding(10, 0, 10, 1);				
@@ -224,7 +188,7 @@ public class PhoneGuideActivity extends Activity {
 				ll.setBackgroundColor(Color.TRANSPARENT);
 				phone_num_pane.addView(ll);
 				store_call_pane.addView(phone_num_pane);
-			//}		
+			}		
 		}
 	}
 	@Override

@@ -55,15 +55,7 @@ public class FlyerActivity extends Activity {
 	    mMemoryCache = new BitmapLRUCache(cacheSize);
 	    
 	    RecyclingImageView logo_image = (RecyclingImageView)findViewById(R.id.magnetfridge_logo);
-		/*List<Promotion> flyers = getFlyer(this.id_marca);
-
-		try {
-			for (Promotion f: flyers){
-				ImageView flyer = (ImageView)findViewById(R.id.flyer_view);
-				File imgFlyer = new File(getFilesDir(), f.imagen);
-				loadImageToFlyer(imgFlyer, flyer);
-			}
-		} catch (FileNotFoundException e) { }*/
+		
 		LinearLayout.LayoutParams ll = new LinearLayout.LayoutParams(width/2,width/2);
 		logo_image.setLayoutParams(ll);
 		TextView nameview = (TextView)findViewById(R.id.magnetfridge_name);
@@ -153,17 +145,16 @@ public class FlyerActivity extends Activity {
 		query.findInBackground(new FindCallback<ParseObject>() {
 			public void done(List<ParseObject> result, ParseException e) {
 				if (e == null) {
-					//List<Promotion> promotions = new ArrayList<Promotion>();
 					for (ParseObject parseObject: result){
 						Promotion promotion = new Promotion(parseObject, context);
 						
 						File imgFile = new File(getFilesDir(), promotion.getName());
 						Log.e("FLYER", imgFile.toString());
 						if(imgFile.exists()){
-							//try {
+							try {
 								loadImageToFlyer(imgFile);
 								return;
-							//} catch (FileNotFoundException ioe) { }
+							} catch (Exception doNotCare) { /*Lost Data*/ }
 						}else{
 							Log.e("FLYER", "File does not exist");
 						}

@@ -1,9 +1,6 @@
 package com.larefri;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -196,12 +193,6 @@ public class SearchFridgeMagnetActivity extends Activity implements AddMagnet{
 		int menu_bg_color = settings.getInt("menu_bg_color", Color.parseColor("#6B6560"));
 		article.setBackgroundColor(menu_bg_color);
 		head.setBackgroundColor(bg_color);
-	}
-
-	public void saveFridgeMagnetsList() throws FileNotFoundException, IOException {
-		File JsonFile = new File(getFilesDir(), "data.json");		
-		FridgeMagnetsManager fridgeMagnetWriter = new FridgeMagnetsManager();
-		fridgeMagnetWriter.writeJsonStream(new FileOutputStream(JsonFile), MainActivity.getMyFridgeMagnets());
 	}
 
 	public void onHomePressed(View view){

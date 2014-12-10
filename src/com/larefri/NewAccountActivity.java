@@ -1,22 +1,26 @@
 package com.larefri;
 
+import com.parse.ParseObject;
+import com.parse.ParseUser;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.Settings.Secure;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 public class NewAccountActivity extends Activity {
-	private SharedPreferences settings;
+	private static SharedPreferences settings;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_new_account);
-		settings = getSharedPreferences("LaRefriPrefsFile", 0);
+		settings = getSharedPreferences(MainActivity.PREFS_NAME, 0);
 	}
 
 	@Override
@@ -43,5 +47,28 @@ public class NewAccountActivity extends Activity {
 		intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 	    this.startActivity(intent);
 	    this.finish();
+	}
+	
+	public static String getUserId(Activity master){
+		settings = master.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+		return settings.getString("user_id", "");
+	}
+	
+	private static void setUserId(String user_id){
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putString("user_id", user_id);
+		editor.commit();
+	}
+	
+	public static void initUser(Activity master){
+		settings = master.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+        ParseUser _user = new ParseUser();
+        String android_id = Secure.getString(master.getContentResolver(), Secure.ANDROID_ID);
+        _user.setUsername("a"+android_id);
+        _user.setEmail("anemail@email.com");
+        _user.setPassword("some password");
+        _user.put("phone", "00000000000");
+        _user.saveInBackground();
+        setUserId(_user.getObjectId());
 	}
 }

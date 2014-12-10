@@ -14,6 +14,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.util.Log;
 
 public class LocationTask extends AsyncTask<Void, Void, List<Address>> {
 
@@ -23,8 +24,8 @@ public class LocationTask extends AsyncTask<Void, Void, List<Address>> {
 	private double currentLongitude;
 	private Context context;
 	private Activity parent;
-	private List<Address> addresses;
-	private SharedPreferences settings;
+	private static List<Address> addresses;
+	private static SharedPreferences settings;
 	private String providerFine;
 	private String providerCoarse;
 	public static final int OUT_OF_SERVICE = 0;
@@ -36,7 +37,11 @@ public class LocationTask extends AsyncTask<Void, Void, List<Address>> {
 		super();
 		this.context = context;
 		this.parent = parent;
-		this.settings = parent.getSharedPreferences("LaRefriPrefsFile", 0);
+		settings = parent.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+	}
+	
+	public static void sharedPreferences(Activity master){
+		settings = master.getSharedPreferences(MainActivity.PREFS_NAME, 0);
 	}
 
 	private void updateLocation(Location location){
@@ -47,33 +52,57 @@ public class LocationTask extends AsyncTask<Void, Void, List<Address>> {
 		}catch(Exception doNotCare){ }
 	}
 
-	public List<Address> getAddresses() {
-		return this.addresses;
+	public static List<Address> getAddresses() {
+		return addresses;
 	}
 
-	public String getCity(){
-		return this.settings.getString("current_city", "NO_CITY");
+	public static String getCity(){
+		return settings.getString("current_city", "NO_CITY");
 	}
 
 	public void setCity(String current_city){
-		SharedPreferences.Editor editor = this.settings.edit();
+		SharedPreferences.Editor editor = settings.edit();
 		editor.putString("current_city", current_city);
+		editor.commit();
+	}
+	
+	public static String getCountry(){
+		return settings.getString("current_country", "NO_COUNTRY");
+	}
+
+	public void setCountry(String current_country){
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putString("current_country", current_country);
+		editor.commit();
+	}
+	
+	public static String getRegion(){
+		return settings.getString("current_region", "NO_REGION");
+	}
+
+	public void setRegion(String current_region){
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putString("current_region", current_region);
 		editor.commit();
 	}
 
 	private void setAddresses(){
 		int tryes = 0;
 		Geocoder gcd = new Geocoder(context, Locale.getDefault());
-		this.addresses = new ArrayList<Address>();
+		addresses = new ArrayList<Address>();
 		while(tryes<5){
 			try {
-				this.addresses = gcd.getFromLocation(currentLatitude, currentLongitude,10);
+				addresses = gcd.getFromLocation(currentLatitude, currentLongitude,10);
 				break;
 			} catch (IOException doNotCare) { }
 			tryes++;
 		}
 		if (addresses.size() > 0){
-			this.setCity(this.addresses.get(0).getLocality().toString());
+			Log.e("LOCATION", addresses.toString());
+			//Log.e("LOCATION",this.addresses.get(0).getAdminArea());
+			this.setCity(addresses.get(0).getLocality().toString());
+			this.setCountry(addresses.get(0).getCountryName().toString());
+			this.setRegion(addresses.get(0).getAdminArea().toString());
 		}
 	}
 

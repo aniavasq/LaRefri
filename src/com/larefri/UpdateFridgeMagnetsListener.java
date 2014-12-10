@@ -18,7 +18,7 @@ public class UpdateFridgeMagnetsListener extends RestClient {
 	private List<UpdateMessage> updateMessages;
 	//private List<FridgeMagnet> fridgeMagnets;
 
-	public UpdateFridgeMagnetsListener(Activity master, List<FridgeMagnet> fridgeMagnets) {
+	public UpdateFridgeMagnetsListener(Activity master, List<Store> fridgeMagnets) {
 		super();
 		this.master = master;
 		//this.fridgeMagnets = fridgeMagnets;
