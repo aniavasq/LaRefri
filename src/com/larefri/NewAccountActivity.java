@@ -1,6 +1,7 @@
 package com.larefri;
 
-import com.parse.ParseObject;
+import com.parse.LogInCallback;
+import com.parse.ParseException;
 import com.parse.ParseUser;
 
 import android.app.Activity;
@@ -9,12 +10,14 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.Settings.Secure;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 public class NewAccountActivity extends Activity {
 	private static SharedPreferences settings;
+	private static ParseUser _user;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +52,15 @@ public class NewAccountActivity extends Activity {
 	    this.finish();
 	}
 	
+	/*public static ParseUser getUser(Activity master){
+		if (_user==null){
+			initUser(master);
+			return _user;
+		}else{
+			return _user;
+		}
+	}*/
+	
 	public static String getUserId(Activity master){
 		settings = master.getSharedPreferences(MainActivity.PREFS_NAME, 0);
 		return settings.getString("user_id", "");
@@ -62,13 +74,28 @@ public class NewAccountActivity extends Activity {
 	
 	public static void initUser(Activity master){
 		settings = master.getSharedPreferences(MainActivity.PREFS_NAME, 0);
-        ParseUser _user = new ParseUser();
+        _user = new ParseUser();
         String android_id = Secure.getString(master.getContentResolver(), Secure.ANDROID_ID);
         _user.setUsername("a"+android_id);
         _user.setEmail("anemail@email.com");
         _user.setPassword("some password");
         _user.put("phone", "00000000000");
         _user.saveInBackground();
+        try {
+			_user.signUp();
+		} catch (ParseException e) {
+			ParseUser.logInInBackground(_user.getUsername(), "some password", new LogInCallback() {				
+				@Override
+				public void done(ParseUser user, ParseException ex) {
+					if(ex==null){
+						_user = user;
+						setUserId(_user.getObjectId());
+					}else{
+						Log.e("USER ERROR", ex.getMessage(), ex);
+					}
+				}
+			});
+		}
         setUserId(_user.getObjectId());
 	}
 }

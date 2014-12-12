@@ -158,7 +158,6 @@ class Store{
 						promotion.downloadImage();
 						promotions.add(promotion);
 						parseObject.pinInBackground();
-						Log.e("PROMOTION DOWNLOADED", promotion.getId());
 					}
 				}else{
 					Log.e("ERROR", e.getMessage(), e);
@@ -199,8 +198,29 @@ class Store{
 	}
 
 	public void removeFromLocalDataStore(){
+		removeLocales();
+		removePromotions();
 		this.parseObject.unpinInBackground();
 	}
+	
+	private void removeLocales(){
+		for(Local s: getLocales()){
+			s.getParseReference().unpinInBackground();
+		}
+	}
+	
+	private void removePromotions(){
+		for(Promotion p: getPromotions()){
+			p.getParseReference().unpinInBackground();
+			File flyer = new File(context.getFilesDir(), logo);
+			flyer.delete();
+		}
+	}
+	
+	public void update(){
+		
+	}
+	
 	@Override
 	public boolean equals(Object o) {
 		return this.getId().equals(((Store)o).getId());
@@ -282,17 +302,6 @@ class Local{
 	}
 }
 
-class PhoneNumber{
-	String number;
-
-	public String getNumber() {
-		return number;
-	}
-
-	public void setNumber(String number) {
-		this.number = number;
-	}
-}
 /**********************************************************************/
 class Promotion{
 	private String id;

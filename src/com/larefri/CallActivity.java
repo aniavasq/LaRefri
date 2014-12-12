@@ -1,20 +1,10 @@
 package com.larefri;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -24,6 +14,7 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import android.app.Activity;
 import android.content.Context;
@@ -32,12 +23,9 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.provider.Settings.Secure;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
@@ -157,8 +145,8 @@ public class CallActivity extends Activity {
 					phone_num.setOnClickListener(new OnClickListener() {							
 						@Override
 						public void onClick(View v) {
+							onCallLog(s);
 							onCall(v, phone);
-
 						}
 					});
 					if (s.getPhones().indexOf(phone)!= (s.getPhones().size()-1))
@@ -200,74 +188,15 @@ public class CallActivity extends Activity {
 
 	public void onCall(View view, String phone){
 		Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+phone));
-		Log.e("USER_ID", "User ID: "+NewAccountActivity.getUserId(this));
-		onCallLog(phone);
 		startActivity(callIntent);
 	}
 
-	public void onCallLog(String phone){
-		//String android_id = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
-		
-		/*id_usuario id_marca
-		HashMap<String, String> params = new HashMap<String, String>();
-		params.put("id_marca[]", id_marca.toString());
-		params.put("id_usuario", android_id);
-		//construct form to HttpRequest
-		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-		nameValuePairs.add(new BasicNameValuePair("id_marca[]", id_marca.toString()));
-		nameValuePairs.add(new BasicNameValuePair("id_usuario", (android_id == null) ? "0": android_id));
-		if (isNetworkAvailable()){
-			try {
-				for(LogCall l: getLocalCallLog()){
-					params.put("id_marca[]", l.id_marca.toString());
-					nameValuePairs.add(new BasicNameValuePair("id_marca[]", l.id_marca.toString()));
-				}
-			} catch (IOException doNotCare) { /*Lost Data}
-			RestClient restClient = new RestClient();
-			restClient.execute(StaticUrls.LOG_CALLS,params, nameValuePairs);
-		}else{
-			try {
-				saveLocalCallLog(phone);
-			} catch (IOException doNotCare) { /*Lost Data }
-		}*/
-	}
-
-	private void saveLocalCallLog(String phone) throws IOException{
-		FileOutputStream outputStream;
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss", Locale.getDefault()); 
-		String now = df.format(new Date());
-		File file = new File(getFilesDir(), "callLog.json");
-		outputStream = new FileOutputStream(file, true);
-		outputStream.write((id_marca.toString()+","+phone+","+now+"\n").getBytes());
-		outputStream.flush(); 
-		outputStream.close();
-	}
-
-	private ArrayList<LogCall> getLocalCallLog() throws IOException{
-		FileInputStream inputStream;
-		ArrayList<LogCall> logCalls = new ArrayList<LogCall>();
-		BufferedReader reader;
-		File file = new File(getFilesDir(), "callLog.json");
-		inputStream = new FileInputStream(file);
-		reader = new BufferedReader(new InputStreamReader(inputStream));
-		String line = reader.readLine();
-		while(line != null && !line.equalsIgnoreCase("\n")){
-			Log.e("LinE",line);
-			line = reader.readLine();
-			try{
-				String[] tmp = line.split(",");
-				//logCalls.add(new LogCall(Integer.parseInt(tmp[0]) , tmp[1], tmp[2]));
-			}catch(Exception doNotCare){ /*Lost Data*/ }
-		}
-		inputStream.close();
-		file.delete();
-		return logCalls;		
-	}
-
-	private boolean isNetworkAvailable() {
-		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-		return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+	public void onCallLog(Local s){
+		Log.e("USER_ID", "User ID: "+NewAccountActivity.getUserId(this));
+		ParseObject call = ParseObject.create("Call");
+		ParseUser caller = ParseUser.getCurrentUser();
+		LogCall logCall = new LogCall(call, s.getParseReference(), caller);
+		logCall.getParseObject().saveEventually();
 	}
 
 	public void onHomePressed(View view){
@@ -310,13 +239,13 @@ class LogCall{
 	private ParseObject locale;
 	private ParseObject caller;
 	private Date createdAt;
+	private Date updatedAt;
 	
 	public LogCall(ParseObject parseObject, ParseObject locale,
-			ParseObject caller, Date createdAt) {
+			ParseObject caller) {
 		setParseObject(parseObject);
 		setCaller(caller);
 		setLocale(locale);
-		setCreatedAt(createdAt);
 	}
 	public ParseObject getLocale() {
 		return locale;
@@ -338,6 +267,12 @@ class LogCall{
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 		this.parseObject.put("createdAt", createdAt);
+	}
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
 	}
 	public ParseObject getParseObject() {
 		return parseObject;
