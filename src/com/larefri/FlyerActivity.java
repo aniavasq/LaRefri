@@ -2,6 +2,7 @@ package com.larefri;
 
 import java.io.File;
 import java.util.List;
+import java.util.Random;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -152,8 +153,11 @@ public class FlyerActivity extends Activity {
 						Log.e("FLYER", imgFile.toString());
 						if(imgFile.exists()){
 							try {
+								Random n = new Random();
 								loadImageToFlyer(imgFile);
-								return;
+								if(n.nextBoolean()) {
+									return;
+								}
 							} catch (Exception doNotCare) { /*Lost Data*/ }
 						}else{
 							Log.e("FLYER", "File does not exist");

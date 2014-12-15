@@ -189,7 +189,11 @@ class Store{
 	}
 
 	public void saveToLocalDataStore(){
-		if(getIndex()==-1 || getIndex()==0) setIndex(this.id.hashCode());
+		if(getIndex()==-1 || getIndex()==0){
+			int i = Math.abs(this.id.hashCode());
+			Log.e("I", "i="+i );
+			setIndex(i);
+		}
 		Log.e("INDEX", ""+getIndex() );
 		this.parseObject.pinInBackground();
 		this.downloadImage();
@@ -215,10 +219,6 @@ class Store{
 			File flyer = new File(context.getFilesDir(), logo);
 			flyer.delete();
 		}
-	}
-	
-	public void update(){
-		
 	}
 	
 	@Override
@@ -300,6 +300,11 @@ class Local{
 	public String toString() {
 		return this.phones.toString();
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		return this.getId().equals(((Local)o).getId());
+	}
 }
 
 /**********************************************************************/
@@ -310,6 +315,7 @@ class Promotion{
 	private String description;
 	private Date startDate;
 	private Date endDate;
+	private Date updatedAt;
 	private String country;
 	private Date imageDate;
 	private Context context;
@@ -321,6 +327,7 @@ class Promotion{
 		this.id = parseObject.getObjectId();
 		this.image = parseObject.getParseFile("image");
 		this.description = parseObject.getString("description");
+		this.updatedAt = parseObject.getDate("updatedAt");
 		this.startDate = parseObject.getDate("startDate");
 		this.endDate = parseObject.getDate("endDate");
 		this.country = parseObject.getString("country");
@@ -395,6 +402,14 @@ class Promotion{
 		return endDate;
 	}
 
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
 	public String getName() {
 		return getId()+".png";
 	}
@@ -405,6 +420,11 @@ class Promotion{
 
 	public ParseObject getParseReference() {
 		return parseReference;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		return this.getId().equals(((Promotion)o).getId());
 	}
 }
 /**********************************************************************/

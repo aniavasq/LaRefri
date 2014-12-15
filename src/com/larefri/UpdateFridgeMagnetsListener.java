@@ -1,37 +1,59 @@
 package com.larefri;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
+
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.JsonReader;
 import android.util.JsonToken;
+import android.util.Log;
 
-public class UpdateFridgeMagnetsListener extends RestClient {
+public class UpdateFridgeMagnetsListener {
 	private Activity master;
-	private SharedPreferences settings;
-	private List<UpdateMessage> updateMessages;
-	//private List<FridgeMagnet> fridgeMagnets;
+	private static Context context;
+	private static SharedPreferences settings;
+	private static UpdateFridgeMagnetsListener INSTANCE;
 
-	public UpdateFridgeMagnetsListener(Activity master, List<Store> fridgeMagnets) {
+	private UpdateFridgeMagnetsListener(Activity master) {
 		super();
 		this.master = master;
 		//this.fridgeMagnets = fridgeMagnets;
-		settings = this.master.getSharedPreferences("LaRefriPrefsFile", 0);
+		context = master;
+		settings = this.master.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+	}
+	
+	private static void createInstance(Activity master){
+		if (INSTANCE == null){
+			INSTANCE = new UpdateFridgeMagnetsListener(master);
+		}else{
+			INSTANCE.master = master;
+		}
 	}
 
-	@Override
-	protected Object doInBackground(Object... params) {
-		Object result = super.doInBackground(params);
-		UpdateManager updateManager = new UpdateManager();
-		try {
+	public static UpdateFridgeMagnetsListener getInstance(Activity master){
+		createInstance(master);
+		return INSTANCE;
+	}
+	
+	public static void update(Activity master) {
+		/*try {
 			if(result != null){
-				setUpdateMessages(updateManager.readJsonStream( new ByteArrayInputStream(result.toString().getBytes()) ));
 				letsUpdate();
 			}
 		} catch (IOException e) {
@@ -41,105 +63,69 @@ public class UpdateFridgeMagnetsListener extends RestClient {
 			String now = updateMessages.get(updateMessages.size()-1).fecha_actualizacion;
 			settings.edit().putString("last_update", now).commit();
 		}
-		return result;
-	}
-
-	private void setUpdateMessages(List<UpdateMessage> updateMessages) {
-		this.updateMessages = updateMessages;
-	}
-
-	public void letsUpdate(){
-//		*for(UpdateMessage update: updateMessages){
-			//
-			/*FridgeMagnet tmpFm = new FridgeMagnet(update.id_marca);
-			if(fridgeMagnets != null && fridgeMagnets.contains(tmpFm)){
-				HashMap<String, String> params = new HashMap<String, String>();
-				params.put("id_marca", update.id_marca.toString());
-				//construct form to HttpRequest
-				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-				nameValuePairs.add(new BasicNameValuePair("id_marca", update.id_marca.toString()));		
-				switch (update.tipo_actualizacion) {
-				case SUCURSAL:
-					(new DownloadMagnetStoresRestClient(master)).execute(
-							StaticUrls.SUCURSALES_URL, 
-							params,
-							nameValuePairs,
-							tmpFm);
-					break;
-				case FLYER:
-					(new DownloadFlyerRestClient(master)).execute(
-							StaticUrls.FLYER_PROMO, 
-							params,
-							nameValuePairs,
-							tmpFm);
-					break;
-				default:
-					break;
-				}
-			}*/
-		//}
-	}
-}
-
-enum UpdateType{
-	SUCURSAL, FLYER;
-}
-
-class UpdateManager implements RefriJsonReader{
-
-	@Override
-	public List<UpdateMessage> readJsonStream(InputStream in) throws IOException {
-		JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
+		return result;*/
+		getInstance(master);
+		
 		try {
-			return readMessagesArray(reader);
-		}catch(Exception e){
-			return null;
-		}finally{
-			reader.close();
+			updatePromotions();
+			updateLocales();
+		}catch (java.text.ParseException ex) {
+			Log.e("ERROR", ex.getMessage(), ex);
 		}
 	}
 
-	@Override
-	public List<UpdateMessage> readMessagesArray(JsonReader reader) throws IOException {
-		List<UpdateMessage> messages = new ArrayList<UpdateMessage>();
+	private static void updatePromotions() throws java.text.ParseException {
+		String[] ids_marca = MainActivity.getMyFridgeMagnetsId();
+		ParseQuery<ParseObject> innerQuery = new ParseQuery<ParseObject>("Store");
+		innerQuery.fromLocalDatastore();
+		innerQuery.whereContainedIn("objectId", Arrays.asList(ids_marca));
+		SimpleDateFormat formatter = (SimpleDateFormat) SimpleDateFormat.getDateTimeInstance();
+		final String now = (new Date()).toString();
+		final Date lastUpdate = formatter.parse(settings.getString("last_update", now));
 
-		if (reader.peek() != JsonToken.BEGIN_ARRAY) {
-			return messages;
-		} else {
-			reader.beginArray();
-			while (reader.hasNext()) {
-				UpdateMessage um = readUpdateMessage(reader);
-				if(um!=null) messages.add(um);
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("Promotion");
+		query.whereMatchesQuery("store", innerQuery);
+		query.findInBackground(new FindCallback<ParseObject>() {
+			public void done(List<ParseObject> result, ParseException e) {
+				if (e == null) {
+					for (ParseObject parseObject: result){
+						Promotion promotion = new Promotion(parseObject, context);
+						if (promotion.getUpdatedAt().compareTo(lastUpdate)>1){
+							promotion.downloadImage();
+							parseObject.pinInBackground();
+							settings.edit().putString("last_update", now).commit();
+							Log.e("FLYER UPDATE", promotion.getId());
+						}
+					}
+				}
 			}
-		}
-		reader.endArray();
-		return messages;
+		});
 	}
 
-	private UpdateMessage readUpdateMessage(JsonReader reader) throws IOException {
-		UpdateMessage updateMessage = new UpdateMessage();
+	private static void updateLocales() throws java.text.ParseException {
+		String[] ids_marca = MainActivity.getMyFridgeMagnetsId();
+		ParseQuery<ParseObject> innerQuery = new ParseQuery<ParseObject>("Store");
+		innerQuery.fromLocalDatastore();
+		innerQuery.whereContainedIn("objectId", Arrays.asList(ids_marca));
+		SimpleDateFormat formatter = (SimpleDateFormat) SimpleDateFormat.getDateTimeInstance();
+		final String now = (new Date()).toString();
+		final Date lastUpdate = formatter.parse(settings.getString("last_update", now));
 
-		reader.beginObject();
-		while (reader.hasNext()) {
-			String name = reader.nextName();
-			if(name.equalsIgnoreCase("id_marca")){
-				updateMessage.id_marca = reader.nextInt();
-			}else if(name.equalsIgnoreCase("tipo_actualizacion")){
-				updateMessage.tipo_actualizacion = UpdateType.valueOf(reader.nextString());
-			}else if(name.equalsIgnoreCase("fecha_actualizacion")){
-				updateMessage.fecha_actualizacion = reader.nextString();
-			}else{
-				updateMessage = null;
-				reader.skipValue();
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("Locale");
+		query.whereMatchesQuery("store", innerQuery);
+		query.findInBackground(new FindCallback<ParseObject>() {
+			public void done(List<ParseObject> result, ParseException e) {
+				if (e == null) {
+					for (ParseObject parseObject: result){
+						Local local = new Local(parseObject);
+						if (local.getUpdatedAt().compareTo(lastUpdate)>1){
+							parseObject.pinInBackground();
+							settings.edit().putString("last_update", now).commit();
+							Log.e("LOCAL UPDATE", local.getName());
+						}
+					}
+				}
 			}
-		}
-		reader.endObject();
-		return updateMessage;
+		});
 	}
-}
-
-class UpdateMessage{
-	Integer id_marca;
-	UpdateType tipo_actualizacion;
-	String fecha_actualizacion;
 }

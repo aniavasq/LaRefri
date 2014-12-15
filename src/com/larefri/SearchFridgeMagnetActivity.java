@@ -244,6 +244,7 @@ public class SearchFridgeMagnetActivity extends Activity implements AddMagnet{
 	private void getParseFridgeMagnets(){
 
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Store");
+		query.whereEqualTo("state", 1);
 		query.findInBackground(new FindCallback<ParseObject>() {
 			public void done(List<ParseObject> result, ParseException e) {
 				if (e == null) {

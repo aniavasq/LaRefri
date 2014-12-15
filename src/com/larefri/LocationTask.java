@@ -14,7 +14,6 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
-import android.util.Log;
 
 public class LocationTask extends AsyncTask<Void, Void, List<Address>> {
 
@@ -98,7 +97,6 @@ public class LocationTask extends AsyncTask<Void, Void, List<Address>> {
 			tryes++;
 		}
 		if (addresses.size() > 0){
-			Log.e("LOCATION", addresses.toString());
 			//Log.e("LOCATION",this.addresses.get(0).getAdminArea());
 			this.setCity(addresses.get(0).getLocality().toString());
 			this.setCountry(addresses.get(0).getCountryName().toString());

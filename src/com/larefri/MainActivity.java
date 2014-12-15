@@ -322,6 +322,7 @@ public class MainActivity extends Activity {
 		loadFridgeMagnetsButtons(getMyFridgeMagnets());
 		//Update phone guide
 		//Check Updates
+		UpdateFridgeMagnetsListener.update(this);
 	}
 	
 	/**********************************************
@@ -338,7 +339,6 @@ public class MainActivity extends Activity {
 					Store s;
 					for(ParseObject fm: result){
 						s = new Store(fm, context);
-						Log.e("FM INDEX", ""+s.getIndex()+" "+s.getName());
 						tmp_fridgemagnets.add(s);
 					}
 					if(tmp_fridgemagnets!=getMyFridgeMagnets())
@@ -455,7 +455,6 @@ public class MainActivity extends Activity {
 	}
 
 	protected void swapFridgeMagnetsInList(View view, View v) {
-		Log.e("LENGHT MyFM BEFORE", ""+getMyFridgeMagnets().size());
 		Store from_view = null, from_v = null;
 		for(Store fm:getMyFridgeMagnets()){
 			if(fm.getIndex() == view.getId()){
@@ -471,12 +470,13 @@ public class MainActivity extends Activity {
 			
 			for(int k=0; k<myFridgeMagnets.size(); k++){
 				Store tmp = myFridgeMagnets.get(k);
+				Log.e("INDEX BEFORE", tmp.getIndex()+"");
 				tmp.setIndex(k);
+				Log.e("INDEX AFTER", tmp.getIndex()+"");
 				myFridgeMagnets.set(k, tmp);
 			}
 			setMyFridgeMagnets(myFridgeMagnets);
 		}
-		Log.e("LENGHT MyFM AFTER", ""+getMyFridgeMagnets().size());
 	}
 
 	private Object[] createEditMagnetView(){
@@ -641,15 +641,14 @@ public class MainActivity extends Activity {
 				goToMenu(v);
 			}
 		});
-		//saveFridgeMagnetsList();
 		hideEditMagnetView();
 	}
 
 	private void chageOpacityFridgeMagnets(float opacity) {
-		for(final Store fm: getMyFridgeMagnets()){
-			ImageButton tmp_imageButtom = (ImageButton)findViewById(fm.getIndex());
-			if(tmp_imageButtom!=null) tmp_imageButtom.setAlpha(opacity);
-		}		
+		LinearLayout left_pane_fridgemagnets = (LinearLayout) findViewById(R.id.left_pane_fridgemagnets);
+		LinearLayout right_pane_fridgemagnets = (LinearLayout)findViewById(R.id.right_pane_fridgemagnets);
+		for (int i=0; i<left_pane_fridgemagnets.getChildCount(); i++) left_pane_fridgemagnets.getChildAt(i).setAlpha(opacity);
+		for (int i=0; i<right_pane_fridgemagnets.getChildCount(); i++) right_pane_fridgemagnets.getChildAt(i).setAlpha(opacity);
 	}
 
 	public void showEditMagnetView(final View view){
@@ -849,5 +848,13 @@ public class MainActivity extends Activity {
 		}
 
 		return inSampleSize;
+	}
+
+	public static String[] getMyFridgeMagnetsId() {
+		String[] result = new String[getMyFridgeMagnets().size()];
+		for (int i=0; i<getMyFridgeMagnets().size(); i++){
+			result[i] = getMyFridgeMagnets().get(i).getId();
+		}
+		return result;
 	}
 }

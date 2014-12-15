@@ -209,6 +209,7 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Store");
 		query.whereMatchesQuery("category", innerQuery);
+		query.whereEqualTo("state", 1);
 		query.findInBackground(new FindCallback<ParseObject>() {
 			public void done(List<ParseObject> result, ParseException e) {
 				if (e == null) {
