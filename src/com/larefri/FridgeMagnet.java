@@ -18,7 +18,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import android.content.Context;
-import android.util.Log;
+//import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.widget.Button;
 
@@ -86,12 +86,10 @@ class Store{
 							out.close();
 							out = null;
 						} catch(IOException doNotCare) { 
-							Log.e("ERROR", "Error writing files"+logo);
+							//Log.e("ERROR", "Error writing files"+logo);
 						}
-
-						Log.e("FILE", image.getName());
 					}else{
-						Log.e("ERROR", e+"", e);
+						//Log.e("ERROR", e+"", e);
 					}
 				}
 			});
@@ -149,7 +147,7 @@ class Store{
 		query.whereGreaterThan("endDate", today);
 		query.whereLessThan("startDate", today);
 		query.whereEqualTo("country", LocationTask.getCountry());
-		Log.e("TODAY", today.toString());
+		//Log.e("TODAY", today.toString());
 		query.findInBackground(new FindCallback<ParseObject>() {
 			public void done(List<ParseObject> result, ParseException e) {
 				if (e == null) {
@@ -160,7 +158,7 @@ class Store{
 						parseObject.pinInBackground();
 					}
 				}else{
-					Log.e("ERROR", e.getMessage(), e);
+					//Log.e("ERROR", e.getMessage(), e);
 				}
 			}
 		});
@@ -191,10 +189,10 @@ class Store{
 	public void saveToLocalDataStore(){
 		if(getIndex()==-1 || getIndex()==0){
 			int i = Math.abs(this.id.hashCode());
-			Log.e("I", "i="+i );
+			//Log.e("I", "i="+i );
 			setIndex(i);
 		}
-		Log.e("INDEX", ""+getIndex() );
+		//Log.e("INDEX", ""+getIndex() );
 		this.parseObject.pinInBackground();
 		this.downloadImage();
 		this.downloadLocales();
@@ -241,7 +239,7 @@ class Local{
 
 	public Local(ParseObject parseObject) {
 		this.id = parseObject.getObjectId();
-		this.updatedAt = parseObject.getDate("updatedAt");
+		this.updatedAt = parseObject.getUpdatedAt();//.getDate("updatedAt");
 		this.name = parseObject.getString("name");
 		this.country = parseObject.getString("country");
 		this.region = parseObject.getString("region");
@@ -327,7 +325,7 @@ class Promotion{
 		this.id = parseObject.getObjectId();
 		this.image = parseObject.getParseFile("image");
 		this.description = parseObject.getString("description");
-		this.updatedAt = parseObject.getDate("updatedAt");
+		this.updatedAt = parseObject.getUpdatedAt();//.getDate("updatedAt");
 		this.startDate = parseObject.getDate("startDate");
 		this.endDate = parseObject.getDate("endDate");
 		this.country = parseObject.getString("country");
@@ -367,7 +365,7 @@ class Promotion{
 						} catch(IOException doNotCare) {	}
 
 					}else{
-						Log.e("ERROR", e+"", e);
+						//Log.e("ERROR", e+"", e);
 					}
 				}
 			});

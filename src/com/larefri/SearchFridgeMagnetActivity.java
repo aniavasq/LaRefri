@@ -12,6 +12,7 @@ import com.parse.ParseQuery;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,7 +23,7 @@ import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
-import android.util.Log;
+//import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -41,6 +42,8 @@ public class SearchFridgeMagnetActivity extends Activity implements AddMagnet{
 	private Context context;
 	private TextView search_txt;
 	private List<Store> loadedFridgeMagnets, queryFridgeMagnets;
+	
+	private ProgressDialog dialog;
 
 	class QueryInList implements TextWatcher{
 		private List<Store> fridgeMagnets;
@@ -245,6 +248,7 @@ public class SearchFridgeMagnetActivity extends Activity implements AddMagnet{
 
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Store");
 		query.whereEqualTo("state", 1);
+		onLoading();
 		query.findInBackground(new FindCallback<ParseObject>() {
 			public void done(List<ParseObject> result, ParseException e) {
 				if (e == null) {
@@ -256,10 +260,25 @@ public class SearchFridgeMagnetActivity extends Activity implements AddMagnet{
 					loadFridgeMagnetsButtons(loadedFridgeMagnets);
 					search_txt.addTextChangedListener(new QueryInList(loadedFridgeMagnets));
 				} else {
-					Log.e("ERROR",e.getMessage(),e);
+					//Log.e("ERROR",e.getMessage(),e);
 				}
+				onLoaded();
 			}
 		});
+	}	
+
+	private void onLoaded() {
+		if (dialog.isShowing()) {
+            dialog.dismiss();
+        }
+	}
+
+	private void onLoading(){
+		dialog = new ProgressDialog(context);
+        dialog.setMessage("Actualizando Imantados");
+        dialog.show();
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(true);
 	}
 	/**********************************************/
 }

@@ -28,6 +28,9 @@
     <string name="positive">si</string>
     <string name="negative">no</string>
     <string name="accept_eula">Aceptar</string>
+    <string name="ok">OK</string>
+    <string name="location_disabled_title">No se puede acceder al servicio de localización</string>
+    <string name="location_disabled">\nPor favor, verifique que tiene activado el servicio de localización y está conectado a internet para una mejor experiencia.</string>
     <string name="no_fridge_magnets">No hay locales cerca de su ubicaci\u00F3n</string>
     <string name="downloading_fridge_magnets">Cargando Imantados</string>
     <string name="delete_fridge_magnet">¿Quiere eliminar el imantado de</string>

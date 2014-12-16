@@ -58,7 +58,7 @@ public final class R {
         public static final int splash=0x7f020015;
     }
     public static final class id {
-        public static final int action_settings=0x7f090023;
+        public static final int action_settings=0x7f090025;
         public static final int add_fridge_magnets_buttons=0x7f090015;
         public static final int article=0x7f090003;
         public static final int btn_account=0x7f090008;
@@ -71,6 +71,7 @@ public final class R {
         public static final int city_txt=0x7f09000d;
         public static final int confirm_pass_txt=0x7f090010;
         public static final int contact_btn=0x7f090021;
+        public static final int dialogButtonOK=0x7f090024;
         public static final int email_txt=0x7f09000c;
         public static final int flyer_view=0x7f090014;
         public static final int larefri_Icon=0x7f090001;
@@ -92,6 +93,7 @@ public final class R {
         public static final int some_relative_layout=0x7f090020;
         public static final int stores_call_buttons=0x7f090016;
         public static final int sure_name_txt=0x7f09000a;
+        public static final int text=0x7f090023;
         public static final int the_scroll_view=0x7f09001a;
         public static final int user_txt=0x7f09000e;
     }
@@ -111,6 +113,7 @@ public final class R {
         public static final int activity_search_fridge_magnet=0x7f03000c;
         public static final int activity_splash=0x7f03000d;
         public static final int flyer_activity=0x7f03000e;
+        public static final int location_dialog=0x7f03000f;
     }
     public static final class menu {
         public static final int account_menu=0x7f080000;
@@ -136,17 +139,20 @@ public final class R {
         public static final int add_fridge_magnets=0x7f060004;
         public static final int app_name=0x7f060000;
         public static final int customize=0x7f060005;
-        public static final int delete_btn=0x7f060020;
-        public static final int delete_fridge_magnet=0x7f06001e;
+        public static final int delete_btn=0x7f060023;
+        public static final int delete_fridge_magnet=0x7f060021;
         public static final int desc=0x7f060001;
-        public static final int downloading_fridge_magnets=0x7f06001d;
-        public static final int eula_string=0x7f060021;
+        public static final int downloading_fridge_magnets=0x7f060020;
+        public static final int eula_string=0x7f060024;
+        public static final int location_disabled=0x7f06001e;
+        public static final int location_disabled_title=0x7f06001d;
         public static final int log_in=0x7f06000a;
-        public static final int move_btn=0x7f06001f;
+        public static final int move_btn=0x7f060022;
         public static final int negative=0x7f06001a;
         public static final int new_account=0x7f060009;
-        public static final int no_fridge_magnets=0x7f06001c;
+        public static final int no_fridge_magnets=0x7f06001f;
         public static final int notifications=0x7f060007;
+        public static final int ok=0x7f06001c;
         public static final int positive=0x7f060019;
         public static final int save=0x7f06000c;
         public static final int there_is_not_notifications=0x7f060008;
@@ -160,7 +166,7 @@ public final class R {
         public static final int title_activity_log_in=0x7f060015;
         public static final int title_activity_menu=0x7f060003;
         public static final int title_activity_new_account=0x7f060014;
-        public static final int title_activity_notifications=0x7f060022;
+        public static final int title_activity_notifications=0x7f060025;
         public static final int title_activity_phone_guide=0x7f06000f;
         public static final int title_activity_search_fridge_magnet=0x7f060018;
         public static final int title_activity_splash=0x7f060012;

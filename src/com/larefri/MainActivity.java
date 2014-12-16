@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -36,7 +39,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
-import android.util.Log;
+//import android.util.Log;
 import android.view.DragEvent;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -55,7 +58,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements Observer{
 
 	public static final String PREFS_NAME = "LaRefriPrefsFile";
 	private final Integer movViewId = 20000000, delViewId = 20000005, enableViewId = 20000010;
@@ -70,7 +73,7 @@ public class MainActivity extends Activity {
 	private boolean hasScrolled;
 	private boolean fridgeMagnetsDraggable;
 	private boolean editMagnetViewShowed;
-	private static List<Store> myFridgeMagnets;
+	private static FridgeMagnets myFridgeMagnets;
 	private ScrollView myScrollView;
 	private LocationTask locationTask;
 	public BitmapLRUCache mMemoryCache;
@@ -178,26 +181,35 @@ public class MainActivity extends Activity {
 
 	public synchronized static List<Store> getMyFridgeMagnets() {
 		if (myFridgeMagnets!=null)
-			return myFridgeMagnets;
+			return myFridgeMagnets.getFridgeMagnets();
 		else{
-			myFridgeMagnets = new ArrayList<Store>();
-			return myFridgeMagnets;
+			myFridgeMagnets = new FridgeMagnets(new ArrayList<Store>());
+			return myFridgeMagnets.getFridgeMagnets();
 		}			
 	}
 
 	public synchronized static void setMyFridgeMagnets(List<Store> myFridgeMagnets) {
-		MainActivity.myFridgeMagnets = myFridgeMagnets;
+		MainActivity.myFridgeMagnets = new FridgeMagnets( myFridgeMagnets);
 	}
 
 	public synchronized static void removeMyFridgeMagnet(Store fm){
 		myFridgeMagnets.remove(fm);
 		fm.removeFromLocalDataStore();
-		Log.e("FM REMOVED", fm.toString());
-		Log.e("AFTER REMOVED", myFridgeMagnets.toString());
+		//Log.e("FM REMOVED", fm.toString());
+		//Log.e("AFTER REMOVED", myFridgeMagnets.toString());
 	}
 	
 	public synchronized static void addMyFridgeMagnet(Store fm){
 		MainActivity.myFridgeMagnets.add(fm);
+	}
+	
+	public synchronized static Store findFridgeMagnet(String id){
+		for (Store fm: myFridgeMagnets.getFridgeMagnets()){
+			if(fm.getId() != null && fm.getId().equals(id)){
+				return fm;
+			}
+		}
+		return null;
 	}
 	
 	public Integer getWidth() {
@@ -231,6 +243,8 @@ public class MainActivity extends Activity {
 		this.fridgeMagnetsClickable = true;
 		this.setFridgeMagnetsDraggable(false);
 		this.editMagnetViewShowed = false;
+		MainActivity.getMyFridgeMagnets();
+		this.myFridgeMagnets.addObserver(this);
 		
 		FontsOverride.setDefaultFont(this, "MONOSPACE", "Roboto-Thin.ttf");
 		//Set policy to HTTP
@@ -353,13 +367,13 @@ public class MainActivity extends Activity {
 					});
 					loadFridgeMagnetsButtons(getMyFridgeMagnets());
 				} else {
-					Log.e("ERROR",e.getMessage(),e);
+					//Log.e("ERROR",e.getMessage(),e);
 				}
 			}
 		});
 	}
 	
-	protected void loadFridgeMagnetsButtons(List<Store> myFridgeMagnets) {
+	public void loadFridgeMagnetsButtons(List<Store> myFridgeMagnets) {
 		LinearLayout left_pane_fridgemagnets = (LinearLayout) findViewById(R.id.left_pane_fridgemagnets);
 		LinearLayout right_pane_fridgemagnets = (LinearLayout)findViewById(R.id.right_pane_fridgemagnets);
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width/2, width/2);
@@ -470,9 +484,9 @@ public class MainActivity extends Activity {
 			
 			for(int k=0; k<myFridgeMagnets.size(); k++){
 				Store tmp = myFridgeMagnets.get(k);
-				Log.e("INDEX BEFORE", tmp.getIndex()+"");
+				//Log.e("INDEX BEFORE", tmp.getIndex()+"");
 				tmp.setIndex(k);
-				Log.e("INDEX AFTER", tmp.getIndex()+"");
+				//Log.e("INDEX AFTER", tmp.getIndex()+"");
 				myFridgeMagnets.set(k, tmp);
 			}
 			setMyFridgeMagnets(myFridgeMagnets);
@@ -856,5 +870,31 @@ public class MainActivity extends Activity {
 			result[i] = getMyFridgeMagnets().get(i).getId();
 		}
 		return result;
+	}
+
+	@Override
+	public void update(Observable observable, Object data) {
+		loadFridgeMagnetsButtons(getMyFridgeMagnets());
+	}
+}
+
+class FridgeMagnets extends Observable{
+	private List<Store> fridgeMagnets;
+
+	public FridgeMagnets(List<Store> fridgeMagnets) {
+		super();
+		this.fridgeMagnets = fridgeMagnets;
+	}
+
+	public void add(Store fm) {
+		this.fridgeMagnets.add(fm);		
+	}
+
+	public void remove(Store fm) {
+		this.fridgeMagnets.remove(fm);
+	}
+
+	public List<Store> getFridgeMagnets() {
+		return fridgeMagnets;
 	}
 }

@@ -15,6 +15,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -46,6 +47,8 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 	private String logo;
 	private Context context;
 	private final ArrayList<Store> fridgeMagnets = new ArrayList<Store>();
+
+	private ProgressDialog dialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -210,7 +213,9 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Store");
 		query.whereMatchesQuery("category", innerQuery);
 		query.whereEqualTo("state", 1);
+		onLoading();
 		query.findInBackground(new FindCallback<ParseObject>() {
+			
 			public void done(List<ParseObject> result, ParseException e) {
 				if (e == null) {
 					Store s;
@@ -222,8 +227,24 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 				} else {
 					Log.e("ERROR",e.getMessage(),e);
 				}
+				onLoaded();
 			}
 		});
+	}
+	
+
+	private void onLoaded() {
+		if (dialog.isShowing()) {
+            dialog.dismiss();
+        }
+	}
+
+	private void onLoading(){
+		dialog = new ProgressDialog(context);
+        dialog.setMessage("Actualizando Imantados");
+        dialog.show();
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(true);
 	}
 	/**********************************************/
 }

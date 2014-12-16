@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.Locale;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Criteria;
@@ -14,6 +17,10 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 public class LocationTask extends AsyncTask<Void, Void, List<Address>> {
 
@@ -30,15 +37,17 @@ public class LocationTask extends AsyncTask<Void, Void, List<Address>> {
 	public static final int OUT_OF_SERVICE = 0;
 	public static final int TEMPORARILY_UNAVAILABLE = 1;
 	public static final int AVAILABLE = 2;
+	private Dialog dialog;
 
 
 	public LocationTask(Context context, Activity parent) {
 		super();
 		this.context = context;
 		this.parent = parent;
+		this.dialog = null;
 		settings = parent.getSharedPreferences(MainActivity.PREFS_NAME, 0);
 	}
-	
+
 	public static void sharedPreferences(Activity master){
 		settings = master.getSharedPreferences(MainActivity.PREFS_NAME, 0);
 	}
@@ -64,7 +73,7 @@ public class LocationTask extends AsyncTask<Void, Void, List<Address>> {
 		editor.putString("current_city", current_city);
 		editor.commit();
 	}
-	
+
 	public static String getCountry(){
 		return settings.getString("current_country", "NO_COUNTRY");
 	}
@@ -74,7 +83,7 @@ public class LocationTask extends AsyncTask<Void, Void, List<Address>> {
 		editor.putString("current_country", current_country);
 		editor.commit();
 	}
-	
+
 	public static String getRegion(){
 		return settings.getString("current_region", "NO_REGION");
 	}
@@ -96,8 +105,9 @@ public class LocationTask extends AsyncTask<Void, Void, List<Address>> {
 			} catch (IOException doNotCare) { }
 			tryes++;
 		}
+		Log.e("ADDRESSES","Adresses: "+addresses);
 		if (addresses.size() > 0){
-			//Log.e("LOCATION",this.addresses.get(0).getAdminArea());
+			Log.e("LOCATION","Location "+addresses.get(0).getAdminArea());
 			this.setCity(addresses.get(0).getLocality().toString());
 			this.setCountry(addresses.get(0).getCountryName().toString());
 			this.setRegion(addresses.get(0).getAdminArea().toString());
@@ -142,5 +152,44 @@ public class LocationTask extends AsyncTask<Void, Void, List<Address>> {
 		}
 		setAddresses();
 		return getAddresses();
+	}
+
+	private boolean isLocationEnabled(){
+		boolean gps_enabled = false,network_enabled = false;
+		try{
+			gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+		}catch(Exception ex){}
+		try{
+			network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+		}catch(Exception ex){}
+
+		return gps_enabled || network_enabled;
+	}
+
+	private void requestLocation(){
+		// custom dialog
+		if(dialog==null){
+			//dialog = new Dialog(context);
+			AlertDialog.Builder builder = new AlertDialog.Builder(context);
+			//builder.setContentView(R.layout.location_dialog);
+			builder.setTitle(R.string.location_disabled_title);
+			builder.setMessage(R.string.location_disabled);
+
+			builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+				}
+			});
+			dialog = builder.create();
+			dialog.show();
+		}
+	}
+
+	@Override
+	protected void onPostExecute(List<Address> result) {
+		if(!isLocationEnabled()){
+			requestLocation();
+		}
 	}
 }
