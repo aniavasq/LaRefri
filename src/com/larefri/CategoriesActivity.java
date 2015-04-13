@@ -22,7 +22,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PictureDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
+//import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -81,7 +81,7 @@ public class CategoriesActivity extends Activity {
 					
 					try{
 					setImageSVGDrawable(btn, imgFile, width/3-30, width/3-30, lp);
-					}catch(Exception ex){ Log.e("",imgFile.toString()); }
+					}catch(Exception ex){ /*Log.e("",imgFile.toString());*/ }
 					if(i%3 != 0)
 						btn.setPadding(10, 30, 20, 0);
 					else if(i%3 != 1)

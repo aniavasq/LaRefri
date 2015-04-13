@@ -30,7 +30,7 @@ import android.graphics.drawable.PictureDrawable;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.DisplayMetrics;
-import android.util.Log;
+//import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.View;
@@ -225,7 +225,7 @@ public class AddMagnetActivity extends Activity implements AddMagnet{
 					}
 					loadFridgeMagnetsButtons(fridgeMagnets);
 				} else {
-					Log.e("ERROR",e.getMessage(),e);
+					//Log.e("ERROR",e.getMessage(),e);
 				}
 				onLoaded();
 			}

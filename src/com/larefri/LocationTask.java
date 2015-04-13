@@ -17,10 +17,6 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
 public class LocationTask extends AsyncTask<Void, Void, List<Address>> {
 
@@ -105,9 +101,9 @@ public class LocationTask extends AsyncTask<Void, Void, List<Address>> {
 			} catch (IOException doNotCare) { }
 			tryes++;
 		}
-		Log.e("ADDRESSES","Adresses: "+addresses);
+		//Log.e("ADDRESSES","Adresses: "+addresses);
 		if (addresses.size() > 0){
-			Log.e("LOCATION","Location "+addresses.get(0).getAdminArea());
+			//Log.e("LOCATION","Location "+addresses.get(0).getAdminArea());
 			this.setCity(addresses.get(0).getLocality().toString());
 			this.setCountry(addresses.get(0).getCountryName().toString());
 			this.setRegion(addresses.get(0).getAdminArea().toString());

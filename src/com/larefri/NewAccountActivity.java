@@ -10,7 +10,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.Settings.Secure;
-import android.util.Log;
+//import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -91,7 +91,7 @@ public class NewAccountActivity extends Activity {
 						_user = user;
 						setUserId(_user.getObjectId());
 					}else{
-						Log.e("USER ERROR", ex.getMessage(), ex);
+						//Log.e("USER ERROR", ex.getMessage(), ex);
 					}
 				}
 			});

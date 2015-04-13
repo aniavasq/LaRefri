@@ -20,7 +20,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
+//import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -150,7 +150,7 @@ public class FlyerActivity extends Activity {
 						Promotion promotion = new Promotion(parseObject, context);
 						
 						File imgFile = new File(getFilesDir(), promotion.getName());
-						Log.e("FLYER", imgFile.toString());
+						//Log.e("FLYER", imgFile.toString());
 						if(imgFile.exists()){
 							try {
 								Random n = new Random();
@@ -160,7 +160,7 @@ public class FlyerActivity extends Activity {
 								}
 							} catch (Exception doNotCare) { /*Lost Data*/ }
 						}else{
-							Log.e("FLYER", "File does not exist");
+							//Log.e("FLYER", "File does not exist");
 						}
 					}
 				}

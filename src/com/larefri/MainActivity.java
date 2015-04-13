@@ -195,8 +195,6 @@ public class MainActivity extends Activity implements Observer{
 	public synchronized static void removeMyFridgeMagnet(Store fm){
 		myFridgeMagnets.remove(fm);
 		fm.removeFromLocalDataStore();
-		//Log.e("FM REMOVED", fm.toString());
-		//Log.e("AFTER REMOVED", myFridgeMagnets.toString());
 	}
 	
 	public synchronized static void addMyFridgeMagnet(Store fm){
@@ -259,10 +257,10 @@ public class MainActivity extends Activity implements Observer{
 		settings = getSharedPreferences(PREFS_NAME, 0);
 
 		//EULA
-		AppEULA appEULA = new AppEULA(this);
+		/*AppEULA appEULA = new AppEULA(this);
 		if (settings.getBoolean(appEULA.getEulaKey(), true)) {
 			appEULA.show();
-		}
+		}*/
 		//check first time installed
 		if (settings.getBoolean("my_first_time", true)) {
 			copyAssets();
